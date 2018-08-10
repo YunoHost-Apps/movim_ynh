@@ -45,8 +45,8 @@ app=$YNH_APP_INSTANCE_NAME
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
 #=================================================
 
-# TODO: final_path=/var/www/$app
-test ! -e "$DESTDIR" || ynh_die "This path already contains a folder"
+final_path=/var/www/$app
+test ! -e "$final_path" || ynh_die "This path already contains a folder"
 
 # Normalize the url path syntax
 path_url=$(ynh_normalize_url_path $path_url)
@@ -101,6 +101,8 @@ ynh_install_app_dependencies php5-gd php5-curl php5-imagick php5-cli php5-zmq
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 
+ynh_app_setting_set "$app" final_path "$final_path"
+
 # Download Movim source code
 tmp_path=/tmp/movim-git
 sudo rm -rf "$tmp_path"
@@ -124,7 +126,7 @@ sed -i "s@'/ws/'@'${path_url%/}/ws/'@g" \
     "${tmp_path}/app/assets/js/movim_websocket.js"
 
 # Move Movim source code
-sudo mv "$tmp_path" "$DESTDIR"
+sudo mv "$tmp_path" "$final_path"
 
 #=================================================
 # CREATE DEDICATED USER
@@ -137,14 +139,14 @@ sudo useradd -d /var/www/movim -s /bin/sh movim
 # SET PERMISSIONS
 #=================================================
 
-sudo chown -R movim:www-data "$DESTDIR"
-sudo find "${DESTDIR}/" -type f -print0 | sudo xargs -0 chmod 0644
-sudo find "${DESTDIR}/" -type d -print0 | sudo xargs -0 chmod 0755
-sudo chmod 400 "${DESTDIR}/config/db.inc.php"
+sudo chown -R movim:www-data "$final_path"
+sudo find "${final_path}/" -type f -print0 | sudo xargs -0 chmod 0644
+sudo find "${final_path}/" -type d -print0 | sudo xargs -0 chmod 0755
+sudo chmod 400 "${final_path}/config/db.inc.php"
 
 # Install PHP dependencies using composer
 (curl -sS https://getcomposer.org/installer \
-     | exec_cmd php -- --install-dir="$DESTDIR" \
+     | exec_cmd php -- --install-dir="$final_path" \
  && exec_cmd php composer.phar config --global discard-changes true \
  && exec_cmd php composer.phar install --no-interaction) \
   || ynh_die "Unable to install Movim dependencies."
@@ -166,7 +168,7 @@ exec_cmd php mud.php config --loglevel=1 \
 
 # Copy init script or systemd service
 sudo sed -i "s@YHURL@${domain}${path_url}@g" ../conf/movim.{service,init}
-sudo sed -i "s@YHDIR@${DESTDIR}@g" ../conf/movim.{service,init}
+sudo sed -i "s@YHDIR@${final_path}@g" ../conf/movim.{service,init}
 sudo sed -i "s@YHPORT@${port}@g" ../conf/movim.{service,init}
 if [ -d /run/systemd/system ]; then
     sudo cp ../conf/movim.service /etc/systemd/system/
@@ -194,7 +196,7 @@ sudo cp ../conf/php-fpm.conf /etc/php5/fpm/pool.d/movim.conf
 
 # Nginx configuration
 sed -i "s@PATHTOCHANGE@$path_url@g" ../conf/nginx.conf
-sed -i "s@ALIASTOCHANGE@$DESTDIR/@g" ../conf/nginx.conf
+sed -i "s@ALIASTOCHANGE@$final_path/@g" ../conf/nginx.conf
 sed -i "s@YHPORT@$port@g" ../conf/nginx.conf
 sed -i "s@//ws/@/ws/@g" ../conf/nginx.conf # Avoid duplicate /
 sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/movim.conf

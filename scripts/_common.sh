@@ -9,9 +9,6 @@ GIT_REPO="https://github.com/movim/movim"
 # Commit to checkout
 HEAD_COMMIT="ee249f1e37b548c71b9a339dd358fbd2136e3291"
 
-# Source code destination directory
-DESTDIR="/var/www/movim"
-
 # App package root directory should be the parent folder
 PKGDIR=$(cd ../; pwd)
 
@@ -22,7 +19,7 @@ PKGDIR=$(cd ../; pwd)
 # Execute a command as movim user in the destination directory
 # usage: exec_cmd COMMAND [ARG ...]
 exec_cmd() {
-  (cd "$DESTDIR" \
+  (cd "$final_path" \
    && sudo sudo -u movim "$@")
 }
 

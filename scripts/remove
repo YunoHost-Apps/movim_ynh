@@ -17,6 +17,7 @@ app=$YNH_APP_INSTANCE_NAME
 
 # Retrieve app settings
 domain=$(ynh_app_setting_get "$app" domain)
+final_path=$(ynh_app_setting_get "$app" final_path)
 
 #=================================================
 # REMOVE NGINX CONFIGURATION
@@ -70,7 +71,7 @@ ynh_mysql_drop_user "$db_user" || true
 # REMOVE APP MAIN DIR
 #=================================================
 
-sudo rm -rf /var/www/movim
+sudo rm -rf "$final_path"
 
 #=================================================
 # GENERIC FINALIZATION

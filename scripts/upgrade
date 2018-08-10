@@ -22,6 +22,17 @@ port=$(ynh_app_setting_get "$app" port)
 ssoenabled=$(ynh_app_setting_get "$app" ssoenabled)
 public_site=$(ynh_app_setting_get "$app" public_site)
 timezone=$(cat /etc/timezone)
+final_path=$(ynh_app_setting_get "$app" final_path)
+
+#=================================================
+# ENSURE DOWNWARD COMPATIBILITY
+#=================================================
+
+# If final_path doesn't exist, create it
+if [ -z "$final_path" ]; then
+	final_path="/var/www/$app"
+	ynh_app_setting_set "$app" final_path "$final_path"
+fi
 
 #=================================================
 # ACTIVE TRAP
@@ -61,7 +72,7 @@ ynh_install_app_dependencies php5-zmq
 #=================================================
 
 # Init git repository as needed
-if [ ! -d "${DESTDIR}/.git" ]; then
+if [ ! -d "${final_path}/.git" ]; then
     tmp_path=/tmp/movim-git
     sudo rm -rf "$tmp_path"
 
@@ -69,16 +80,16 @@ if [ ! -d "${DESTDIR}/.git" ]; then
     (git clone "$GIT_REPO" "$tmp_path" \
        && cd "$tmp_path" && git checkout "$HEAD_COMMIT") \
       || ynh_die "Unable to download Movim source code."
-    sudo cp "${DESTDIR}/config/db.inc.php" "${tmp_path}/config/db.inc.php"
+    sudo cp "${final_path}/config/db.inc.php" "${tmp_path}/config/db.inc.php"
 
     # Replace current source code
-    sudo rm -rf "$DESTDIR"
-    sudo mv "$tmp_path" "$DESTDIR"
-    sudo chown -R movim:www-data "$DESTDIR"
+    sudo rm -rf "$final_path"
+    sudo mv "$tmp_path" "$final_path"
+    sudo chown -R movim:www-data "$final_path"
 
     # Install composer for PHP dependencies
     curl -sS https://getcomposer.org/installer \
-        | exec_cmd php -- --install-dir="$DESTDIR"
+        | exec_cmd php -- --install-dir="$final_path"
 fi
 
 # Update Movim source code
@@ -87,7 +98,7 @@ fi
   || ynh_die "Unable to download Movim source code."
 ## TODO: consider installation in a subpath
 exec_cmd sed -i "s@'/ws/'@'${path_url%/}/ws/'@g" \
-    "${DESTDIR}/app/assets/js/movim_websocket.js"
+    "${final_path}/app/assets/js/movim_websocket.js"
 
 #=================================================
 # CREATE DEDICATED USER
@@ -101,10 +112,10 @@ ynh_system_user_exists movim \
 # SET PERMISSIONS
 #=================================================
 
-sudo chown -R movim:www-data "$DESTDIR"
-sudo find "${DESTDIR}/" -type f -print0 | sudo xargs -0 chmod 0644
-sudo find "${DESTDIR}/" -type d -print0 | sudo xargs -0 chmod 0755
-sudo chmod 400 "${DESTDIR}/config/db.inc.php"
+sudo chown -R movim:www-data "$final_path"
+sudo find "${final_path}/" -type f -print0 | sudo xargs -0 chmod 0644
+sudo find "${final_path}/" -type d -print0 | sudo xargs -0 chmod 0755
+sudo chmod 400 "${final_path}/config/db.inc.php"
 
 #=================================================
 # install PHP dependencies
@@ -161,7 +172,7 @@ fi
 
 # Update init scripts
 sudo sed -i "s@YHURL@${domain}${path_url}@g" ../conf/movim.{service,init}
-sudo sed -i "s@YHDIR@${DESTDIR}@g" ../conf/movim.{service,init}
+sudo sed -i "s@YHDIR@${final_path}@g" ../conf/movim.{service,init}
 sudo sed -i "s@YHPORT@${port}@g" ../conf/movim.{service,init}
 if [ -d /run/systemd/system ]; then
     sudo rm -f /lib/systemd/system/movim.service
@@ -189,7 +200,7 @@ sudo cp ../conf/php-fpm.conf /etc/php5/fpm/pool.d/movim.conf
 
 # Nginx configuration
 sed -i "s@PATHTOCHANGE@$path_url@g" ../conf/nginx.conf
-sed -i "s@ALIASTOCHANGE@$DESTDIR/@g" ../conf/nginx.conf
+sed -i "s@ALIASTOCHANGE@$final_path/@g" ../conf/nginx.conf
 sed -i "s@YHPORT@$port@g" ../conf/nginx.conf
 sed -i "s@//ws/@/ws/@g" ../conf/nginx.conf # Avoid duplicate /
 sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/movim.conf
