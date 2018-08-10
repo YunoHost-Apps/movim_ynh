@@ -106,12 +106,7 @@ ynh_install_app_dependencies php5-gd php5-curl php5-imagick php5-cli php5-zmq
 
 ynh_app_setting_set "$app" final_path "$final_path"
 
-# Download Movim source code
-tmp_path=/tmp/movim-git
-ynh_secure_remove "$tmp_path"
-(git clone "$GIT_REPO" "$tmp_path" \
-   && cd "$tmp_path" && git checkout "$HEAD_COMMIT") \
-  || ynh_die "Unable to download Movim source code."
+ynh_setup_source "$final_path"
 
 #=================================================
 # SET CONFIGURATION FILE
@@ -119,17 +114,14 @@ ynh_secure_remove "$tmp_path"
 
 # TODO: add checksum
 # Set database configuration
-cp "${tmp_path}/config/"{db.example.inc.php,db.inc.php}
+cp "$final_path/config/"{db.example.inc.php,db.inc.php}
 ynh_replace_string "'username'    => 'username'" "'username'    => '$db_user'" \
-    "${tmp_path}/config/db.inc.php"
+    "$final_path/config/db.inc.php"
 ynh_replace_string "'password'    => 'password'" "'password'    => '$db_pwd'" \
-    "${tmp_path}/config/db.inc.php"
+    "$final_path/config/db.inc.php"
 ## TODO: consider installation in a subpath
 ynh_replace_string "'/ws/'" "'${path_url%/}/ws/'" \
-    "${tmp_path}/app/assets/js/movim_websocket.js"
-
-# Move Movim source code
-mv "$tmp_path" "$final_path"
+    "$final_path/app/assets/js/movim_websocket.js"
 
 #=================================================
 # CREATE DEDICATED USER
@@ -146,6 +138,10 @@ chown -R movim:www-data "$final_path"
 find "${final_path}/" -type f -print0 | xargs -0 chmod 0644
 find "${final_path}/" -type d -print0 | xargs -0 chmod 0755
 chmod 400 "${final_path}/config/db.inc.php"
+
+#=================================================
+# Install PHP dependencies using composer
+#=================================================
 
 # Install PHP dependencies using composer
 (curl -sS https://getcomposer.org/installer \
@@ -212,9 +208,9 @@ cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/movim.conf
 if [[ "$ssoenabled" = "No" ]]; then
     ynh_app_setting_set "$app" skipped_uris "/"
     exec_cmd php mud.php config --xmppwhitelist="$domain"
+    undo_sso_patch
 else
     ynh_app_setting_set "$app" unprotected_uris "/"
-    apply_sso_patch
 fi
 
 #=================================================

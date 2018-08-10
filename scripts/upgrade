@@ -71,33 +71,12 @@ ynh_install_app_dependencies php5-zmq
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 
-# Init git repository as needed
-if [ ! -d "${final_path}/.git" ]; then
-    tmp_path=/tmp/movim-git
-    ynh_secure_remove "$tmp_path"
+ynh_setup_source "$final_path"
 
-    # Download Movim source code
-    (git clone "$GIT_REPO" "$tmp_path" \
-       && cd "$tmp_path" && git checkout "$HEAD_COMMIT") \
-      || ynh_die "Unable to download Movim source code."
-    cp "${final_path}/config/db.inc.php" "${tmp_path}/config/db.inc.php"
+chown -R movim:www-data "$final_path"
 
-    # Replace current source code
-    ynh_secure_remove "$final_path"
-    mv "$tmp_path" "$final_path"
-    chown -R movim:www-data "$final_path"
-
-    # Install composer for PHP dependencies
-    curl -sS https://getcomposer.org/installer \
-        | exec_cmd php -- --install-dir="$final_path"
-fi
-
-# Update Movim source code
-(exec_cmd git fetch origin \
-   && exec_cmd git reset --hard "$HEAD_COMMIT") \
-  || ynh_die "Unable to download Movim source code."
 ## TODO: consider installation in a subpath
-exec_cmd ynh_replace_string "'/ws/'" "'${path_url%/}/ws/'" \
+ynh_replace_string "'/ws/'" "'${path_url%/}/ws/'" \
     "${final_path}/app/assets/js/movim_websocket.js"
 
 #=================================================
@@ -120,6 +99,9 @@ chmod 400 "${final_path}/config/db.inc.php"
 #=================================================
 # install PHP dependencies
 #=================================================
+
+curl -sS https://getcomposer.org/installer \
+| exec_cmd php -- --install-dir="$final_path"
 
 # Update PHP dependencies using composer
 (exec_cmd php composer.phar config --global discard-changes true \
@@ -160,9 +142,9 @@ if [[ "$ssoenabled" = "No" ]]; then
     ynh_app_setting_set "$app" skipped_uris "/"
     exec_cmd php mud.php config --xmppwhitelist=$domain
     yunohost app ssowatconf
+    undo_sso_patch
 else
     ynh_app_setting_set "$app" unprotected_uris "/"
-    apply_sso_patch
 fi
 
 
