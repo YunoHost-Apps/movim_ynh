@@ -79,14 +79,6 @@
                 },
                 "choices": ["Yes", "No"],
                 "default": "Yes"
-            },
-            {
-                "name": "port",
-                "ask": {
-                    "en": "Movim daemon port (internal only)",
-                    "fr": "Port du daemon Movim (interne uniquement)"
-                },
-                "default": "9537"
             }
         ]
     }

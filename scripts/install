@@ -26,7 +26,6 @@ admin=$YNH_APP_ARG_ADMIN
 password=$YNH_APP_ARG_PASSWORD
 language=$YNH_APP_ARG_LANGUAGE
 ssoenabled=$YNH_APP_ARG_SSOENABLED
-port=$YNH_APP_ARG_PORT
 timezone=$(cat /etc/timezone)
 
 ### If it's a multi-instance app, meaning it can be installed several times independently
@@ -56,9 +55,6 @@ ynh_webpath_available $domain $path_url
 # Register (book) web path
 ynh_webpath_register $app $domain $path_url
 
-# Check port availability
-yunohost app checkport "$port" \
-  || ynh_die "This port is already used"
 
 #=================================================
 # STORE SETTINGS FROM MANIFEST
@@ -67,13 +63,20 @@ yunohost app checkport "$port" \
 # Save app settings
 ynh_app_setting_set "$app" admin "$admin"
 ynh_app_setting_set "$app" ssoenabled "$ssoenabled"
-ynh_app_setting_set "$app" port "$port"
 ynh_app_setting_set "$app" path "$path_url"
 
 
 #=================================================
 # STANDARD MODIFICATIONS
 #=================================================
+# FIND AND OPEN A PORT
+#=================================================
+
+# Find a free port
+port=$(ynh_find_port 9537)
+# Open this port
+yunohost firewall allow --no-upnp TCP "$port" 2>&1
+ynh_app_setting_set "$app" port "$port"
 
 #=================================================
 # CREATE A MYSQL DATABASE
