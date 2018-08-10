@@ -1,51 +1,83 @@
 #!/bin/bash
 
-# Exit on command errors and treat unset variables as an error
-set -eu
+#=================================================
+# GENERIC START
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
 
-app="movim"
-
-# Retrieve arguments
-domain=$1
-path=${2:-/}
-admin=$3
-password=$4
-language=$5
-ssoenabled=$6
-port=$7
-timezone=`cat /etc/timezone`
-
-# Source local helpers
-source ./_common.sh
-
+source _common.sh
 source /usr/share/yunohost/helpers
 
-# Check domain/path availability
-sudo yunohost app checkurl "${domain}${path}" -a "$app" \
-  || exit 1
+#=================================================
+# MANAGE SCRIPT FAILURE
+#=================================================
+
+# Exit if an error occurs during the execution of the script
+ynh_abort_if_errors
+
+#=================================================
+# RETRIEVE ARGUMENTS FROM THE MANIFEST
+#=================================================
+
+domain=$YNH_APP_ARG_DOMAIN
+path_url=$YNH_APP_ARG_PATH
+admin=$YNH_APP_ARG_ADMIN
+password=$YNH_APP_ARG_PASSWORD
+language=$YNH_APP_ARG_LANGUAGE
+ssoenabled=$YNH_APP_ARG_SSOENABLED
+port=$YNH_APP_ARG_PORT
+timezone=$(cat /etc/timezone)
+
+### If it's a multi-instance app, meaning it can be installed several times independently
+### The id of the app as stated in the manifest is available as $YNH_APP_ID
+### The instance number is available as $YNH_APP_INSTANCE_NUMBER (equals "1", "2", ...)
+### The app instance name is available as $YNH_APP_INSTANCE_NAME
+###    - the first time the app is installed, YNH_APP_INSTANCE_NAME = ynhexample
+###    - the second time the app is installed, YNH_APP_INSTANCE_NAME = ynhexample__2
+###    - ynhexample__{N} for the subsequent installations, with N=3,4, ...
+### The app instance name is probably what interests you most, since this is
+### guaranteed to be unique. This is a good unique identifier to define installation path,
+### db names, ...
+app=$YNH_APP_INSTANCE_NAME
+
+#=================================================
+# CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
+#=================================================
+
+# TODO: final_path=/var/www/$app
+test ! -e "$DESTDIR" || ynh_die "This path already contains a folder"
+
+# Normalize the url path syntax
+path_url=$(ynh_normalize_url_path $path_url)
+
+# Check web path availability
+ynh_webpath_available $domain $path_url
+# Register (book) web path
+ynh_webpath_register $app $domain $path_url
 
 # Check port availability
-sudo yunohost app checkport "$port" \
-  || exit 1
+yunohost app checkport "$port" \
+  || ynh_die "This port is already used"
 
-# Check user availability
-ynh_user_exists "$admin" \
-  || ynh_die "The chosen admin user does not exist."
-
-# Check password not empty
-[[ -n "$password" ]] \
-  || ynh_die "You must set an admin password."
-
-# Check timezone
-[[ -n "$timezone" ]] \
-  || ynh_die "Could not detect timezone, please check /etc/timezone." \
-  && echo "Detected timezone: $timezone"
+#=================================================
+# STORE SETTINGS FROM MANIFEST
+#=================================================
 
 # Save app settings
 ynh_app_setting_set "$app" admin "$admin"
 ynh_app_setting_set "$app" ssoenabled "$ssoenabled"
 ynh_app_setting_set "$app" port "$port"
-ynh_app_setting_set "$app" path "$path"
+ynh_app_setting_set "$app" path "$path_url"
+
+
+#=================================================
+# STANDARD MODIFICATIONS
+#=================================================
+
+#=================================================
+# CREATE A MYSQL DATABASE
+#=================================================
 
 # Generate and save random MySQL password
 db_pwd=$(ynh_string_random 12)
@@ -58,8 +90,16 @@ db_name=movim
 # Create MySQL database
 ynh_mysql_create_db "$db_name" "$db_user" "$db_pwd"
 
+#=================================================
+# INSTALL DEPENDENCIES
+#=================================================
+
 # Install packages
 ynh_install_app_dependencies php5-gd php5-curl php5-imagick php5-cli php5-zmq
+
+#=================================================
+# DOWNLOAD, CHECK AND UNPACK SOURCE
+#=================================================
 
 # Download Movim source code
 tmp_path=/tmp/movim-git
@@ -68,21 +108,35 @@ sudo rm -rf "$tmp_path"
    && cd "$tmp_path" && git checkout "$HEAD_COMMIT") \
   || ynh_die "Unable to download Movim source code."
 
+#=================================================
+# SET CONFIGURATION FILE
+#=================================================
+
+# TODO: add checksum
 # Set database configuration
 cp "${tmp_path}/config/"{db.example.inc.php,db.inc.php}
 sed -i "s@'username'    => 'username'@'username'    => '$db_user'@g" \
     "${tmp_path}/config/db.inc.php"
 sed -i "s@'password'    => 'password'@'password'    => '$db_pwd'@g" \
     "${tmp_path}/config/db.inc.php"
-## FIXME: consider installation in a subpath
-sed -i "s@'/ws/'@'${path%/}/ws/'@g" \
+## TODO: consider installation in a subpath
+sed -i "s@'/ws/'@'${path_url%/}/ws/'@g" \
     "${tmp_path}/app/assets/js/movim_websocket.js"
 
 # Move Movim source code
 sudo mv "$tmp_path" "$DESTDIR"
 
+#=================================================
+# CREATE DEDICATED USER
+#=================================================
+
 # Create movim system user and set permissions
 sudo useradd -d /var/www/movim -s /bin/sh movim
+
+#=================================================
+# SET PERMISSIONS
+#=================================================
+
 sudo chown -R movim:www-data "$DESTDIR"
 sudo find "${DESTDIR}/" -type f -print0 | sudo xargs -0 chmod 0644
 sudo find "${DESTDIR}/" -type d -print0 | sudo xargs -0 chmod 0755
@@ -95,14 +149,23 @@ sudo chmod 400 "${DESTDIR}/config/db.inc.php"
  && exec_cmd php composer.phar install --no-interaction) \
   || ynh_die "Unable to install Movim dependencies."
 
+
+#=================================================
+# Set Movim database and configuration
+#=================================================
+
 # Set Movim database and configuration
 exec_cmd php mud.php db --set
 exec_cmd php mud.php config --loglevel=1 \
     --locale="$language" --timezone="$timezone" \
     --username="$admin" --password="$password"
 
+#=================================================
+# SETUP SYSTEMD
+#=================================================
+
 # Copy init script or systemd service
-sudo sed -i "s@YHURL@${domain}${path}@g" ../conf/movim.{service,init}
+sudo sed -i "s@YHURL@${domain}${path_url}@g" ../conf/movim.{service,init}
 sudo sed -i "s@YHDIR@${DESTDIR}@g" ../conf/movim.{service,init}
 sudo sed -i "s@YHPORT@${port}@g" ../conf/movim.{service,init}
 if [ -d /run/systemd/system ]; then
@@ -117,16 +180,34 @@ else
     sudo /etc/init.d/movim start
 fi
 
+#=================================================
+# PHP-FPM CONFIGURATION
+#=================================================
+
 # php-fpm configuration
 sed -i "s@YHTZ@$timezone@g" ../conf/php-fpm.conf
 sudo cp ../conf/php-fpm.conf /etc/php5/fpm/pool.d/movim.conf
 
+#=================================================
+# NGINX CONFIGURATION
+#=================================================
+
 # Nginx configuration
-sed -i "s@PATHTOCHANGE@$path@g" ../conf/nginx.conf
+sed -i "s@PATHTOCHANGE@$path_url@g" ../conf/nginx.conf
 sed -i "s@ALIASTOCHANGE@$DESTDIR/@g" ../conf/nginx.conf
 sed -i "s@YHPORT@$port@g" ../conf/nginx.conf
 sed -i "s@//ws/@/ws/@g" ../conf/nginx.conf # Avoid duplicate /
 sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/movim.conf
+
+
+#=================================================
+# GENERIC FINALIZATION
+#=================================================
+
+
+#=================================================
+# SETUP SSOWAT
+#=================================================
 
 # SSOwat configuration
 if [[ "$ssoenabled" = "No" ]]; then
@@ -136,6 +217,10 @@ else
     ynh_app_setting_set "$app" unprotected_uris "/"
     apply_sso_patch
 fi
+
+#=================================================
+# RELOAD NGINX
+#=================================================
 
 # Reload services
 sudo service php5-fpm restart

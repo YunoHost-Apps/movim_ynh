@@ -1,30 +1,64 @@
 #!/bin/bash
 
-# Exit on command errors and treat unset variables as an error
-set -eu
+#=================================================
+# GENERIC START
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
 
-app="movim"
-
-# Source local helpers
-source ./_common.sh
-
+source _common.sh
 source /usr/share/yunohost/helpers
+
+#=================================================
+# LOAD SETTINGS
+#=================================================
+
+app=$YNH_APP_INSTANCE_NAME
 
 # Retrieve app settings
 domain=$(ynh_app_setting_get "$app" domain)
-path=$(ynh_app_setting_get "$app" path)
+path_url=$(ynh_app_setting_get "$app" path)
 port=$(ynh_app_setting_get "$app" port)
 ssoenabled=$(ynh_app_setting_get "$app" ssoenabled)
 public_site=$(ynh_app_setting_get "$app" public_site)
-timezone=`cat /etc/timezone`
+timezone=$(cat /etc/timezone)
 
-# Check timezone
-[[ -n "$timezone" ]] \
-  || ynh_die "Could not detect timezone, please check /etc/timezone." \
-  && echo "Detected timezone: $timezone"
+#=================================================
+# ACTIVE TRAP
+#=================================================
+
+# TODO: activate backup
+# Backup the current version of the app
+# ynh_backup_before_upgrade
+# ynh_clean_setup () {
+	# restore it if the upgrade fails
+	# ynh_restore_upgradebackup
+# }
+# Exit if an error occurs during the execution of the script
+ynh_abort_if_errors
+
+#=================================================
+# CHECK THE PATH
+#=================================================
+
+# Normalize the URL path syntax
+path_url=$(ynh_normalize_url_path $path_url)
+
+
+#=================================================
+# STANDARD UPGRADE STEPS
+#=================================================
+
+#=================================================
+# UPGRADE DEPENDENCIES
+#=================================================
 
 # Since Movim 0.13, zmq is required
 ynh_install_app_dependencies php5-zmq
+
+#=================================================
+# DOWNLOAD, CHECK AND UNPACK SOURCE
+#=================================================
 
 # Init git repository as needed
 if [ ! -d "${DESTDIR}/.git" ]; then
@@ -51,25 +85,46 @@ fi
 (exec_cmd git fetch origin \
    && exec_cmd git reset --hard "$HEAD_COMMIT") \
   || ynh_die "Unable to download Movim source code."
-## FIXME: consider installation in a subpath
-exec_cmd sed -i "s@'/ws/'@'${path%/}/ws/'@g" \
+## TODO: consider installation in a subpath
+exec_cmd sed -i "s@'/ws/'@'${path_url%/}/ws/'@g" \
     "${DESTDIR}/app/assets/js/movim_websocket.js"
+
+#=================================================
+# CREATE DEDICATED USER
+#=================================================
 
 # Create movim user if not exists and set permissions
 ynh_system_user_exists movim \
   || sudo useradd -d /var/www/movim -s /bin/sh movim
+
+#=================================================
+# SET PERMISSIONS
+#=================================================
+
 sudo chown -R movim:www-data "$DESTDIR"
 sudo find "${DESTDIR}/" -type f -print0 | sudo xargs -0 chmod 0644
 sudo find "${DESTDIR}/" -type d -print0 | sudo xargs -0 chmod 0755
 sudo chmod 400 "${DESTDIR}/config/db.inc.php"
+
+#=================================================
+# install PHP dependencies
+#=================================================
 
 # Update PHP dependencies using composer
 (exec_cmd php composer.phar config --global discard-changes true \
  && exec_cmd php composer.phar install --no-interaction) \
   || ynh_die "Unable to update Movim dependencies."
 
+#=================================================
+# Upgrade Movim Databas
+#=================================================
+
 # Upgrade Movim database as needed
 exec_cmd php mud.php db --set
+
+#=================================================
+# ENSURE DOWNWARD COMPATIBILITY
+#=================================================
 
 # Reset SSO parameters
 ynh_app_setting_delete "$app" protected_uris
@@ -85,6 +140,10 @@ if [ ! -z "$public_site" ]; then
     ynh_app_setting_set "$app" ssoenabled "$ssoenabled"
 fi
 
+#=================================================
+# SETUP SSOWAT
+#=================================================
+
 # SSOwat configuration
 if [[ "$ssoenabled" = "No" ]]; then
     ynh_app_setting_set "$app" skipped_uris "/"
@@ -95,8 +154,13 @@ else
     apply_sso_patch
 fi
 
+
+#=================================================
+# SETUP SYSTEMD
+#=================================================
+
 # Update init scripts
-sudo sed -i "s@YHURL@${domain}${path}@g" ../conf/movim.{service,init}
+sudo sed -i "s@YHURL@${domain}${path_url}@g" ../conf/movim.{service,init}
 sudo sed -i "s@YHDIR@${DESTDIR}@g" ../conf/movim.{service,init}
 sudo sed -i "s@YHPORT@${port}@g" ../conf/movim.{service,init}
 if [ -d /run/systemd/system ]; then
@@ -111,16 +175,28 @@ else
     sudo /etc/init.d/movim start
 fi
 
+#=================================================
+# PHP-FPM CONFIGURATION
+#=================================================
+
 # Update php-fpm configuration
 sed -i "s@YHTZ@$timezone@g" ../conf/php-fpm.conf
 sudo cp ../conf/php-fpm.conf /etc/php5/fpm/pool.d/movim.conf
 
+#=================================================
+# NGINX CONFIGURATION
+#=================================================
+
 # Nginx configuration
-sed -i "s@PATHTOCHANGE@$path@g" ../conf/nginx.conf
+sed -i "s@PATHTOCHANGE@$path_url@g" ../conf/nginx.conf
 sed -i "s@ALIASTOCHANGE@$DESTDIR/@g" ../conf/nginx.conf
 sed -i "s@YHPORT@$port@g" ../conf/nginx.conf
 sed -i "s@//ws/@/ws/@g" ../conf/nginx.conf # Avoid duplicate /
 sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/movim.conf
+
+#=================================================
+# RELOAD SERVICES
+#=================================================
 
 # Reload services
 sudo service movim restart
