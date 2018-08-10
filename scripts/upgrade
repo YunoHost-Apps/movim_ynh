@@ -65,7 +65,7 @@ path_url=$(ynh_normalize_url_path $path_url)
 #=================================================
 
 # Since Movim 0.13, zmq is required
-ynh_install_app_dependencies php5-zmq
+ynh_install_app_dependencies php-gd php-curl php-imagick php-cli php-zmq
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE

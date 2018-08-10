@@ -98,7 +98,7 @@ ynh_mysql_create_db "$db_name" "$db_user" "$db_pwd"
 #=================================================
 
 # Install packages
-ynh_install_app_dependencies php5-gd php5-curl php5-imagick php5-cli php5-zmq
+ynh_install_app_dependencies php-gd php-curl php-imagick php-cli php-zmq
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
