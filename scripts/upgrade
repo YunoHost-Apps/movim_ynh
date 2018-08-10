@@ -170,21 +170,13 @@ fi
 # SETUP SYSTEMD
 #=================================================
 
-# Update init scripts
-ynh_replace_string "YHURL" "${domain}${path_url}" ../conf/movim.{service,init}
-ynh_replace_string "YHDIR" "${final_path}" ../conf/movim.{service,init}
-ynh_replace_string "YHPORT" "${port}" ../conf/movim.{service,init}
-if [ -d /run/systemd/system ]; then
-    ynh_secure_remove /lib/systemd/system/movim.service
-    cp ../conf/movim.service /etc/systemd/system/
-    systemctl daemon-reload
-else
-    /etc/init.d/movim stop
-    cp ../conf/movim.init /etc/init.d/movim
-    chmod 755 /etc/init.d/movim
-    update-rc.d movim defaults
-    /etc/init.d/movim start
-fi
+ynh_replace_string "YHURL" "${domain}${path_url}" ../conf/movim.service
+ynh_replace_string "YHDIR" "${final_path}" ../conf/movim.service
+ynh_replace_string "YHPORT" "${port}" ../conf/movim.service
+
+ynh_secure_remove /lib/systemd/system/movim.service
+cp ../conf/movim.service /etc/systemd/system/
+systemctl daemon-reload
 
 #=================================================
 # PHP-FPM CONFIGURATION

@@ -42,14 +42,10 @@ service php5-fpm restart
 #=================================================
 
 service movim stop
-if [ -d /run/systemd/system ]; then
-    systemctl --quiet disable movim.service
-    ynh_secure_remove /lib/systemd/system/movim.service
-    systemctl --quiet daemon-reload
-else
-    update-rc.d -f movim remove
-    ynh_secure_remove /etc/init.d/movim
-fi
+
+systemctl --quiet disable movim.service
+ynh_secure_remove /lib/systemd/system/movim.service
+systemctl --quiet daemon-reload
 
 #=================================================
 # REMOVE DEPENDENCIES
