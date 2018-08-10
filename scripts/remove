@@ -29,6 +29,13 @@ else
     sudo rm -f /etc/init.d/movim
 fi
 
+#=================================================
+# REMOVE DEPENDENCIES
+#=================================================
+
+# Remove metapackage and its dependencies
+ynh_remove_app_dependencies
+
 # Drop MySQL database and user
 db_user=movim
 db_name=movim

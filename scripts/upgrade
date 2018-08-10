@@ -24,7 +24,7 @@ timezone=`cat /etc/timezone`
   && echo "Detected timezone: $timezone"
 
 # Since Movim 0.13, zmq is required
-ynh_package_install php5-zmq
+ynh_install_app_dependencies php5-zmq
 
 # Init git repository as needed
 if [ ! -d "${DESTDIR}/.git" ]; then
