@@ -74,18 +74,18 @@ ynh_install_app_dependencies php5-zmq
 # Init git repository as needed
 if [ ! -d "${final_path}/.git" ]; then
     tmp_path=/tmp/movim-git
-    sudo rm -rf "$tmp_path"
+    ynh_secure_remove "$tmp_path"
 
     # Download Movim source code
     (git clone "$GIT_REPO" "$tmp_path" \
        && cd "$tmp_path" && git checkout "$HEAD_COMMIT") \
       || ynh_die "Unable to download Movim source code."
-    sudo cp "${final_path}/config/db.inc.php" "${tmp_path}/config/db.inc.php"
+    cp "${final_path}/config/db.inc.php" "${tmp_path}/config/db.inc.php"
 
     # Replace current source code
-    sudo rm -rf "$final_path"
-    sudo mv "$tmp_path" "$final_path"
-    sudo chown -R movim:www-data "$final_path"
+    ynh_secure_remove "$final_path"
+    mv "$tmp_path" "$final_path"
+    chown -R movim:www-data "$final_path"
 
     # Install composer for PHP dependencies
     curl -sS https://getcomposer.org/installer \
@@ -97,7 +97,7 @@ fi
    && exec_cmd git reset --hard "$HEAD_COMMIT") \
   || ynh_die "Unable to download Movim source code."
 ## TODO: consider installation in a subpath
-exec_cmd sed -i "s@'/ws/'@'${path_url%/}/ws/'@g" \
+exec_cmd ynh_replace_string "'/ws/'" "'${path_url%/}/ws/'" \
     "${final_path}/app/assets/js/movim_websocket.js"
 
 #=================================================
@@ -106,16 +106,16 @@ exec_cmd sed -i "s@'/ws/'@'${path_url%/}/ws/'@g" \
 
 # Create movim user if not exists and set permissions
 ynh_system_user_exists movim \
-  || sudo useradd -d /var/www/movim -s /bin/sh movim
+  || useradd -d /var/www/movim -s /bin/sh movim
 
 #=================================================
 # SET PERMISSIONS
 #=================================================
 
-sudo chown -R movim:www-data "$final_path"
-sudo find "${final_path}/" -type f -print0 | sudo xargs -0 chmod 0644
-sudo find "${final_path}/" -type d -print0 | sudo xargs -0 chmod 0755
-sudo chmod 400 "${final_path}/config/db.inc.php"
+chown -R movim:www-data "$final_path"
+find "${final_path}/" -type f -print0 | xargs -0 chmod 0644
+find "${final_path}/" -type d -print0 | xargs -0 chmod 0755
+chmod 400 "${final_path}/config/db.inc.php"
 
 #=================================================
 # install PHP dependencies
@@ -140,7 +140,7 @@ exec_cmd php mud.php db --set
 # Reset SSO parameters
 ynh_app_setting_delete "$app" protected_uris
 ynh_app_setting_delete "$app" skipped_uris
-sudo yunohost app clearaccess movim
+yunohost app clearaccess movim
 
 # Replace old public_site variable (if exists) by ssoenabled
 if [ ! -z "$public_site" ]; then
@@ -159,7 +159,7 @@ fi
 if [[ "$ssoenabled" = "No" ]]; then
     ynh_app_setting_set "$app" skipped_uris "/"
     exec_cmd php mud.php config --xmppwhitelist=$domain
-    sudo yunohost app ssowatconf
+    yunohost app ssowatconf
 else
     ynh_app_setting_set "$app" unprotected_uris "/"
     apply_sso_patch
@@ -171,19 +171,19 @@ fi
 #=================================================
 
 # Update init scripts
-sudo sed -i "s@YHURL@${domain}${path_url}@g" ../conf/movim.{service,init}
-sudo sed -i "s@YHDIR@${final_path}@g" ../conf/movim.{service,init}
-sudo sed -i "s@YHPORT@${port}@g" ../conf/movim.{service,init}
+ynh_replace_string "YHURL" "${domain}${path_url}" ../conf/movim.{service,init}
+ynh_replace_string "YHDIR" "${final_path}" ../conf/movim.{service,init}
+ynh_replace_string "YHPORT" "${port}" ../conf/movim.{service,init}
 if [ -d /run/systemd/system ]; then
-    sudo rm -f /lib/systemd/system/movim.service
-    sudo cp ../conf/movim.service /etc/systemd/system/
-    sudo systemctl daemon-reload
+    ynh_secure_remove /lib/systemd/system/movim.service
+    cp ../conf/movim.service /etc/systemd/system/
+    systemctl daemon-reload
 else
-    sudo /etc/init.d/movim stop
-    sudo cp ../conf/movim.init /etc/init.d/movim
-    sudo chmod 755 /etc/init.d/movim
-    sudo update-rc.d movim defaults
-    sudo /etc/init.d/movim start
+    /etc/init.d/movim stop
+    cp ../conf/movim.init /etc/init.d/movim
+    chmod 755 /etc/init.d/movim
+    update-rc.d movim defaults
+    /etc/init.d/movim start
 fi
 
 #=================================================
@@ -191,25 +191,25 @@ fi
 #=================================================
 
 # Update php-fpm configuration
-sed -i "s@YHTZ@$timezone@g" ../conf/php-fpm.conf
-sudo cp ../conf/php-fpm.conf /etc/php5/fpm/pool.d/movim.conf
+ynh_replace_string "YHTZ" "$timezone" ../conf/php-fpm.conf
+cp ../conf/php-fpm.conf /etc/php5/fpm/pool.d/movim.conf
 
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
 
 # Nginx configuration
-sed -i "s@PATHTOCHANGE@$path_url@g" ../conf/nginx.conf
-sed -i "s@ALIASTOCHANGE@$final_path/@g" ../conf/nginx.conf
-sed -i "s@YHPORT@$port@g" ../conf/nginx.conf
-sed -i "s@//ws/@/ws/@g" ../conf/nginx.conf # Avoid duplicate /
-sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/movim.conf
+ynh_replace_string "PATHTOCHANGE" "$path_url" ../conf/nginx.conf
+ynh_replace_string "ALIASTOCHANGE" "$final_path/" ../conf/nginx.conf
+ynh_replace_string "YHPORT" "$port" ../conf/nginx.conf
+ynh_replace_string "//ws/" "/ws/" ../conf/nginx.conf # Avoid duplicate /
+cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/movim.conf
 
 #=================================================
 # RELOAD SERVICES
 #=================================================
 
 # Reload services
-sudo service movim restart
-sudo service php5-fpm restart
-sudo service nginx reload
+service movim restart
+service php5-fpm restart
+service nginx reload

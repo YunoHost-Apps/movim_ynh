@@ -29,5 +29,5 @@ apply_sso_patch() {
   local patch_path="/tmp/sso-logout.patch"
   cp -f "${PKGDIR}/patches/sso-logout.patch" "$patch_path"
   exec_cmd git apply "$patch_path"
-  rm -f "$patch_path"
+  ynh_secure_remove "$patch_path"
 }

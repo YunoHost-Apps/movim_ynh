@@ -24,31 +24,31 @@ final_path=$(ynh_app_setting_get "$app" final_path)
 #=================================================
 
 # Remove the dedicated nginx config
-sudo rm -f "/etc/nginx/conf.d/${domain}.d/movim.conf"
+ynh_secure_remove "/etc/nginx/conf.d/${domain}.d/movim.conf"
 
 #=================================================
 # REMOVE PHP-FPM CONFIGURATION
 #=================================================
 
 # Remove the dedicated php-fpm config
-sudo rm -f "/etc/php5/fpm/pool.d/movim.conf"
+ynh_secure_remove "/etc/php5/fpm/pool.d/movim.conf"
 
 # Reload services
-sudo service nginx reload
-sudo service php5-fpm restart
+service nginx reload
+service php5-fpm restart
 
 #=================================================
 # STOP AND REMOVE SERVICE
 #=================================================
 
-sudo service movim stop
+service movim stop
 if [ -d /run/systemd/system ]; then
-    sudo systemctl --quiet disable movim.service
-    sudo rm -f /lib/systemd/system/movim.service
-    sudo systemctl --quiet daemon-reload
+    systemctl --quiet disable movim.service
+    ynh_secure_remove /lib/systemd/system/movim.service
+    systemctl --quiet daemon-reload
 else
-    sudo update-rc.d -f movim remove
-    sudo rm -f /etc/init.d/movim
+    update-rc.d -f movim remove
+    ynh_secure_remove /etc/init.d/movim
 fi
 
 #=================================================
@@ -71,7 +71,7 @@ ynh_mysql_drop_user "$db_user" || true
 # REMOVE APP MAIN DIR
 #=================================================
 
-sudo rm -rf "$final_path"
+ynh_secure_remove "$final_path"
 
 #=================================================
 # GENERIC FINALIZATION
@@ -80,4 +80,4 @@ sudo rm -rf "$final_path"
 #=================================================
 
 ynh_system_user_exists movim \
-  && sudo userdel movim
+  && userdel movim
