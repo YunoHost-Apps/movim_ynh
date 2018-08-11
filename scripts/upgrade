@@ -73,11 +73,12 @@ ynh_install_app_dependencies php-gd php-curl php-imagick php-cli php-zmq
 
 ynh_setup_source "$final_path"
 
-chown -R movim:www-data "$final_path"
+#=================================================
+# NGINX CONFIGURATION
+#=================================================
 
-## TODO: consider installation in a subpath
-ynh_replace_string "'/ws/'" "'${path_url%/}/ws/'" \
-    "${final_path}/app/assets/js/movim_websocket.js"
+# Create a dedicated nginx config
+ynh_add_nginx_config
 
 #=================================================
 # CREATE DEDICATED USER
@@ -86,6 +87,20 @@ ynh_replace_string "'/ws/'" "'${path_url%/}/ws/'" \
 # Create movim user if not exists and set permissions
 ynh_system_user_exists movim \
   || useradd -d /var/www/movim -s /bin/sh movim
+
+#=================================================
+# PHP-FPM CONFIGURATION
+#=================================================
+
+# Create a dedicated php-fpm config
+ynh_add_fpm_config
+
+
+chown -R movim:www-data "$final_path"
+
+## TODO: consider installation in a subpath
+ynh_replace_string "'/ws/'" "'${path_url%/}/ws/'" \
+    "${final_path}/app/assets/js/movim_websocket.js"
 
 #=================================================
 # SET PERMISSIONS
@@ -159,25 +174,6 @@ ynh_replace_string "YHPORT" "${port}" ../conf/movim.service
 ynh_secure_remove /lib/systemd/system/movim.service
 cp ../conf/movim.service /etc/systemd/system/
 systemctl daemon-reload
-
-#=================================================
-# PHP-FPM CONFIGURATION
-#=================================================
-
-# Update php-fpm configuration
-ynh_replace_string "YHTZ" "$timezone" ../conf/php-fpm.conf
-cp ../conf/php-fpm.conf /etc/php5/fpm/pool.d/movim.conf
-
-#=================================================
-# NGINX CONFIGURATION
-#=================================================
-
-# Nginx configuration
-ynh_replace_string "PATHTOCHANGE" "$path_url" ../conf/nginx.conf
-ynh_replace_string "ALIASTOCHANGE" "$final_path/" ../conf/nginx.conf
-ynh_replace_string "YHPORT" "$port" ../conf/nginx.conf
-ynh_replace_string "//ws/" "/ws/" ../conf/nginx.conf # Avoid duplicate /
-cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/movim.conf
 
 #=================================================
 # RELOAD SERVICES

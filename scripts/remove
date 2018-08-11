@@ -25,18 +25,14 @@ port=$(ynh_app_setting_get "$app" port)
 #=================================================
 
 # Remove the dedicated nginx config
-ynh_secure_remove "/etc/nginx/conf.d/${domain}.d/movim.conf"
+ynh_remove_nginx_config
 
 #=================================================
 # REMOVE PHP-FPM CONFIGURATION
 #=================================================
 
 # Remove the dedicated php-fpm config
-ynh_secure_remove "/etc/php5/fpm/pool.d/movim.conf"
-
-# Reload services
-service nginx reload
-service php5-fpm restart
+ynh_remove_fpm_config
 
 #=================================================
 # STOP AND REMOVE SERVICE

@@ -79,6 +79,13 @@ yunohost firewall allow --no-upnp TCP "$port" 2>&1
 ynh_app_setting_set "$app" port "$port"
 
 #=================================================
+# INSTALL DEPENDENCIES
+#=================================================
+
+# Install packages
+ynh_install_app_dependencies php-gd php-curl php-imagick php-cli php-zmq
+
+#=================================================
 # CREATE A MYSQL DATABASE
 #=================================================
 
@@ -94,19 +101,36 @@ db_name=movim
 ynh_mysql_create_db "$db_name" "$db_user" "$db_pwd"
 
 #=================================================
-# INSTALL DEPENDENCIES
-#=================================================
-
-# Install packages
-ynh_install_app_dependencies php-gd php-curl php-imagick php-cli php-zmq
-
-#=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 
 ynh_app_setting_set "$app" final_path "$final_path"
 
 ynh_setup_source "$final_path"
+
+#=================================================
+# NGINX CONFIGURATION
+#=================================================
+
+# Create a dedicated nginx config
+ynh_add_nginx_config
+
+ynh_replace_string "//ws/" "/ws/" "$finalnginxconf" # Avoid duplicate /
+
+#=================================================
+# CREATE DEDICATED USER
+#=================================================
+
+# Create movim system user and set permissions
+useradd -d /var/www/movim -s /bin/sh movim
+
+#=================================================
+# PHP-FPM CONFIGURATION
+#=================================================
+
+# Create a dedicated php-fpm config
+ynh_replace_string "YHTZ" "$timezone" ../conf/php-fpm.ini
+ynh_add_fpm_config
 
 #=================================================
 # SET CONFIGURATION FILE
@@ -122,13 +146,6 @@ ynh_replace_string "'password'    => 'password'" "'password'    => '$db_pwd'" \
 ## TODO: consider installation in a subpath
 ynh_replace_string "'/ws/'" "'${path_url%/}/ws/'" \
     "$final_path/app/assets/js/movim_websocket.js"
-
-#=================================================
-# CREATE DEDICATED USER
-#=================================================
-
-# Create movim system user and set permissions
-useradd -d /var/www/movim -s /bin/sh movim
 
 #=================================================
 # SET PERMISSIONS
@@ -176,29 +193,8 @@ systemctl enable movim.service
 systemctl start movim.service
 
 #=================================================
-# PHP-FPM CONFIGURATION
-#=================================================
-
-# php-fpm configuration
-ynh_replace_string "YHTZ" "$timezone" ../conf/php-fpm.conf
-cp ../conf/php-fpm.conf /etc/php5/fpm/pool.d/movim.conf
-
-#=================================================
-# NGINX CONFIGURATION
-#=================================================
-
-# Nginx configuration
-ynh_replace_string "PATHTOCHANGE" "$path_url" ../conf/nginx.conf
-ynh_replace_string "ALIASTOCHANGE" "$final_path/" ../conf/nginx.conf
-ynh_replace_string "YHPORT" "$port" ../conf/nginx.conf
-ynh_replace_string "//ws/" "/ws/" ../conf/nginx.conf # Avoid duplicate /
-cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/movim.conf
-
-
-#=================================================
 # GENERIC FINALIZATION
 #=================================================
-
 
 #=================================================
 # SETUP SSOWAT
@@ -217,6 +213,4 @@ fi
 # RELOAD NGINX
 #=================================================
 
-# Reload services
-service php5-fpm restart
 service nginx reload
