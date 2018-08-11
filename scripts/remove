@@ -38,11 +38,8 @@ ynh_remove_fpm_config
 # STOP AND REMOVE SERVICE
 #=================================================
 
-service movim stop
-
-systemctl --quiet disable movim.service
-ynh_secure_remove /lib/systemd/system/movim.service
-systemctl --quiet daemon-reload
+# Remove the dedicated systemd config
+ynh_remove_systemd_config
 
 #=================================================
 # REMOVE DEPENDENCIES

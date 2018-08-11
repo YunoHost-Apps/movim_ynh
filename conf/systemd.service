@@ -1,15 +1,15 @@
 [Unit]
-Description=Movim daemon
+Description=Movim daemon (__APP__)
 After=nginx.service network.target local-fs.target mysql.service
 
 [Service]
-User=movim
 Type=simple
+User=__APP__
+Group=__APP__
+WorkingDirectory=__FINALPATH__/
 ExecStart=/usr/bin/php daemon.php start --url=https://YHURL --port=YHPORT
-WorkingDirectory=YHDIR
 StandardOutput=syslog
-SyslogIdentifier=movim
-PIDFile=/run/movim.pid
+SyslogIdentifier=__APP__
 
 [Install]
 WantedBy=multi-user.target

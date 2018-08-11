@@ -167,13 +167,10 @@ fi
 # SETUP SYSTEMD
 #=================================================
 
-ynh_replace_string "YHURL" "${domain}${path_url}" ../conf/movim.service
-ynh_replace_string "YHDIR" "${final_path}" ../conf/movim.service
-ynh_replace_string "YHPORT" "${port}" ../conf/movim.service
-
-ynh_secure_remove /lib/systemd/system/movim.service
-cp ../conf/movim.service /etc/systemd/system/
-systemctl daemon-reload
+# Create a dedicated systemd config
+ynh_replace_string "__URL__"  "${domain}${path_url}" ../conf/systemd.service
+ynh_replace_string "__PORT__" "${port}"              ../conf/systemd.service
+ynh_add_systemd_config
 
 #=================================================
 # RELOAD SERVICES

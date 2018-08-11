@@ -182,15 +182,10 @@ exec_cmd php mud.php config --loglevel=1 \
 # SETUP SYSTEMD
 #=================================================
 
-# Copy init script or systemd service
-ynh_replace_string "YHURL" "${domain}${path_url}" ../conf/movim.service
-ynh_replace_string "YHDIR" "${final_path}"        ../conf/movim.service
-ynh_replace_string "YHPORT" "${port}"             ../conf/movim.service
-
-cp ../conf/movim.service /etc/systemd/system/
-systemctl daemon-reload
-systemctl enable movim.service
-systemctl start movim.service
+# Create a dedicated systemd config
+ynh_replace_string "__URL__"  "${domain}${path_url}" ../conf/systemd.service
+ynh_replace_string "__PORT__" "${port}"              ../conf/systemd.service
+ynh_add_systemd_config
 
 #=================================================
 # GENERIC FINALIZATION
