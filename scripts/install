@@ -131,46 +131,26 @@ ynh_add_fpm_config
 #=================================================
 
 # TODO: add checksum
-# Set database configuration
-cp "$final_path/config/"{db.example.inc.php,db.inc.php}
-ynh_replace_string "'username'    => 'username'" "'username'    => '$db_user'" \
-    "$final_path/config/db.inc.php"
-ynh_replace_string "'password'    => 'password'" "'password'    => '$db_pwd'" \
-    "$final_path/config/db.inc.php"
+cp ../conf/db.inc.php  "$final_path/config/db.inc.php"
+
+ynh_replace_string "__DB_USER__" "$db_user"   "$final_path/config/db.inc.php"
+ynh_replace_string "__DB_PWD__"  "$db_pwd"    "$final_path/config/db.inc.php"
+ynh_replace_string "__DB_NAME__" "$db_name"   "$final_path/config/db.inc.php"
+
 ## TODO: consider installation in a subpath
 ynh_replace_string "'/ws/'" "'${path_url%/}/ws/'" \
     "$final_path/app/assets/js/movim_websocket.js"
 
 #=================================================
-# SET PERMISSIONS
-#=================================================
-
-chown -R movim:www-data "$final_path"
-find "${final_path}/" -type f -print0 | xargs -0 chmod 0644
-find "${final_path}/" -type d -print0 | xargs -0 chmod 0755
-chmod 400 "${final_path}/config/db.inc.php"
-
-#=================================================
 # Install PHP dependencies using composer
 #=================================================
 
-# Install PHP dependencies using composer
-(curl -sS https://getcomposer.org/installer \
-     | exec_cmd php -- --install-dir="$final_path" \
- && exec_cmd php composer.phar config --global discard-changes true \
- && exec_cmd php composer.phar install --no-interaction) \
-  || ynh_die "Unable to install Movim dependencies."
-
-
-#=================================================
-# Set Movim database and configuration
-#=================================================
-
-# Set Movim database and configuration
-exec_cmd php mud.php db --set
-exec_cmd php mud.php config --loglevel=1 \
-    --locale="$language" --timezone="$timezone" \
-    --username="$admin" --password="$password"
+(
+	cd "$final_path"
+	curl -sS https://getcomposer.org/installer | php -- --install-dir="$final_path" \
+		&& php composer.phar config --global discard-changes true --quiet \
+		&& php composer.phar install --no-interaction --quiet
+)
 
 #=================================================
 # SETUP SYSTEMD
@@ -182,8 +162,28 @@ ynh_replace_string "__PORT__" "${port}"              ../conf/systemd.service
 ynh_add_systemd_config
 
 #=================================================
+# Set-up database and configuration
+#=================================================
+
+(
+	cd "$final_path"
+	php mud.php db --set
+	php mud.php config --loglevel=1 \
+	    --locale="$language" --timezone="$timezone" \
+	    --username="$admin" --password="$password"
+)
+
+#=================================================
 # GENERIC FINALIZATION
 #=================================================
+# SET PERMISSIONS
+#=================================================
+
+# TODO: use more strict permissions
+chown -R "$app":www-data "$final_path"
+find "${final_path}/" -type f -print0 | xargs -0 chmod 0644
+find "${final_path}/" -type d -print0 | xargs -0 chmod 0755
+chmod 400 "${final_path}/config/db.inc.php"
 
 #=================================================
 # SETUP SSOWAT
@@ -192,7 +192,7 @@ ynh_add_systemd_config
 # SSOwat configuration
 if [[ "$ssoenabled" = "No" ]]; then
     ynh_app_setting_set "$app" skipped_uris "/"
-    exec_cmd php mud.php config --xmppwhitelist="$domain"
+   (cd "$final_path" && php mud.php config --xmppwhitelist="$domain")
     undo_sso_patch
 else
     ynh_app_setting_set "$app" unprotected_uris "/"
