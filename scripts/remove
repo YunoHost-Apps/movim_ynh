@@ -82,5 +82,5 @@ fi
 # REMOVE DEDICATED USER
 #=================================================
 
-ynh_system_user_exists movim \
-  && userdel movim
+# Delete a system user
+ynh_system_user_delete "$app"

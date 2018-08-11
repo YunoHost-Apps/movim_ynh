@@ -121,8 +121,8 @@ ynh_replace_string "//ws/" "/ws/" "$finalnginxconf" # Avoid duplicate /
 # CREATE DEDICATED USER
 #=================================================
 
-# Create movim system user and set permissions
-useradd -d /var/www/movim -s /bin/sh movim
+# Create a system user
+ynh_system_user_create "$app"
 
 #=================================================
 # PHP-FPM CONFIGURATION

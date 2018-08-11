@@ -84,9 +84,8 @@ ynh_add_nginx_config
 # CREATE DEDICATED USER
 #=================================================
 
-# Create movim user if not exists and set permissions
-ynh_system_user_exists movim \
-  || useradd -d /var/www/movim -s /bin/sh movim
+# Create a dedicated user (if not existing)
+ynh_system_user_create "$app"
 
 #=================================================
 # PHP-FPM CONFIGURATION
@@ -140,6 +139,7 @@ ynh_app_setting_delete "$app" skipped_uris
 yunohost app clearaccess movim
 
 # Replace old public_site variable (if exists) by ssoenabled
+# TODO: add clean support for old/new setting public_site/ssoenabled
 if [ ! -z "$public_site" ]; then
     [[ $public_site = "Yes" ]] \
       && ssoenabled="No" \
