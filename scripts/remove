@@ -19,6 +19,8 @@ app=$YNH_APP_INSTANCE_NAME
 domain=$(ynh_app_setting_get "$app" domain)
 final_path=$(ynh_app_setting_get "$app" final_path)
 port=$(ynh_app_setting_get "$app" port)
+db_name=$(ynh_app_setting_get "$app" db_name)
+db_user=$db_name
 
 #=================================================
 # REMOVE NGINX CONFIGURATION
@@ -52,10 +54,7 @@ ynh_remove_app_dependencies
 # REMOVE THE MYSQL DATABASE
 #=================================================
 
-db_user=movim
-db_name=movim
-ynh_mysql_drop_db "$db_name" || true
-ynh_mysql_drop_user "$db_user" || true
+ynh_mysql_remove_db "$db_user" "$db_name"
 
 #=================================================
 # REMOVE APP MAIN DIR

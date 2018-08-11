@@ -89,16 +89,10 @@ ynh_install_app_dependencies php-gd php-curl php-imagick php-cli php-zmq
 # CREATE A MYSQL DATABASE
 #=================================================
 
-# Generate and save random MySQL password
-db_pwd=$(ynh_string_random 12)
-ynh_app_setting_set "$app" mysqlpwd "$db_pwd"
-
-# Use 'movim' as database name and user
-db_user=movim
-db_name=movim
-
-# Create MySQL database
-ynh_mysql_create_db "$db_name" "$db_user" "$db_pwd"
+db_name=$(ynh_sanitize_dbid "$app")
+db_user=$db_name
+ynh_app_setting_set "$app" db_name "$db_name"
+ynh_mysql_setup_db "$db_user" "$db_name"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
