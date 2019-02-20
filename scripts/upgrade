@@ -1,88 +1,150 @@
 #!/bin/bash
 
-# Exit on command errors and treat unset variables as an error
-set -eu
+#=================================================
+# GENERIC START
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
 
-app="movim"
+source _common.sh
+source /usr/share/yunohost/helpers
 
-# Source local helpers
-source ./_common.sh
+#=================================================
+# LOAD SETTINGS
+#=================================================
 
-# Source YunoHost helpers if exists.
-# If not, source backported helpers from file.
-if [ -a "/usr/share/yunohost/helpers" ]; then
-  source /usr/share/yunohost/helpers
-else
-  source ./_helpers.sh
-fi
+app=$YNH_APP_INSTANCE_NAME
 
 # Retrieve app settings
 domain=$(ynh_app_setting_get "$app" domain)
-path=$(ynh_app_setting_get "$app" path)
+path_url=$(ynh_app_setting_get "$app" path)
 port=$(ynh_app_setting_get "$app" port)
 ssoenabled=$(ynh_app_setting_get "$app" ssoenabled)
 public_site=$(ynh_app_setting_get "$app" public_site)
-timezone=`cat /etc/timezone`
+timezone=$(cat /etc/timezone)
+final_path=$(ynh_app_setting_get "$app" final_path)
+db_name=$(ynh_app_setting_get "$app" db_name)
 
-# Check timezone
-[[ -n "$timezone" ]] \
-  || ynh_die "Could not detect timezone, please check /etc/timezone." \
-  && echo "Detected timezone: $timezone"
+#=================================================
+# ENSURE DOWNWARD COMPATIBILITY
+#=================================================
 
-# Since Movim 0.13, zmq is required
-ynh_package_install php5-zmq
-
-# Init git repository as needed
-if [ ! -d "${DESTDIR}/.git" ]; then
-    tmp_path=/tmp/movim-git
-    sudo rm -rf "$tmp_path"
-
-    # Download Movim source code
-    (git clone "$GIT_REPO" "$tmp_path" \
-       && cd "$tmp_path" && git checkout "$HEAD_COMMIT") \
-      || ynh_die "Unable to download Movim source code."
-    sudo cp "${DESTDIR}/config/db.inc.php" "${tmp_path}/config/db.inc.php"
-
-    # Replace current source code
-    sudo rm -rf "$DESTDIR"
-    sudo mv "$tmp_path" "$DESTDIR"
-    sudo chown -R movim:www-data "$DESTDIR"
-
-    # Install composer for PHP dependencies
-    curl -sS https://getcomposer.org/installer \
-        | exec_cmd php -- --install-dir="$DESTDIR"
+# If final_path doesn't exist, create it
+if [ -z "$final_path" ]; then
+	final_path="/var/www/$app"
+	ynh_app_setting_set "$app" final_path "$final_path"
 fi
 
-# Update Movim source code
-(exec_cmd git fetch origin \
-   && exec_cmd git reset --hard "$HEAD_COMMIT") \
-  || ynh_die "Unable to download Movim source code."
-## FIXME: consider installation in a subpath
-exec_cmd sed -i "s@'/ws/'@'${path%/}/ws/'@g" \
-    "${DESTDIR}/app/assets/js/movim_websocket.js"
 
-# Create movim user if not exists and set permissions
-ynh_system_user_exists movim \
-  || sudo useradd -d /var/www/movim -s /bin/sh movim
-sudo chown -R movim:www-data "$DESTDIR"
-sudo find "${DESTDIR}/" -type f -print0 | sudo xargs -0 chmod 0644
-sudo find "${DESTDIR}/" -type d -print0 | sudo xargs -0 chmod 0755
-sudo chmod 400 "${DESTDIR}/config/db.inc.php"
+# If db_name doesn't exist, create it
+if [ -z "$db_name" ]; then
+	db_name=$(ynh_sanitize_dbid "$app")
+	ynh_app_setting_set "$app" db_name "$db_name"
+fi
 
-# Update PHP dependencies using composer
-(exec_cmd php composer.phar config --global discard-changes true \
- && exec_cmd php composer.phar install --no-interaction) \
-  || ynh_die "Unable to update Movim dependencies."
+#=================================================
+# ACTIVE TRAP
+#=================================================
 
-# Upgrade Movim database as needed
-exec_cmd php mud.php db --set
+# TODO: activate backup
+# Backup the current version of the app
+# ynh_backup_before_upgrade
+# ynh_clean_setup () {
+	# restore it if the upgrade fails
+	# ynh_restore_upgradebackup
+# }
+# Exit if an error occurs during the execution of the script
+ynh_abort_if_errors
+
+#=================================================
+# CHECK THE PATH
+#=================================================
+
+# Normalize the URL path syntax
+path_url=$(ynh_normalize_url_path $path_url)
+
+
+#=================================================
+# STANDARD UPGRADE STEPS
+#=================================================
+
+#=================================================
+# UPGRADE DEPENDENCIES
+#=================================================
+
+ynh_install_app_dependencies php-gd php-curl php-imagick php-cli php-zmq
+
+#=================================================
+# DOWNLOAD, CHECK AND UNPACK SOURCE
+#=================================================
+
+ynh_setup_source "$final_path"
+
+## TODO: consider installation in a subpath
+ynh_replace_string "'/ws/'" "'${path_url%/}/ws/'" \
+    "${final_path}/app/assets/js/movim_websocket.js"
+
+#=================================================
+# NGINX CONFIGURATION
+#=================================================
+
+# Create a dedicated nginx config
+ynh_add_nginx_config
+
+#=================================================
+# CREATE DEDICATED USER
+#=================================================
+
+# Create a dedicated user (if not existing)
+ynh_system_user_create "$app"
+
+#=================================================
+# PHP-FPM CONFIGURATION
+#=================================================
+
+# Create a dedicated php-fpm config
+ynh_add_fpm_config
+
+#=================================================
+# SET PERMISSIONS
+#=================================================
+
+chown -R "$app":www-data "$final_path"
+find "${final_path}/" -type f -print0 | xargs -0 chmod 0644
+find "${final_path}/" -type d -print0 | xargs -0 chmod 0755
+chmod 400 "${final_path}/config/db.inc.php"
+
+#=================================================
+# Install PHP dependencies using composer
+#=================================================
+
+(
+	cd "$final_path"
+	curl -sS https://getcomposer.org/installer | php -- --install-dir="$final_path" \
+		&& php composer.phar config --global discard-changes true --quiet \
+		&& php composer.phar install --no-interaction --quiet
+)
+
+#=================================================
+# Set-up database
+#=================================================
+
+(
+	cd "$final_path"
+	php mud.php db --set
+)
+
+#=================================================
+# ENSURE DOWNWARD COMPATIBILITY
+#=================================================
 
 # Reset SSO parameters
 ynh_app_setting_delete "$app" protected_uris
 ynh_app_setting_delete "$app" skipped_uris
-sudo yunohost app clearaccess movim
+yunohost app clearaccess "$app"
 
 # Replace old public_site variable (if exists) by ssoenabled
+# TODO: add clean support for old/new setting public_site/ssoenabled
 if [ ! -z "$public_site" ]; then
     [[ $public_site = "Yes" ]] \
       && ssoenabled="No" \
@@ -91,44 +153,33 @@ if [ ! -z "$public_site" ]; then
     ynh_app_setting_set "$app" ssoenabled "$ssoenabled"
 fi
 
+#=================================================
+# SETUP SSOWAT
+#=================================================
+
 # SSOwat configuration
 if [[ "$ssoenabled" = "No" ]]; then
     ynh_app_setting_set "$app" skipped_uris "/"
-    exec_cmd php mud.php config --xmppwhitelist=$domain
-    sudo yunohost app ssowatconf
+    (cd "$final_path" && php mud.php config --xmppwhitelist="$domain")
+    yunohost app ssowatconf
+    undo_sso_patch
 else
     ynh_app_setting_set "$app" unprotected_uris "/"
-    apply_sso_patch
 fi
 
-# Update init scripts
-sudo sed -i "s@YHURL@${domain}${path}@g" ../conf/movim.{service,init}
-sudo sed -i "s@YHDIR@${DESTDIR}@g" ../conf/movim.{service,init}
-sudo sed -i "s@YHPORT@${port}@g" ../conf/movim.{service,init}
-if [ -d /run/systemd/system ]; then
-    sudo rm -f /lib/systemd/system/movim.service
-    sudo cp ../conf/movim.service /etc/systemd/system/
-    sudo systemctl daemon-reload
-else
-    sudo /etc/init.d/movim stop
-    sudo cp ../conf/movim.init /etc/init.d/movim
-    sudo chmod 755 /etc/init.d/movim
-    sudo update-rc.d movim defaults
-    sudo /etc/init.d/movim start
-fi
 
-# Update php-fpm configuration
-sed -i "s@YHTZ@$timezone@g" ../conf/php-fpm.conf
-sudo cp ../conf/php-fpm.conf /etc/php5/fpm/pool.d/movim.conf
+#=================================================
+# SETUP SYSTEMD
+#=================================================
 
-# Nginx configuration
-sed -i "s@PATHTOCHANGE@$path@g" ../conf/nginx.conf
-sed -i "s@ALIASTOCHANGE@$DESTDIR/@g" ../conf/nginx.conf
-sed -i "s@YHPORT@$port@g" ../conf/nginx.conf
-sed -i "s@//ws/@/ws/@g" ../conf/nginx.conf # Avoid duplicate /
-sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/movim.conf
+# Create a dedicated systemd config
+ynh_replace_string "__URL__"  "${domain}${path_url}" ../conf/systemd.service
+ynh_replace_string "__PORT__" "${port}"              ../conf/systemd.service
+ynh_add_systemd_config
+
+#=================================================
+# RELOAD SERVICES
+#=================================================
 
 # Reload services
-sudo service movim restart
-sudo service php5-fpm restart
-sudo service nginx reload
+service nginx reload

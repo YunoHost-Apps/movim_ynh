@@ -1,47 +1,82 @@
 #!/bin/bash
 
-app="movim"
+#=================================================
+# GENERIC START
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
 
-# Source local helpers
-source ./_common.sh
+source _common.sh
+source /usr/share/yunohost/helpers
 
-# Source YunoHost helpers if exists.
-# If not, source backported helpers from file.
-if [ -a "/usr/share/yunohost/helpers" ]; then
-  source /usr/share/yunohost/helpers
-else
-  source ./_helpers.sh
-fi
+#=================================================
+# LOAD SETTINGS
+#=================================================
+
+app=$YNH_APP_INSTANCE_NAME
 
 # Retrieve app settings
 domain=$(ynh_app_setting_get "$app" domain)
+final_path=$(ynh_app_setting_get "$app" final_path)
+port=$(ynh_app_setting_get "$app" port)
+db_name=$(ynh_app_setting_get "$app" db_name)
+db_user=$db_name
 
-# Remove nginx and php-fpm configuration files
-sudo rm -f "/etc/nginx/conf.d/${domain}.d/movim.conf"
-sudo rm -f "/etc/php5/fpm/pool.d/movim.conf"
+#=================================================
+# REMOVE NGINX CONFIGURATION
+#=================================================
 
-# Reload services
-sudo service nginx reload
-sudo service php5-fpm restart
+# Remove the dedicated nginx config
+ynh_remove_nginx_config
 
-# Stop service and remove it
-sudo service movim stop
-if [ -d /run/systemd/system ]; then
-    sudo systemctl --quiet disable movim.service
-    sudo rm -f /lib/systemd/system/movim.service
-    sudo systemctl --quiet daemon-reload
-else
-    sudo update-rc.d -f movim remove
-    sudo rm -f /etc/init.d/movim
+#=================================================
+# REMOVE PHP-FPM CONFIGURATION
+#=================================================
+
+# Remove the dedicated php-fpm config
+ynh_remove_fpm_config
+
+#=================================================
+# STOP AND REMOVE SERVICE
+#=================================================
+
+# Remove the dedicated systemd config
+ynh_remove_systemd_config
+
+#=================================================
+# REMOVE DEPENDENCIES
+#=================================================
+
+# Remove metapackage and its dependencies
+ynh_remove_app_dependencies
+
+#=================================================
+# REMOVE THE MYSQL DATABASE
+#=================================================
+
+ynh_mysql_remove_db "$db_user" "$db_name"
+
+#=================================================
+# REMOVE APP MAIN DIR
+#=================================================
+
+ynh_secure_remove "$final_path"
+
+#=================================================
+# CLOSE A PORT
+#=================================================
+
+if yunohost firewall list | grep -q "\- $port$"
+then
+	echo "Close port $port" >&2
+	yunohost firewall disallow TCP "$port" 2>&1
 fi
 
-# Drop MySQL database and user
-db_user=movim
-db_name=movim
-ynh_mysql_drop_db "$db_name" || true
-ynh_mysql_drop_user "$db_user" || true
+#=================================================
+# GENERIC FINALIZATION
+#=================================================
+# REMOVE DEDICATED USER
+#=================================================
 
-# Remove Movim files and user
-sudo rm -rf /var/www/movim
-ynh_system_user_exists movim \
-  && sudo userdel movim
+# Delete a system user
+ynh_system_user_delete "$app"

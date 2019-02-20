@@ -1,11 +1,16 @@
 {
     "name": "Movim",
     "id": "movim",
+    "packaging_format": 1,
     "description": {
         "en": "The Kickass Social Network"
     },
+    "version": "0.13.0~ynh1",
+    "requirements": {
+        "yunohost": ">= 3.0"
+    },
     "url": "https://movim.eu/",
-    "license": "AGPL-3",
+    "license": "AGPL-3.0-or-later",
     "maintainer": {
         "name": "src386",
         "email": "soyouz@src386.org",
@@ -22,19 +27,19 @@
         "install" : [
             {
                 "name": "domain",
-		"type": "domain",
+                "type": "domain",
                 "ask": {
                     "en": "Domain of the pod",
-		    "fr": "Domaine du pod"
+                    "fr": "Domaine du pod"
                 },
                 "example": "domain.org"
             },
             {
                 "name": "path",
-		"type": "path",
+                "type": "path",
                 "ask": {
                     "en": "Path to the pod",
-		    "fr": "Chemin vers le pod"
+                    "fr": "Chemin vers le pod"
                 },
                 "example": "/movim",
                 "default": "/movim"
@@ -44,20 +49,20 @@
                 "type": "user",
                 "ask": {
                     "en": "Pod administrator",
-		    "fr": "Administrateur du pod"
+                    "fr": "Administrateur du pod"
                 },
                 "example": "homer"
             },
             {
                 "name": "password",
-		"type": "password",
+                "type": "password",
                 "ask": {
                     "en": "Administrator password",
                     "fr": "Mot de passe administrateur"
                 },
                 "example" : "password"
             },
-	    {
+            {
                 "name": "language",
                 "ask": {
                     "en": "Pod language",
@@ -70,18 +75,10 @@
                 "name": "ssoenabled",
                 "ask": {
                     "en": "Enable SSO support (autologin) ?",
-		    "fr": "Activer le support SSO (connexin auto) ?"
+                    "fr": "Activer le support SSO (connexin auto) ?"
                 },
                 "choices": ["Yes", "No"],
-		"default": "Yes"
-            },
-	    {
-                "name": "port",
-                "ask": {
-                    "en": "Movim daemon port (internal only)",
-		    "fr": "Port du daemon Movim (interne uniquement)"
-                },
-                "default": "9537"
+                "default": "Yes"
             }
         ]
     }
