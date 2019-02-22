@@ -42,6 +42,16 @@ if [ -z "$db_name" ]; then
 	ynh_app_setting_set "$app" db_name "$db_name"
 fi
 
+
+# Fix ssoenabled as a boolean value
+if [ "$ssoenabled" = "Yes" ]; then
+	ynh_app_setting_set $app ssoenabled 1
+	ssoenabled=1
+elif [ "$ssoenabled" = "No" ]; then
+	ynh_app_setting_set $app ssoenabled 0
+	ssoenabled=0
+fi
+
 #=================================================
 # ACTIVE TRAP
 #=================================================

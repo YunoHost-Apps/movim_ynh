@@ -123,7 +123,7 @@ ynh_system_user_create "$app"
 #=================================================
 
 # Create a dedicated php-fpm config
-ynh_replace_string "YHTZ" "$timezone" ../conf/php-fpm.ini
+ynh_replace_string "YHTZ" "$timezone" ../conf/php-fpm.conf
 ynh_add_fpm_config
 
 #=================================================
@@ -190,7 +190,7 @@ chmod 400 "${final_path}/config/db.inc.php"
 #=================================================
 
 # SSOwat configuration
-if [[ "$ssoenabled" = "No" ]]; then
+if [[ "$ssoenabled" -eq 0 ]]; then
     ynh_app_setting_set "$app" skipped_uris "/"
    (cd "$final_path" && php mud.php config --xmppwhitelist="$domain")
     undo_sso_patch
