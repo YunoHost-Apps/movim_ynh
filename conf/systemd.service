@@ -7,7 +7,7 @@ Type=simple
 User=__APP__
 Group=__APP__
 WorkingDirectory=__FINALPATH__/
-ExecStart=/usr/bin/php daemon.php start --url=https://YHURL --port=YHPORT
+ExecStart=/usr/bin/php daemon.php start --url=https://__URL__ --port=__PORT__
 StandardOutput=syslog
 SyslogIdentifier=__APP__
 
