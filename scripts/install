@@ -84,7 +84,7 @@ ynh_app_setting_set "$app" port "$port"
 
 # Install packages
 ynh_install_app_dependencies php-curl php-cli php-mbstring php-pgsql php-xml \
-	postgresql
+	postgresql php7.0-pgsql
 
 #=================================================
 # CREATE A PostgreSQL DATABASE
@@ -157,8 +157,8 @@ ynh_replace_string "'/ws/'" "'${path_url%/}/ws/'" \
 (
 	cd "$final_path"
 	curl -sS https://getcomposer.org/installer | php -- --install-dir="$final_path" \
-		&& php composer.phar config --global discard-changes true --verbose \
-		&& php composer.phar install --no-interaction --verbose
+		&& php composer.phar config --global discard-changes true \
+		&& php composer.phar install --no-interaction
 )
 
 #=================================================

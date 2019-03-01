@@ -83,7 +83,7 @@ path_url=$(ynh_normalize_url_path $path_url)
 #=================================================
 
 ynh_install_app_dependencies php-curl php-cli php-mbstring php-pgsql php-xml \
-	postgresql
+	postgresql php7.0-pgsql
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
