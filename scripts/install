@@ -147,6 +147,7 @@ ynh_replace_string "'/ws/'" "'${path_url%/}/ws/'" \
 
 (
 	cd "$final_path"
+	export COMPOSER_HOME=$final_path
 	curl -sS https://getcomposer.org/installer | php -- --install-dir="$final_path" \
 		&& php composer.phar config --global discard-changes true --quiet \
 		&& php composer.phar install --no-interaction --quiet
