@@ -83,16 +83,25 @@ ynh_app_setting_set "$app" port "$port"
 #=================================================
 
 # Install packages
-ynh_install_app_dependencies php-gd php-curl php-imagick php-cli php-zmq
+ynh_install_app_dependencies php-curl php-cli php-mbstring php-pgsql php-xml \
+	postgresql
 
 #=================================================
-# CREATE A MYSQL DATABASE
+# CREATE A PostgreSQL DATABASE
 #=================================================
+
+ynh_psql_test_if_first_run
 
 db_name=$(ynh_sanitize_dbid "$app")
 db_user=$db_name
+db_pwd=$(ynh_string_random)
 ynh_app_setting_set "$app" db_name "$db_name"
-ynh_mysql_setup_db "$db_user" "$db_name"
+ynh_app_setting_set "$app" psqlpwd "$db_pwd"
+
+# Initialize database and store postgres password for upgrade
+ynh_psql_create_db "$db_name" "$db_user" "$db_pwd"
+
+systemctl reload postgresql
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -148,8 +157,8 @@ ynh_replace_string "'/ws/'" "'${path_url%/}/ws/'" \
 (
 	cd "$final_path"
 	curl -sS https://getcomposer.org/installer | php -- --install-dir="$final_path" \
-		&& php composer.phar config --global discard-changes true --quiet \
-		&& php composer.phar install --no-interaction --quiet
+		&& php composer.phar config --global discard-changes true --verbose \
+		&& php composer.phar install --no-interaction --verbose
 )
 
 #=================================================
@@ -157,8 +166,8 @@ ynh_replace_string "'/ws/'" "'${path_url%/}/ws/'" \
 #=================================================
 
 # Create a dedicated systemd config
-ynh_replace_string "__URL__"  "${domain}${path_url}" ../conf/systemd.service
-ynh_replace_string "__PORT__" "${port}"              ../conf/systemd.service
+ynh_replace_string "__URL__"  "${domain}"	../conf/systemd.service
+ynh_replace_string "__PORT__" "${port}"		../conf/systemd.service
 ynh_add_systemd_config
 
 #=================================================
@@ -167,10 +176,13 @@ ynh_add_systemd_config
 
 (
 	cd "$final_path"
-	php mud.php db --set
-	php mud.php config --loglevel=1 \
-	    --locale="$language" --timezone="$timezone" \
-	    --username="$admin" --password="$password"
+	find | grep "phinx"
+	find | grep "daemon.php"
+	php vendor/bin/phinx migrate
+	php daemon.php config --username="$admin" --password="$password"
+	# php mud.php db --set
+	# php mud.php config --loglevel=1 \
+	#     --locale="$language" --timezone="$timezone"
 )
 
 #=================================================
@@ -192,7 +204,7 @@ chmod 400 "${final_path}/config/db.inc.php"
 # SSOwat configuration
 if [[ "$ssoenabled" -eq 0 ]]; then
     ynh_app_setting_set "$app" skipped_uris "/"
-   (cd "$final_path" && php mud.php config --xmppwhitelist="$domain")
+   #(cd "$final_path" && php mud.php config --xmppwhitelist="$domain")
     undo_sso_patch
 else
     ynh_app_setting_set "$app" unprotected_uris "/"

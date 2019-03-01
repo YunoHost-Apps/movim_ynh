@@ -54,7 +54,7 @@ ynh_remove_app_dependencies
 # REMOVE THE MYSQL DATABASE
 #=================================================
 
-ynh_mysql_remove_db "$db_user" "$db_name"
+ynh_psql_remove_db "$db_user" "$db_name"
 
 #=================================================
 # REMOVE APP MAIN DIR

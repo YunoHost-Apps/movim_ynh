@@ -82,7 +82,8 @@ path_url=$(ynh_normalize_url_path $path_url)
 # UPGRADE DEPENDENCIES
 #=================================================
 
-ynh_install_app_dependencies php-gd php-curl php-imagick php-cli php-zmq
+ynh_install_app_dependencies php-curl php-cli php-mbstring php-pgsql php-xml \
+	postgresql
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -141,7 +142,7 @@ chmod 400 "${final_path}/config/db.inc.php"
 
 (
 	cd "$final_path"
-	php mud.php db --set
+	php vendor/bin/phinx migrate
 )
 
 #=================================================
@@ -170,7 +171,7 @@ fi
 # SSOwat configuration
 if [[ "$ssoenabled" = "No" ]]; then
     ynh_app_setting_set "$app" skipped_uris "/"
-    (cd "$final_path" && php mud.php config --xmppwhitelist="$domain")
+    #(cd "$final_path" && php mud.php config --xmppwhitelist="$domain")
     yunohost app ssowatconf
     undo_sso_patch
 else
