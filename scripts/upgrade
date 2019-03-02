@@ -143,6 +143,7 @@ chmod 400 "${final_path}/config/db.inc.php"
 (
 	cd "$final_path"
 	php vendor/bin/phinx migrate
+	php vendor/bin/phinx seed:run -s FromModlToEloquent
 )
 
 #=================================================
@@ -184,8 +185,8 @@ fi
 #=================================================
 
 # Create a dedicated systemd config
-ynh_replace_string "__URL__"  "${domain}${path_url}" ../conf/systemd.service
-ynh_replace_string "__PORT__" "${port}"              ../conf/systemd.service
+ynh_replace_string "__URL__"  "${domain}"	../conf/systemd.service
+ynh_replace_string "__PORT__" "${port}"         ../conf/systemd.service
 ynh_add_systemd_config
 
 #=================================================
