@@ -70,7 +70,7 @@ ynh_app_setting_set --app=$app --key=port --value=$port
 ynh_script_progression --message="Installing dependencies..." --time --weight=1
 
 # Install packages
-ynh_install_app_dependencies $pkg_dependencies
+#ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # CREATE A POSTGRESQL DATABASE
@@ -148,7 +148,8 @@ ynh_store_file_checksum --file="$final_path/config/db.inc.php"
 # )
 
 pushd "$final_path" || ynh_die
-	composer install --no-interaction --quiet
+	ynh_package_install movim
+	#composer install --no-interaction --quiet
 	#composer $app:migrate
 popd || ynh_die
 
