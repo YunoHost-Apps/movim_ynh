@@ -5,8 +5,7 @@
 #=================================================
 
 # dependencies used by the app
-pkg_dependencies="postgresql "
-#composer php-fpm php-curl php-mbstring php-imagick php-gd php-pgsql php-xml
+pkg_dependencies="postgresql composer php-fpm php-curl php-mbstring php-imagick php-gd php-pgsql php-xml"
 #=================================================
 # PERSONAL HELPERS
 #=================================================
