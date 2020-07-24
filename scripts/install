@@ -138,7 +138,6 @@ ynh_replace_string --match_string="__DB_NAME__" --replace_string="$db_name" --ta
 
 ynh_store_file_checksum --file="$final_path/config/db.inc.php"
 
-
 		## TODO: consider installation in a subpath
 		ynh_replace_string "'/ws/'" "'${path_url%/}/ws/'" \
    		 "$final_path/app/assets/js/movim_websocket.js"
