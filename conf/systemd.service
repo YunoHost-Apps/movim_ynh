@@ -1,6 +1,6 @@
 [Unit]
-Description=Movim daemon (__APP__)
-After=nginx.service network.target local-fs.target mysql.service
+Description=Movim daemon
+After=nginx.service network.target local-fs.target postgresql.service
 
 [Service]
 Type=simple

@@ -28,99 +28,95 @@ language=$YNH_APP_ARG_LANGUAGE
 ssoenabled=$YNH_APP_ARG_SSOENABLED
 timezone=$(cat /etc/timezone)
 
-### If it's a multi-instance app, meaning it can be installed several times independently
-### The id of the app as stated in the manifest is available as $YNH_APP_ID
-### The instance number is available as $YNH_APP_INSTANCE_NUMBER (equals "1", "2", ...)
-### The app instance name is available as $YNH_APP_INSTANCE_NAME
-###    - the first time the app is installed, YNH_APP_INSTANCE_NAME = ynhexample
-###    - the second time the app is installed, YNH_APP_INSTANCE_NAME = ynhexample__2
-###    - ynhexample__{N} for the subsequent installations, with N=3,4, ...
-### The app instance name is probably what interests you most, since this is
-### guaranteed to be unique. This is a good unique identifier to define installation path,
-### db names, ...
 app=$YNH_APP_INSTANCE_NAME
 
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
 #=================================================
+ynh_script_progression --message="Validating installation parameters..." --weight=1
 
 final_path=/var/www/$app
 test ! -e "$final_path" || ynh_die "This path already contains a folder"
 
-# Normalize the url path syntax
-path_url=$(ynh_normalize_url_path $path_url)
-
-# Check web path availability
-ynh_webpath_available $domain $path_url
 # Register (book) web path
-ynh_webpath_register $app $domain $path_url
-
+ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
 
 #=================================================
 # STORE SETTINGS FROM MANIFEST
 #=================================================
+ynh_script_progression --message="Storing installation settings..." --weight=2
 
-# Save app settings
-ynh_app_setting_set "$app" admin "$admin"
-ynh_app_setting_set "$app" ssoenabled "$ssoenabled"
-ynh_app_setting_set "$app" path "$path_url"
-
+ynh_app_setting_set --app=$app --key=domain --value=$domain
+ynh_app_setting_set --app=$app --key=path --value=$path_url
+ynh_app_setting_set --app=$app --key=admin --value=$admin
+ynh_app_setting_set --app=$app --key=ssoenabled --value=$ssoenabled
 
 #=================================================
 # STANDARD MODIFICATIONS
 #=================================================
 # FIND AND OPEN A PORT
 #=================================================
+ynh_script_progression --message="Configuring firewall..." --weight=2
 
 # Find a free port
 port=$(ynh_find_port 9537)
+ynh_app_setting_set --app=$app --key=port --value=$port
+
 # Open this port
 yunohost firewall allow --no-upnp TCP "$port" 2>&1
-ynh_app_setting_set "$app" port "$port"
 
 #=================================================
 # INSTALL DEPENDENCIES
 #=================================================
+ynh_script_progression --message="Installing dependencies..." --time --weight=1
 
 # Install packages
-ynh_install_app_dependencies php-gd php-curl php-imagick php-cli php-zmq
+ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
-# CREATE A MYSQL DATABASE
+# CREATE A POSTGRESQL DATABASE
 #=================================================
+ynh_script_progression --message="Creating a PostgreSQL database..." --weight=2
 
-db_name=$(ynh_sanitize_dbid "$app")
+db_name=$(ynh_sanitize_dbid --db_name=$app)
 db_user=$db_name
-ynh_app_setting_set "$app" db_name "$db_name"
-ynh_mysql_setup_db "$db_user" "$db_name"
+db_pwd=$(ynh_string_random --length=30)
+
+ynh_app_setting_set --app=$app --key=db_name --value=$db_name
+ynh_app_setting_set --app=$app --key=db_pwd  --value=$db_pwd
+
+ynh_psql_test_if_first_run
+ynh_psql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_pwd
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
+ynh_script_progression --message="Setting up source files..." --time --weight=1
 
-ynh_app_setting_set "$app" final_path "$final_path"
-
-ynh_setup_source "$final_path"
+ynh_app_setting_set --app=$app --key=final_path --value=$final_path
+# Download, check integrity, uncompress and patch the source from app.src
+ynh_setup_source --dest_dir="$final_path"
 
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
+ynh_script_progression --message="Configuring nginx web server..." --time --weight=1
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
 
-ynh_replace_string "//ws/" "/ws/" "$finalnginxconf" # Avoid duplicate /
-
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
+ynh_script_progression --message="Configuring system user..." --time --weight=1
 
 # Create a system user
-ynh_system_user_create "$app"
+ynh_system_user_create --username=$app
 
 #=================================================
 # PHP-FPM CONFIGURATION
 #=================================================
+ynh_script_progression --message="Configuring php-fpm..." --time --weight=1
 
 # Create a dedicated php-fpm config
 ynh_replace_string "YHTZ" "$timezone" ../conf/php-fpm.ini
@@ -129,17 +125,20 @@ ynh_add_fpm_config
 #=================================================
 # SET CONFIGURATION FILE
 #=================================================
+ynh_script_progression --message="Modifying a config file..."
 
-# TODO: add checksum
-cp ../conf/db.inc.php  "$final_path/config/db.inc.php"
+cp ../conf/db.example.inc.php  $final_path/config/db.inc.php
 
-ynh_replace_string "__DB_USER__" "$db_user"   "$final_path/config/db.inc.php"
-ynh_replace_string "__DB_PWD__"  "$db_pwd"    "$final_path/config/db.inc.php"
-ynh_replace_string "__DB_NAME__" "$db_name"   "$final_path/config/db.inc.php"
+ynh_replace_string --match_string="__DB_USER__" --replace_string="$db_user" --target_file="$final_path/config/db.inc.php"
+ynh_replace_string --match_string="__DB_PWD__"  --replace_string="$db_pwd"  --target_file="$final_path/config/db.inc.php"
+ynh_replace_string --match_string="__DB_NAME__" --replace_string="$db_name" --target_file="$final_path/config/db.inc.php"
 
-## TODO: consider installation in a subpath
-ynh_replace_string "'/ws/'" "'${path_url%/}/ws/'" \
-    "$final_path/app/assets/js/movim_websocket.js"
+ynh_store_file_checksum --file="$final_path/config/db.inc.php"
+
+
+		## TODO: consider installation in a subpath
+		ynh_replace_string "'/ws/'" "'${path_url%/}/ws/'" \
+   		 "$final_path/app/assets/js/movim_websocket.js"
 
 #=================================================
 # Install PHP dependencies using composer
@@ -156,10 +155,11 @@ ynh_replace_string "'/ws/'" "'${path_url%/}/ws/'" \
 #=================================================
 # SETUP SYSTEMD
 #=================================================
+ynh_script_progression --message="Configuring a systemd service..." --weight=1
 
-# Create a dedicated systemd config
-ynh_replace_string "__URL__"  "${domain}${path_url}" ../conf/systemd.service
-ynh_replace_string "__PORT__" "${port}"              ../conf/systemd.service
+ynh_replace_string --match_string="__URL__"  --replace_string="${domain}${path_url}" --target_file=../conf/systemd.service
+ynh_replace_string --match_string="__PORT__" --replace_string="$port"                --target_file=../conf/systemd.service
+
 ynh_add_systemd_config
 
 #=================================================

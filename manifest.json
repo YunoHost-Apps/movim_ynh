@@ -5,9 +5,9 @@
     "description": {
         "en": "The Kickass Social Network"
     },
-    "version": "0.13.0~ynh1",
+    "version": "0.18.0~ynh1",
     "requirements": {
-        "yunohost": ">= 3.0"
+        "yunohost": ">= 3.8.1"
     },
     "url": "https://movim.eu/",
     "license": "AGPL-3.0-or-later",
@@ -18,9 +18,7 @@
     },
     "services": [
         "nginx",
-        "php5-fpm",
-        "mysql",
-        "metronome"
+        "php7.0-fpm"
     ],
     "multi_instance": false,
     "arguments": {
@@ -74,7 +72,7 @@
             {
                 "name": "ssoenabled",
                 "ask": {
-                    "en": "Enable SSO support (autologin) ?",
+                    "en": "Enable SSO support (autologin)?",
                     "fr": "Activer le support SSO (connexin auto) ?"
                 },
                 "choices": ["Yes", "No"],
