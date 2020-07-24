@@ -149,7 +149,7 @@ ynh_store_file_checksum --file="$final_path/config/db.inc.php"
 
 pushd "$final_path" || ynh_die
 	composer install --no-interaction --quiet
-	composer $app:migrate
+	#composer $app:migrate
 popd || ynh_die
 
 #=================================================
