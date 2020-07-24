@@ -87,6 +87,10 @@ ynh_app_setting_set --app=$app --key=db_pwd  --value=$db_pwd
 ynh_psql_test_if_first_run
 ynh_psql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_pwd
 
+
+nh_psql_execute_as_root --sql="CREATE EXTENSION IF NOT EXISTS unaccent;" --database=$db_name
+ynh_psql_execute_as_root --sql="CREATE EXTENSION IF NOT EXISTS pg_trgm;" --database=$db_name
+
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
@@ -120,7 +124,8 @@ ynh_script_progression --message="Configuring php-fpm..." --time --weight=1
 # Create a dedicated php-fpm config
 #ynh_replace_string --match_string="YHTZ" --replace_string="$timezone" --target_file=../conf/php-fpm.conf
 
-ynh_add_fpm_config
+ynh_add_fpm_config --package="$extra_php_dependencies"
+phpversion=$(ynh_app_setting_get --app="$app" --key=phpversion)
 
 #=================================================
 # SET CONFIGURATION FILE

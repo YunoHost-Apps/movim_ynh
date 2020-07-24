@@ -22,9 +22,9 @@ path_url=$(ynh_app_setting_get --app=$app --key=path)
 port=$(ynh_app_setting_get --app=$app --key=port)
 ssoenabled=$(ynh_app_setting_get --app=$app --key=ssoenabled)
 is_public=$(ynh_app_setting_get --app=$app --key=is_public)
-timezone=$(cat /etc/timezone)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
+phpversion=$(ynh_app_setting_get --app="$app" --key=phpversion)
 
 #=================================================
 # CHECK VERSION
@@ -133,7 +133,7 @@ ynh_system_user_create --username=$app
 ynh_script_progression --message="Upgrading php-fpm configuration..." --time --weight=1
 
 # Create a dedicated php-fpm config
-ynh_add_fpm_config
+ynh_add_fpm_config --package="$extra_php_dependencies"
 
 #=================================================
 # SET PERMISSIONS
