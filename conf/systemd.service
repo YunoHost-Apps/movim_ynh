@@ -6,10 +6,14 @@ After=nginx.service network.target local-fs.target postgresql.service
 Type=simple
 User=__APP__
 Group=__APP__
-WorkingDirectory=__FINALPATH__/
+WorkingDirectory=__FINALPATH__
 ExecStart=/usr/bin/php daemon.php start --url=https://__URL__ --port=__PORT__
 StandardOutput=syslog
 SyslogIdentifier=__APP__
 
 [Install]
 WantedBy=multi-user.target
+
+
+
+#ExecStart=/usr/bin/php daemon.php start --url=https://__DOMAIN__/__PATH__ --port=__PORT__
