@@ -118,7 +118,7 @@ ynh_system_user_create --username=$app
 ynh_script_progression --message="Configuring php-fpm..." --time --weight=1
 
 # Create a dedicated php-fpm config
-ynh_replace_string --match_string="YHTZ" --replace_string="$timezone" --target_file=../conf/php-fpm.conf
+#ynh_replace_string --match_string="YHTZ" --replace_string="$timezone" --target_file=../conf/php-fpm.conf
 
 ynh_add_fpm_config
 
@@ -197,5 +197,12 @@ fi
 #=================================================
 # RELOAD NGINX
 #=================================================
+ynh_script_progression --message="Reloading nginx web server..." --time --weight=1
 
-service nginx reload
+ynh_systemd_action --service_name=nginx --action=reload
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression --message="Installation of $app completed" --time --last
