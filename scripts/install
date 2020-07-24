@@ -148,8 +148,10 @@ ynh_store_file_checksum --file="$final_path/config/db.inc.php"
 # )
 
 pushd "$final_path" || ynh_die
-	composer install
+	composer install --no-interaction --quiet
+	composer $app:migrate
 popd || ynh_die
+
 #=================================================
 # SETUP SYSTEMD
 #=================================================
@@ -163,8 +165,8 @@ ynh_add_systemd_config
 #=================================================
 # Set-up database and configuration
 #=================================================
-cd "$final_path"
-php composer.phar movim:migrate
+# cd "$final_path"
+# php composer.phar movim:migrate
 
 # (
 # 	cd "$final_path"
