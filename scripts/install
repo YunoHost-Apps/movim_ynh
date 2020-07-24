@@ -139,14 +139,17 @@ ynh_store_file_checksum --file="$final_path/config/db.inc.php"
 # Install PHP dependencies using composer
 #=================================================
 
-(
-	cd "$final_path"
-	export COMPOSER_HOME=$final_path
-	curl -sS https://getcomposer.org/installer | php -- --install-dir="$final_path" \
-		&& php composer.phar config --global discard-changes true --quiet \
-		&& php composer.phar install --no-interaction --quiet
-)
+# (
+# 	cd "$final_path"
+# 	export COMPOSER_HOME=$final_path
+# 	curl -sS https://getcomposer.org/installer | php -- --install-dir="$final_path" \
+# 		&& php composer.phar config --global discard-changes true --quiet \
+# 		&& php composer.phar install --no-interaction --quiet
+# )
 
+pushd "$final_path" || ynh_die
+	composer install
+popd || ynh_die
 #=================================================
 # SETUP SYSTEMD
 #=================================================
@@ -160,14 +163,16 @@ ynh_add_systemd_config
 #=================================================
 # Set-up database and configuration
 #=================================================
+cd "$final_path"
+php composer.phar movim:migrate
 
-(
-	cd "$final_path"
-	php mud.php db --set
-	php mud.php config --loglevel=1 \
-	    --locale="$language" --timezone="$timezone" \
-	    --username="$admin" --password="$password"
-)
+# (
+# 	cd "$final_path"
+# 	php mud.php db --set
+# 	php mud.php config --loglevel=1 \
+# 	    --locale="$language" --timezone="$timezone" \
+# 	    --username="$admin" --password="$password"
+# )
 
 #=================================================
 # GENERIC FINALIZATION
@@ -176,10 +181,12 @@ ynh_add_systemd_config
 #=================================================
 
 # TODO: use more strict permissions
-chown -R "$app":www-data "$final_path"
-find "${final_path}/" -type f -print0 | xargs -0 chmod 0644
-find "${final_path}/" -type d -print0 | xargs -0 chmod 0755
-chmod 400 "${final_path}/config/db.inc.php"
+# chown -R "$app":www-data "$final_path"
+# find "${final_path}/" -type f -print0 | xargs -0 chmod 0644
+# find "${final_path}/" -type d -print0 | xargs -0 chmod 0755
+# chmod 400 "${final_path}/config/db.inc.php"
+
+chown www-data $final_path && chown www-data $final_path/public && chmod u+rwx $final_path
 
 #=================================================
 # SETUP SSOWAT
