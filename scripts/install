@@ -64,9 +64,6 @@ ynh_script_progression --message="Configuring firewall..." --weight=2
 port=$(ynh_find_port 9537)
 ynh_app_setting_set --app=$app --key=port --value=$port
 
-# Open this port
-yunohost firewall allow --no-upnp TCP "$port" 2>&1
-
 #=================================================
 # INSTALL DEPENDENCIES
 #=================================================
@@ -137,10 +134,6 @@ ynh_replace_string --match_string="__DB_PWD__"  --replace_string="$db_pwd"  --ta
 ynh_replace_string --match_string="__DB_NAME__" --replace_string="$db_name" --target_file="$final_path/config/db.inc.php"
 
 ynh_store_file_checksum --file="$final_path/config/db.inc.php"
-
-		## TODO: consider installation in a subpath
-		ynh_replace_string "'/ws/'" "'${path_url%/}/ws/'" \
-   		 "$final_path/app/assets/js/movim_websocket.js"
 
 #=================================================
 # Install PHP dependencies using composer
