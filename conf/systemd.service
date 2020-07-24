@@ -10,6 +10,8 @@ WorkingDirectory=__FINALPATH__
 ExecStart=/usr/bin/php daemon.php start --url=https://__DOMAIN__/__PATH__ --port=__PORT__
 StandardOutput=syslog
 SyslogIdentifier=__APP__
+Restart=on-failure
+RestartSec=10
 
 [Install]
 WantedBy=multi-user.target
