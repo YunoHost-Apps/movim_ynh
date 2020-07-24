@@ -62,15 +62,17 @@
             },
             {
                 "name": "language",
+                "type": "string",
                 "ask": {
-                    "en": "Pod language",
-                    "fr": "Langue du pod"
+                    "en": "Choose the application language",
+                    "fr": "Choisissez la langue de l'application"
                 },
                 "choices" : ["ar", "de", "en", "es", "fr", "it", "ja", "nl", "ru"],
-                "default" : "en"
+                "default" : "fr"
             },
             {
                 "name": "ssoenabled",
+                "type": "string",
                 "ask": {
                     "en": "Enable SSO support (autologin)?",
                     "fr": "Activer le support SSO (connexin auto) ?"
