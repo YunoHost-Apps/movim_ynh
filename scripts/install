@@ -152,11 +152,18 @@ ynh_store_file_checksum --file="$final_path/config/db.inc.php"
 # 	#sudo -u www-data php composer.phar $app:migrate
 # popd || ynh_die
 
+# (
+# 	cd "$final_path"
+# 	export COMPOSER_HOME=$final_path
+# 	curl -sS https://getcomposer.org/installer | php -- --install-dir="$final_path" \
+# 		&& php composer.phar config --global discard-changes true --quiet \
+# 		&& php composer.phar install --no-interaction --quiet
+# )
+
 (
 	cd "$final_path"
 	export COMPOSER_HOME=$final_path
 	curl -sS https://getcomposer.org/installer | php -- --install-dir="$final_path" \
-		&& php composer.phar config --global discard-changes true --quiet \
 		&& php composer.phar install --no-interaction --quiet
 )
 
