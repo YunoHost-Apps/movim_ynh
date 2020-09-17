@@ -45,7 +45,7 @@ ynh_psql_remove_db --db_user=$db_user --db_name=$db_name
 #=================================================
 ynh_script_progression --message="Removing NGINX web server configuration..." --weight=5
 
-# Remove the dedicated nginx config
+# Remove the dedicated NGINX config
 ynh_remove_nginx_config
 
 #=================================================
@@ -76,7 +76,7 @@ ynh_secure_remove --file="/home/$app"
 #=================================================
 ynh_script_progression --message="Removing PHP-FPM configuration..." --weight=2
 
-# Remove the dedicated php-fpm config
+# Remove the dedicated PHP_FPM config
 ynh_remove_fpm_config
 
 #=================================================
@@ -94,4 +94,3 @@ ynh_system_user_delete --username=$app
 #=================================================
 
 ynh_script_progression --message="Removal of $app completed" --last
-
