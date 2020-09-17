@@ -182,16 +182,27 @@ ynh_add_systemd_config
 #=================================================
 # Set-up database and configuration
 #=================================================
+ynh_script_progression --message="Configuring database..." --weight=1
+
+
+cache_dir="/home/$app"
+
+# Create datadir folder
+mkdir -p $cache_dir
+chown -R $app $cache_dir
+# chown -R $app /home/movim/.composer/cache/repo/https---repo.packagist.org/
+# chown -R $app /home/movim/.composer/cache/files/
 cd "$final_path"
+
 ynh_exec_as $app php"${phpversion}" composer.phar $app:migrate
 
-# (
-# 	cd "$final_path"
-# 	php mud.php db --set
-# 	php mud.php config --loglevel=1 \
-# 	    --locale="$language" --timezone="$timezone" \
-# 	    --username="$admin" --password="$password"
-# )
+(
+	cd "$final_path"
+ 	php mud.php db --set
+ 	php mud.php config --loglevel=1 \
+ 	    --locale="$language" --timezone="$timezone" \
+ 	    --username="$admin" --password="$password"
+)
 
 #=================================================
 # GENERIC FINALIZATION
