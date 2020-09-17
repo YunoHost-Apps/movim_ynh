@@ -184,7 +184,6 @@ ynh_add_systemd_config
 #=================================================
 ynh_script_progression --message="Configuring database..." --weight=1
 
-
 cache_dir="/home/$app"
 
 # Create datadir folder
@@ -195,14 +194,14 @@ chown -R $app $cache_dir
 cd "$final_path"
 
 ynh_exec_as $app php"${phpversion}" composer.phar $app:migrate
-
-(
-	cd "$final_path"
- 	php mud.php db --set
- 	php mud.php config --loglevel=1 \
- 	    --locale="$language" --timezone="$timezone" \
- 	    --username="$admin" --password="$password"
-)
+php"${phpversion}" daemon.php config --username=$admin --password=$password
+# (
+# 	cd "$final_path"
+#  	php"${phpversion}" mud.php db --set
+#  	php"${phpversion}" mud.php config --loglevel=1 \
+#  	    --locale="$language" --timezone="$timezone" \
+#  	    --username="$admin" --password="$password"
+# )
 
 #=================================================
 # GENERIC FINALIZATION
