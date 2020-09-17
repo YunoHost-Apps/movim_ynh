@@ -80,17 +80,7 @@
                 },
                 "choices" : ["de", "en", "es", "fr", "it", "nl", "pt"],
                 "default" : "fr"
-            },
-            {
-                "name": "ssoenabled",
-                "type": "srting",
-                "ask": {
-                    "en": "Enable SSO support (autologin)?",
-                    "fr": "Activer le support SSO (connexin auto) ?"
-                },
-                "choices": ["Yes", "No"],
-                "default": "Yes"
-            }
+            } 
         ]
     }
 }
