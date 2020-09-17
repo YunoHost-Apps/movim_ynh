@@ -64,9 +64,17 @@ ynh_script_progression --message="Removing app main directory..." --weight=6
 ynh_secure_remove --file="$final_path"
 
 #=================================================
+# REMOVE APP CACHE DIR
+#=================================================
+ynh_script_progression --message="Removing app cache directory..." --weight=6
+
+# Remove the app directory securely
+ynh_secure_remove --file="/home/$app"
+
+#=================================================
 # REMOVE PHP-FPM CONFIGURATION
 #=================================================
-ynh_script_progression --message="Removing PHP-fpm configuration..." --weight=2
+ynh_script_progression --message="Removing PHP-FPM configuration..." --weight=2
 
 # Remove the dedicated php-fpm config
 ynh_remove_fpm_config
