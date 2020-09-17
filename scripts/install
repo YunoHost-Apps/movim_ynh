@@ -147,23 +147,6 @@ ynh_store_file_checksum --file="$final_path/config/db.inc.php"
 # Install PHP dependencies using composer
 #=================================================
 
-# pushd "$final_path" || ynh_die
-# export COMPOSER_HOME=$final_path
-# 	curl -sS https://getcomposer.org/installer | php -- --install-dir="$final_path" \
-# 	&& php composer.phar config --global discard-changes true --quiet \
-# 	&& php composer.phar install --no-interaction --quiet
-# 	#sudo -u www-data php composer.phar install
-# 	#sudo -u www-data php composer.phar $app:migrate
-# popd || ynh_die
-
-# (
-# 	cd "$final_path"
-# 	export COMPOSER_HOME=$final_path
-# 	curl -sS https://getcomposer.org/installer | php -- --install-dir="$final_path" \
-# 		&& php composer.phar config --global discard-changes true --quiet \
-# 		&& php composer.phar install --no-interaction --quiet
-# )
-
 (
 	cd "$final_path"
 	export COMPOSER_HOME=$final_path
@@ -190,7 +173,7 @@ ynh_script_progression --message="Configuring database..." --weight=1
 
 cache_dir="/home/$app"
 
-# Create datadir folder
+# Create cachedir folder
 mkdir -p $cache_dir
 chown -R $app $cache_dir
 # chown -R $app /home/movim/.composer/cache/repo/https---repo.packagist.org/
@@ -199,6 +182,7 @@ cd "$final_path"
 
 ynh_exec_as $app php"${phpversion}" composer.phar $app:migrate
 php"${phpversion}" daemon.php config --username=$admin --password=$password
+
 # (
 # 	cd "$final_path"
 #  	php"${phpversion}" mud.php db --set
@@ -219,16 +203,15 @@ php"${phpversion}" daemon.php config --username=$admin --password=$password
 # find "${final_path}/" -type d -print0 | xargs -0 chmod 0755
 # chmod 400 "${final_path}/config/db.inc.php"
 
-chown www-data $final_path
-chown www-data $final_path/public
-chmod u+rwx $final_path
+chown -R $app:www-data $final_path
+#chmod u+rwx $final_path
 
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
 
-yunohost service add $app --description "Collaborative Markdown notes" --log="/var/log/$app/$app.log"
+yunohost service add $app --description "Responsive web-based XMPP client" --log="/var/log/$app/$app.log"
 
 #=================================================
 # START SYSTEMD SERVICE
@@ -244,12 +227,22 @@ ynh_systemd_action --service_name=$app --action="start" --log_path="systemd" #--
 #=================================================
 ynh_script_progression --message="Configuring SSOwat..." --weight=1
 
-# Make app public if necessary or protect it
-if [ $is_public -eq 1 ]
-then
-	# Everyone can access the app.
-	# The "main" permission is automatically created before the install script.
-	 	ynh_permission_update --permission "main" --add "visitors"
+# # Make app public if necessary or protect it
+# if [ $is_public -eq 1 ]
+# then
+# 	# Everyone can access the app.
+# 	# The "main" permission is automatically created before the install script.
+# 	 	ynh_permission_update --permission "main" --add "visitors"
+# fi
+
+
+# SSOwat configuration
+if [[ "$ssoenabled" = "No" ]]; then
+    ynh_app_setting_set "$app" skipped_uris "/"
+   (cd "$final_path" && php mud.php config --xmppwhitelist="$domain")
+    undo_sso_patch
+else
+    ynh_app_setting_set "$app" unprotected_uris "/"
 fi
 
 #=================================================
