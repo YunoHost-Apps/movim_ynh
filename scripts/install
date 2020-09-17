@@ -123,7 +123,7 @@ ynh_script_progression --message="Configuring PHP-FPM..." --weight=1
 
 # Create a dedicated php-fpm config
 #ynh_replace_string --match_string="YHTZ" --replace_string="$timezone" --target_file=../conf/php-fpm.conf
-ynh_add_fpm_config --package="$extra_php_dependencies"
+ynh_add_fpm_config --phpversion=$YNH_PHP_VERSION --package="$extra_php_dependencies"
 phpversion=$(ynh_app_setting_get --app="$app" --key=phpversion)
 
 #=================================================
@@ -133,7 +133,7 @@ ynh_script_progression --message="Modifying a config file..." --weight=1
 
 cp ../conf/db.example.inc.php  $final_path/config/db.inc.php
 
-ynh_replace_string --match_string="__DB_USER__" --replace_string="$db_user" --target_file="$final_path/config/db.inc.php"
+#ynh_replace_string --match_string="__DB_USER__" --replace_string="$db_user" --target_file="$final_path/config/db.inc.php"
 ynh_replace_string --match_string="__DB_PWD__"  --replace_string="$db_pwd"  --target_file="$final_path/config/db.inc.php"
 ynh_replace_string --match_string="__DB_NAME__" --replace_string="$db_name" --target_file="$final_path/config/db.inc.php"
 
@@ -182,8 +182,8 @@ ynh_add_systemd_config
 #=================================================
 # Set-up database and configuration
 #=================================================
-# cd "$final_path"
-# php composer.phar movim:migrate
+cd "$final_path"
+php"${phpversion}" composer.phar $app:migrate
 
 # (
 # 	cd "$final_path"
