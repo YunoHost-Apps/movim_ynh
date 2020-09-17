@@ -3,7 +3,8 @@
     "id": "movim",
     "packaging_format": 1,
     "description": {
-        "en": "The Kickass Social Network"
+        "en": "Responsive web-based cross-platform XMPP client",
+        "fr": "Client XMPP multiplateforme"
     },
     "version": "0.18.0~ynh1",
     "requirements": {
@@ -12,9 +13,8 @@
     "url": "https://movim.eu/",
     "license": "AGPL-3.0-or-later",
     "maintainer": {
-        "name": "src386",
-        "email": "soyouz@src386.org",
-        "url": "http://github.com/src386"
+        "name": "",
+        "email": ""
     },
     "services": [
         "nginx",
@@ -27,8 +27,8 @@
                 "name": "domain",
                 "type": "domain",
                 "ask": {
-                    "en": "Domain of the pod",
-                    "fr": "Domaine du pod"
+                    "en": "Choose a domain name for Movim",
+                    "fr": "Choisissez un nom de domaine pour Movim"
                 },
                 "example": "domain.org"
             },
@@ -36,8 +36,8 @@
                 "name": "path",
                 "type": "path",
                 "ask": {
-                    "en": "Path to the pod",
-                    "fr": "Chemin vers le pod"
+                    "en": "Choose a path for Movim",
+                    "fr": "Choisissez un chemin pour Movim"
                 },
                 "example": "/movim",
                 "default": "/movim"
@@ -46,19 +46,19 @@
                 "name": "admin",
                 "type": "user",
                 "ask": {
-                    "en": "Pod administrator",
-                    "fr": "Administrateur du pod"
+                    "en": "Choose an admin user",
+                    "fr": "Choisissez l'administrateur"
                 },
-                "example": "homer"
+                "example": "johndoe"
             },
             {
                 "name": "password",
                 "type": "password",
                 "ask": {
-                    "en": "Administrator password",
-                    "fr": "Mot de passe administrateur"
+                    "en": "Set the administrator password",
+                    "fr": "Définissez le mot de passe administrateur"
                 },
-                "example" : "password"
+                "example" : "Choose a password"
             },
             {
                 "name": "is_public",

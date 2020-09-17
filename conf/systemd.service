@@ -4,10 +4,11 @@ After=nginx.service network.target local-fs.target postgresql.service
 
 [Service]
 Type=simple
-User=__APP__
-Group=__APP__
+User=www-data
+Environment=PUBLIC_URL=https://__DOMAIN__/__PATH__
+Environment=WS_PORT=__PORT__
+ExecStart=/usr/bin/php daemon.php start --url=${PUBLIC_URL} --port=${WS_PORT}
 WorkingDirectory=__FINALPATH__
-ExecStart=/usr/bin/php __FINALPATH__/daemon.php start --url=https://__DOMAIN__/__PATH__ --port=__PORT__
 StandardOutput=syslog
 SyslogIdentifier=__APP__
 PIDFile=/run/movim.pid

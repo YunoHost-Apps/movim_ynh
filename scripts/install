@@ -123,9 +123,8 @@ ynh_script_progression --message="Configuring PHP-FPM..." --weight=1
 
 # Create a dedicated php-fpm config
 #ynh_replace_string --match_string="YHTZ" --replace_string="$timezone" --target_file=../conf/php-fpm.conf
-phpversion=$(ynh_app_setting_get --app="$app" --key=phpversion)
-
 ynh_add_fpm_config --package="$extra_php_dependencies"
+phpversion=$(ynh_app_setting_get --app="$app" --key=phpversion)
 
 #=================================================
 # SET CONFIGURATION FILE
@@ -174,7 +173,9 @@ ynh_store_file_checksum --file="$final_path/config/db.inc.php"
 ynh_script_progression --message="Configuring a systemd service..." --weight=1
 
 #ynh_replace_string --match_string="__URL__"  --replace_string="${domain}${path_url}" --target_file=../conf/systemd.service
-#ynh_replace_string --match_string="__PORT__" --replace_string="$port"                --target_file=../conf/systemd.service
+ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file=../conf/systemd.service
+ynh_replace_string --match_string="__PATH__" --replace_string="$path_url" --target_file=../conf/systemd.service
+ynh_replace_string --match_string="__PORT__" --replace_string="$port"     --target_file=../conf/systemd.service
 
 ynh_add_systemd_config
 
