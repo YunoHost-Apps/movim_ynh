@@ -205,7 +205,8 @@ php"${phpversion}" daemon.php config --username=$admin --password=$password
 
 chown -R $app:www-data $final_path
 #chmod u+rwx $final_path
-chown -R $app $final_path/src/Movim/Bootstrap.php
+chown $app $final_path/src/Movim/Bootstrap.php
+chown $app $final_path/src/Movim/Daemon/Core.php
 
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST

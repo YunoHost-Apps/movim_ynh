@@ -100,8 +100,8 @@ then
 	ynh_setup_source --dest_dir="$final_path"
 
 	## TODO: consider installation in a subpath
-	ynh_replace_string "'/ws/'" "'${path_url%/}/ws/'" \
-    "${final_path}/app/assets/js/movim_websocket.js"
+	ynh_replace_string "'ws/'" "'${path_url%/}/ws/'" \
+    "$final_path/public/scripts/movim_websocket.js"
 fi
 
 #=================================================
@@ -139,10 +139,14 @@ ynh_add_fpm_config --package="$extra_php_dependencies"
 # SET PERMISSIONS
 #=================================================
 
-chown -R "$app":www-data "$final_path"
-find "${final_path}/" -type f -print0 | xargs -0 chmod 0644
-find "${final_path}/" -type d -print0 | xargs -0 chmod 0755
-chmod 400 "${final_path}/config/db.inc.php"
+# chown -R "$app":www-data "$final_path"
+# find "${final_path}/" -type f -print0 | xargs -0 chmod 0644
+# find "${final_path}/" -type d -print0 | xargs -0 chmod 0755
+# chmod 400 "${final_path}/config/db.inc.php"
+
+chown -R $app:www-data $final_path
+#chmod u+rwx $final_path
+chown -R $app $final_path/src/Movim/Bootstrap.php
 
 #=================================================
 # Install PHP dependencies using composer
@@ -197,7 +201,6 @@ else
     ynh_app_setting_set "$app" unprotected_uris "/"
 fi
 
-
 #=================================================
 # SETUP SYSTEMD
 #=================================================
@@ -205,7 +208,7 @@ fi
 # Create a dedicated systemd config
 
 # ynh_replace_string --match_string="__URL__"  --replace_string="${domain}${path_url}" --target_file=../conf/systemd.service
-ynh_replace_string --match_string="__PORT__" --replace_string="$port"                --target_file=../conf/systemd.service
+ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file=../conf/systemd.service
 
 ynh_add_systemd_config
 
