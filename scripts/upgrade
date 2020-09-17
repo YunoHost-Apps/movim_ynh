@@ -12,7 +12,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 # LOAD SETTINGS
 #=================================================
-ynh_script_progression --message="Loading installation settings..." --time --weight=1
+ynh_script_progression --message="Loading installation settings..." --weight=1
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -35,7 +35,7 @@ upgrade_type=$(ynh_check_app_version_changed)
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
-ynh_script_progression --message="Ensuring downward compatibility..." --time --weight=1
+ynh_script_progression --message="Ensuring downward compatibility..." --weight=4
 
 # Fix is_public as a boolean value
 if [ "$is_public" = "Yes" ]; then
@@ -61,7 +61,7 @@ fi
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
-ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --time --weight=1
+ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --weight=1
 
 # Backup the current version of the app
 ynh_backup_before_upgrade
@@ -84,7 +84,7 @@ path_url=$(ynh_normalize_url_path $path_url)
 #=================================================
 # STOP SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Stopping a systemd service..." --time --weight=1
+ynh_script_progression --message="Stopping a systemd service..." --weight=23
 
 ynh_systemd_action --service_name=$app --action="stop" --log_path="/var/log/$app/$app.log"
 
@@ -94,7 +94,7 @@ ynh_systemd_action --service_name=$app --action="stop" --log_path="/var/log/$app
 
 if [ "$upgrade_type" == "UPGRADE_APP" ]
 then
-	ynh_script_progression --message="Upgrading source files..." --time --weight=1
+	ynh_script_progression --message="Upgrading source files..." --weight=1
 
 	# Download, check integrity, uncompress and patch the source from app.src
 	ynh_setup_source --dest_dir="$final_path"
@@ -107,7 +107,7 @@ fi
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Upgrading nginx web server configuration..." --time --weight=1
+ynh_script_progression --message="Upgrading NGINX web server configuration..." --weight=5
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
@@ -115,14 +115,14 @@ ynh_add_nginx_config
 #=================================================
 # UPGRADE DEPENDENCIES
 #=================================================
-ynh_script_progression --message="Upgrading dependencies..." --time --weight=1
+ynh_script_progression --message="Upgrading dependencies..." --weight=4
 
 ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
-ynh_script_progression --message="Making sure dedicated system user exists..." --time --weight=1
+ynh_script_progression --message="Making sure dedicated system user exists..." --weight=7
 
 # Create a dedicated user (if not existing)
 ynh_system_user_create --username=$app
@@ -130,10 +130,13 @@ ynh_system_user_create --username=$app
 #=================================================
 # PHP-FPM CONFIGURATION
 #=================================================
-ynh_script_progression --message="Upgrading php-fpm configuration..." --time --weight=1
+ynh_script_progression --message="Upgrading PHP-FPM configuration..." --weight=1
 
-# Create a dedicated php-fpm config
-ynh_add_fpm_config --package="$extra_php_dependencies"
+# Create a dedicated PHP-FPM config
+ynh_replace_string --match_string="__YHTZ__" --replace_string="$timezone" --target_file=../conf/php-fpm.conf
+
+ynh_add_fpm_config --phpversion=$YNH_PHP_VERSION --package="$extra_php_dependencies"
+phpversion=$(ynh_app_setting_get --app="$app" --key=phpversion)
 
 #=================================================
 # SET PERMISSIONS
@@ -162,44 +165,44 @@ chown -R $app $final_path/src/Movim/Bootstrap.php
 #=================================================
 # Set-up database
 #=================================================
-
+ynh_script_progression --message="Configuring database.." --weight=1
 (
 	cd "$final_path"
-	php mud.php db --set
+	ynh_exec_as $app php"${phpversion}" mud.php db --set
 )
 
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
 
-# Reset SSO parameters
-ynh_app_setting_delete "$app" protected_uris
-ynh_app_setting_delete "$app" skipped_uris
-yunohost app clearaccess "$app"
+# # Reset SSO parameters
+# ynh_app_setting_delete "$app" protected_uris
+# ynh_app_setting_delete "$app" skipped_uris
+# yunohost app clearaccess "$app"
 
-# Replace old public_site variable (if exists) by ssoenabled
-# TODO: add clean support for old/new setting public_site/ssoenabled
-if [ ! -z "$public_site" ]; then
-    [[ $public_site = "Yes" ]] \
-      && ssoenabled="No" \
-      || ssoenabled="Yes"
-    ynh_app_setting_delete "$app" public_site
-    ynh_app_setting_set "$app" ssoenabled "$ssoenabled"
-fi
+# # Replace old public_site variable (if exists) by ssoenabled
+# # TODO: add clean support for old/new setting public_site/ssoenabled
+# if [ ! -z "$public_site" ]; then
+#     [[ $public_site = "Yes" ]] \
+#       && ssoenabled="No" \
+#       || ssoenabled="Yes"
+#     ynh_app_setting_delete "$app" public_site
+#     ynh_app_setting_set "$app" ssoenabled "$ssoenabled"
+# fi
 
 #=================================================
 # SETUP SSOWAT
 #=================================================
 
-# SSOwat configuration
-if [[ "$ssoenabled" = "No" ]]; then
-    ynh_app_setting_set "$app" skipped_uris "/"
-    (cd "$final_path" && php mud.php config --xmppwhitelist="$domain")
-    yunohost app ssowatconf
-    undo_sso_patch
-else
-    ynh_app_setting_set "$app" unprotected_uris "/"
-fi
+# # SSOwat configuration
+# if [[ "$ssoenabled" = "No" ]]; then
+#     ynh_app_setting_set "$app" skipped_uris "/"
+#     (cd "$final_path" && php mud.php config --xmppwhitelist="$domain")
+#     yunohost app ssowatconf
+#     undo_sso_patch
+# else
+#     ynh_app_setting_set "$app" unprotected_uris "/"
+# fi
 
 #=================================================
 # SETUP SYSTEMD
@@ -207,8 +210,9 @@ fi
 
 # Create a dedicated systemd config
 
-# ynh_replace_string --match_string="__URL__"  --replace_string="${domain}${path_url}" --target_file=../conf/systemd.service
-ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file=../conf/systemd.service
+ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file=../conf/systemd.service
+ynh_replace_string --match_string="__PATH__" --replace_string="$path_url" --target_file=../conf/systemd.service
+ynh_replace_string --match_string="__PORT__" --replace_string="$port"     --target_file=../conf/systemd.service
 
 ynh_add_systemd_config
 
