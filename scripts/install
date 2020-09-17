@@ -183,7 +183,7 @@ ynh_add_systemd_config
 # Set-up database and configuration
 #=================================================
 cd "$final_path"
-php"${phpversion}" composer.phar $app:migrate
+ynh_exec_as $app php"${phpversion}" composer.phar $app:migrate
 
 # (
 # 	cd "$final_path"
