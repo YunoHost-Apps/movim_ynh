@@ -137,6 +137,10 @@ cp ../conf/db.example.inc.php  $final_path/config/db.inc.php
 ynh_replace_string --match_string="__DB_PWD__"  --replace_string="$db_pwd"  --target_file="$final_path/config/db.inc.php"
 ynh_replace_string --match_string="__DB_NAME__" --replace_string="$db_name" --target_file="$final_path/config/db.inc.php"
 
+## TODO: consider installation in a subpath
+ynh_replace_string --match_string="'ws/'" --replace_string="'${path_url%/}/ws/'" \
+    --target_file="$final_path/public/scripts/movim_websocket.js"
+
 ynh_store_file_checksum --file="$final_path/config/db.inc.php"
 
 #=================================================
