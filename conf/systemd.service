@@ -7,9 +7,12 @@ Type=simple
 User=__APP__
 Group=__APP__
 WorkingDirectory=__FINALPATH__
-ExecStart=/usr/bin/php daemon.php start --url=https://__DOMAIN__/__PATH__ --port=__PORT__
+ExecStart=/usr/bin/php __FINALPATH__/daemon.php start --url=https://__DOMAIN__/__PATH__ --port=__PORT__
 StandardOutput=syslog
 SyslogIdentifier=__APP__
 PIDFile=/run/movim.pid
 Restart=on-failure
 RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
