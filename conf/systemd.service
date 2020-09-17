@@ -4,7 +4,7 @@ After=nginx.service network.target local-fs.target postgresql.service
 
 [Service]
 Type=simple
-User=www-data
+User=__APP__
 WorkingDirectory=__FINALPATH__
 ExecStart=/usr/bin/php daemon.php start --url=https://__DOMAIN____PATH__ --port=__PORT__
 StandardOutput=syslog
