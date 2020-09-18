@@ -139,8 +139,8 @@ ynh_replace_string --match_string="__DB_PWD__"  --replace_string="$db_pwd"  --ta
 ynh_replace_string --match_string="__DB_NAME__" --replace_string="$db_name" --target_file="$final_path/config/db.inc.php"
 
 ## TODO: consider installation in a subpath
-ynh_replace_string --match_string="'ws/'" --replace_string="'${path_url%/}/ws/'" \
-    --target_file="$final_path/public/scripts/movim_websocket.js"
+#ynh_replace_string --match_string="'ws/'" --replace_string="'${path_url%/}/ws/'" \
+#    --target_file="$final_path/public/scripts/movim_websocket.js"
 
 ynh_store_file_checksum --file="$final_path/config/db.inc.php"
 
@@ -160,9 +160,8 @@ ynh_store_file_checksum --file="$final_path/config/db.inc.php"
 #=================================================
 ynh_script_progression --message="Configuring a systemd service..." --weight=1
 
-#ynh_replace_string --match_string="__URL__"  --replace_string="${domain}${path_url}" --target_file=../conf/systemd.service
 ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file=../conf/systemd.service
-#ynh_replace_string --match_string="__PATH__" --replace_string="$path_url" --target_file=../conf/systemd.service
+ynh_replace_string --match_string="__PATH__" --replace_string="$path_url" --target_file=../conf/systemd.service
 ynh_replace_string --match_string="__PORT__" --replace_string="$port"     --target_file=../conf/systemd.service
 
 ynh_add_systemd_config
@@ -222,6 +221,9 @@ ynh_script_progression --message="Starting a systemd service..." --weight=2
 
 # Start a systemd service
 ynh_systemd_action --service_name=$app --action="start" --log_path="systemd" #--line_match="HTTP Server listening"
+
+
+php"${phpversion}" mud.php db --set
 
 #=================================================
 # SETUP SSOWAT
