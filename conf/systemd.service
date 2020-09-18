@@ -6,7 +6,7 @@ After=nginx.service network.target local-fs.target postgresql.service
 Type=simple
 User=__APP__
 WorkingDirectory=__FINALPATH__
-ExecStart=/usr/bin/php daemon.php start --url=https://__DOMAIN____PATH__ --port=__PORT__
+ExecStart=/usr/bin/php daemon.php start --url=https://__DOMAIN__ --port=__PORT__
 StandardOutput=syslog
 SyslogIdentifier=__APP__
 PIDFile=/run/movim.pid
