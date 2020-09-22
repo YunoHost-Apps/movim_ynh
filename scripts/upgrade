@@ -100,10 +100,6 @@ then
 
 	# Download, check integrity, uncompress and patch the source from app.src
 	ynh_setup_source --dest_dir="$final_path"
-
-	## TODO: consider installation in a subpath
-	ynh_replace_string "'ws/'" "'${path_url%/}/ws/'" \
-    "$final_path/public/scripts/movim_websocket.js"
 fi
 
 #=================================================
@@ -144,13 +140,7 @@ phpversion=$(ynh_app_setting_get --app="$app" --key=phpversion)
 # SET PERMISSIONS
 #=================================================
 
-# chown -R "$app":www-data "$final_path"
-# find "${final_path}/" -type f -print0 | xargs -0 chmod 0644
-# find "${final_path}/" -type d -print0 | xargs -0 chmod 0755
-# chmod 400 "${final_path}/config/db.inc.php"
-
 chown -R $app:www-data $final_path
-#chmod u+rwx $final_path
 chown -R $app $final_path/src/Movim/Bootstrap.php
 
 #=================================================
@@ -174,44 +164,10 @@ ynh_script_progression --message="Configuring database.." --weight=1
 )
 
 #=================================================
-# ENSURE DOWNWARD COMPATIBILITY
-#=================================================
-
-# # Reset SSO parameters
-# ynh_app_setting_delete "$app" protected_uris
-# ynh_app_setting_delete "$app" skipped_uris
-# yunohost app clearaccess "$app"
-
-# # Replace old public_site variable (if exists) by ssoenabled
-# # TODO: add clean support for old/new setting public_site/ssoenabled
-# if [ ! -z "$public_site" ]; then
-#     [[ $public_site = "Yes" ]] \
-#       && ssoenabled="No" \
-#       || ssoenabled="Yes"
-#     ynh_app_setting_delete "$app" public_site
-#     ynh_app_setting_set "$app" ssoenabled "$ssoenabled"
-# fi
-
-#=================================================
-# SETUP SSOWAT
-#=================================================
-
-# # SSOwat configuration
-# if [[ "$ssoenabled" = "No" ]]; then
-#     ynh_app_setting_set "$app" skipped_uris "/"
-#     (cd "$final_path" && php mud.php config --xmppwhitelist="$domain")
-#     yunohost app ssowatconf
-#     undo_sso_patch
-# else
-#     ynh_app_setting_set "$app" unprotected_uris "/"
-# fi
-
-#=================================================
 # SETUP SYSTEMD
 #=================================================
 
 # Create a dedicated systemd config
-
 ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file=../conf/systemd.service
 ynh_replace_string --match_string="__PATH__" --replace_string="$path_url" --target_file=../conf/systemd.service
 ynh_replace_string --match_string="__PORT__" --replace_string="$port"     --target_file=../conf/systemd.service

@@ -97,8 +97,8 @@ ynh_script_progression --message="Setting up source files..." --weight=4
 
 ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
-#ynh_setup_source --dest_dir="$final_path"
-git clone https://github.com/movim/movim.git "$final_path" --quiet
+ynh_setup_source --dest_dir="$final_path"
+#git clone https://github.com/movim/movim.git "$final_path" --quiet
 
 #=================================================
 # NGINX CONFIGURATION
@@ -134,13 +134,8 @@ ynh_script_progression --message="Modifying a config file..." --weight=1
 
 cp ../conf/db.example.inc.php  $final_path/config/db.inc.php
 
-#ynh_replace_string --match_string="__DB_USER__" --replace_string="$db_user" --target_file="$final_path/config/db.inc.php"
 ynh_replace_string --match_string="__DB_PWD__"  --replace_string="$db_pwd"  --target_file="$final_path/config/db.inc.php"
 ynh_replace_string --match_string="__DB_NAME__" --replace_string="$db_name" --target_file="$final_path/config/db.inc.php"
-
-## TODO: consider installation in a subpath
-#ynh_replace_string --match_string="'ws/'" --replace_string="'${path_url%/}/ws/'" \
-#    --target_file="$final_path/public/scripts/movim_websocket.js"
 
 ynh_store_file_checksum --file="$final_path/config/db.inc.php"
 
@@ -176,20 +171,10 @@ cache_dir="/home/$app"
 # Create cachedir folder
 mkdir -p $cache_dir
 chown -R $app $cache_dir
-# chown -R $app /home/movim/.composer/cache/repo/https---repo.packagist.org/
-# chown -R $app /home/movim/.composer/cache/files/
-cd "$final_path"
 
+cd "$final_path"
 ynh_exec_as $app php"${phpversion}" composer.phar $app:migrate
 php"${phpversion}" daemon.php config --username=$admin --password=$password
-
-# (
-# 	cd "$final_path"
-#  	php"${phpversion}" mud.php db --set
-#  	php"${phpversion}" mud.php config --loglevel=1 \
-#  	    --locale="$language" --timezone="$timezone" \
-#  	    --username="$admin" --password="$password"
-# )
 
 #=================================================
 # GENERIC FINALIZATION
@@ -197,14 +182,7 @@ php"${phpversion}" daemon.php config --username=$admin --password=$password
 # SET PERMISSIONS
 #=================================================
 
-# TODO: use more strict permissions
-# chown -R "$app":www-data "$final_path"
-# find "${final_path}/" -type f -print0 | xargs -0 chmod 0644
-# find "${final_path}/" -type d -print0 | xargs -0 chmod 0755
-# chmod 400 "${final_path}/config/db.inc.php"
-
 chown -R $app:www-data $final_path
-#chmod u+rwx $final_path
 chown -R $app $final_path/src/Movim/
 
 #=================================================
@@ -232,16 +210,6 @@ if [ $is_public -eq 1 ]
 then
 	ynh_permission_update --permission "main" --add "visitors"
 fi
-
-
-# # SSOwat configuration
-# if [[ "$ssoenabled" -eq 0 ]]; then
-#     ynh_app_setting_set "$app" skipped_uris "/"
-#    #(cd "$final_path" && php"${phpversion}" mud.php config --xmppwhitelist="$domain")
-#     undo_sso_patch
-# else
-#     ynh_app_setting_set "$app" unprotected_uris "/"
-# fi
 
 #=================================================
 # RELOAD NGINX
