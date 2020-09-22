@@ -24,7 +24,7 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 
 ## Configuration
 
- * How to configure this app: From an admin panel.
+ * How to configure this app: From an admin panel at this address https://example.com/movim/?admin. Username and password are defined during installation.
 
 ## Documentation
 
@@ -48,21 +48,6 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 * Any known limitations.
 
 ## Additional information
-
-**Options**
-
-* domain: Your domain name.
-* path: Path to the Movim pod.
-* admin: Allowed acces to `/?admin` (pod advanced options), must exist in YunoHost.
-* password: Password to access `/?admin`.
-* language: Pod language.
-* enable sso: Automatic login.
-
-**Pod advanced configuration**
-
-    https://example.com/movim/?admin
-
-Username and password are defined during installation.
 
 ## Links
 
