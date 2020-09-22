@@ -9,7 +9,8 @@
 If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/install) to learn how to install it.*
 
 ## Overview
-Movim is a decentralized social network, written in PHP and HTML5 and based on the XMPP standard protocol: https://movim.eu
+
+(Movim)[https://movim.eu] is a decentralized social network, written in PHP and HTML5 and based on the XMPP standard protocol.
 
 **Shipped version:** 0.18rc14
 
@@ -34,8 +35,8 @@ How to configure this app: From an admin panel, a plain file with SSH, or any ot
 
 #### Multi-user support
 
-* Are LDAP and HTTP auth supported?
-* Can the app be used by multiple users?
+* Are LDAP and HTTP auth supported? **No**
+* Can the app be used by multiple users? **Yes**
 
 #### Supported architectures
 
@@ -50,13 +51,12 @@ How to configure this app: From an admin panel, a plain file with SSH, or any ot
 
 **Options**
 
-* domain : Your domain name.
-* path : Path to the Movim pod.
-* admin : Allowed acces to /?admin (pod advanced options), must exist in Yunohost.
-* password : Password to access /?admin.
-* language : Pod language.
-* enable sso : Automatic login.
-* port : Local port for Movim daemon (no firewall configuration needed).
+* domain: Your domain name.
+* path: Path to the Movim pod.
+* admin: Allowed acces to `/?admin` (pod advanced options), must exist in YunoHost.
+* password: Password to access `/?admin`.
+* language: Pod language.
+* enable sso: Automatic login.
 
 **Pod advanced configuration**
 
