@@ -6,12 +6,11 @@
 ;; Test complet
 	; Manifest
 		domain="domain.tld"	(DOMAIN)
-		path="/movim"	    (PATH)
+		path="/path"	    (PATH)
 		admin="john"	    (USER)
 		is_public=1	        (PUBLIC|public=1|private=0)
 		password="phrasedepasse"
 		language="fr"
-		ssoenabled="Yes"
 		port=9537 (PORT)
 	; Checks
 		pkg_linter=1
@@ -38,5 +37,9 @@
 	Level 9=0
 	Level 10=0
 ;;; Options
-Email=jean-baptiste@holcroft.fr
-Notification=all
+Email=
+Notification=none
+;;; Upgrade options
+	; commit=CommitHash
+		name=Name and date of the commit.
+		manifest_arg=domain=DOMAIN&path=PATH&admin=USER&language=fr&is_public=1&password=phrasedepasse&port=9537&
