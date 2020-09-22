@@ -170,7 +170,7 @@ chown -R $app $final_path/src/Movim/Bootstrap.php
 ynh_script_progression --message="Configuring database.." --weight=1
 (
 	cd "$final_path"
-	ynh_exec_as $app php"${phpversion}" mud.php db --set
+	ynh_exec_as $app php"${phpversion}" composer.phar movim:migrate
 )
 
 #=================================================
