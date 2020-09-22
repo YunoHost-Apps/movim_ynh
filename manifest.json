@@ -7,22 +7,22 @@
         "fr": "Client XMPP multiplateforme"
     },
     "version": "0.18rc14~ynh1",
-    "requirements": {
-        "yunohost": ">= 3.8.1"
-    },
     "url": "https://movim.eu",
     "license": "AGPL-3.0-or-later",
     "maintainer": {
         "name": "",
         "email": ""
     },
+    "requirements": {
+        "yunohost": ">= 3.8.1"
+    },
+    "multi_instance": false,
     "services": [
         "nginx",
         "php7.0-fpm",
         "postgresql",
         "metronome"
     ],
-    "multi_instance": false,
     "arguments": {
         "install" : [
             {
@@ -60,7 +60,7 @@
                     "en": "Set the administrator password",
                     "fr": "Définissez le mot de passe administrateur"
                 },
-                "example" : "Choose a password"
+                "example": "Choose a password"
             },
             {
                 "name": "is_public",
