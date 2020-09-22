@@ -10,7 +10,7 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 
 ## Overview
 
-(Movim)[https://movim.eu] is a decentralized social network, written in PHP and HTML5 and based on the XMPP standard protocol.
+[Movim](https://movim.eu) is a decentralized social network, written in PHP and HTML5 and based on the XMPP standard protocol.
 
 **Shipped version:** 0.18rc14
 
