@@ -24,7 +24,7 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 
 ## Configuration
 
-How to configure this app: From an admin panel, a plain file with SSH, or any other way.
+ * How to configure this app: From an admin panel.
 
 ## Documentation
 

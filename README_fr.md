@@ -20,11 +20,11 @@ Si vous n'avez pas YunoHost, consultez [le guide](https://yunohost.org/#/install
 
 ## Démo
 
-* [Démo officielle](https://nl.movim.eu/?login)
+ * [Démo officielle](https://nl.movim.eu/?login)
 
 ## Configuration
 
-Comment configurer cette application : via le panneau d'administration, un fichier brut en SSH ou tout autre moyen.
+ * Comment configurer cette application : via le panneau d'administration.
 
 ## Documentation
 
