@@ -3,8 +3,8 @@
     "id": "movim",
     "packaging_format": 1,
     "description": {
-        "en": "Responsive web-based cross-platform XMPP client",
-        "fr": "Client XMPP multiplateforme"
+        "en": "Web-based cross-platform XMPP client",
+        "fr": "Client XMPP multiplateforme basé sur le Web"
     },
     "version": "0.18rc14~ynh1",
     "url": "https://movim.eu",
@@ -70,17 +70,7 @@
                     "fr": "Est-ce une application publique ?"
                 },
                 "default": true
-            },
-            {
-                "name": "language",
-                "type": "string",
-                "ask": {
-                    "en": "Choose the application language",
-                    "fr": "Choisissez la langue de l'application"
-                },
-                "choices" : ["de", "en", "es", "fr", "it", "nl", "pt"],
-                "default" : "fr"
-            } 
+            }
         ]
     }
 }
