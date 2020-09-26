@@ -57,8 +57,6 @@ ynh_backup --src_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 ynh_backup --src_path="/etc/php/$phpversion/fpm/pool.d/$app.conf"
 
 #=================================================
-# SPECIFIC BACKUP
-#=================================================
 # BACKUP SYSTEMD
 #=================================================
 
