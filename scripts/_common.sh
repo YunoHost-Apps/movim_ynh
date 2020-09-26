@@ -17,13 +17,6 @@ extra_php_dependencies="php${YNH_PHP_VERSION}-fpm php${YNH_PHP_VERSION}-curl php
 # PERSONAL HELPERS
 #=================================================
 
-undo_sso_patch() {
-  	(
-  		cd $final_path
-		patch -p1 -R < $YNH_CWD/../sources/patches/app-00-sso-logout.patch
-	)
-}
-
 #=================================================
 # EXPERIMENTAL HELPERS
 #=================================================

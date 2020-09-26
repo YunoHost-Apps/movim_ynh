@@ -26,7 +26,6 @@ admin=$YNH_APP_ARG_ADMIN
 is_public=$YNH_APP_ARG_IS_PUBLIC
 password=$YNH_APP_ARG_PASSWORD
 language=$YNH_APP_ARG_LANGUAGE
-#ssoenabled=$YNH_APP_ARG_SSOENABLED
 timezone=$(cat /etc/timezone)
 
 app=$YNH_APP_INSTANCE_NAME
@@ -222,4 +221,4 @@ ynh_systemd_action --service_name=nginx --action=reload
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Installation of $app completed" --last
+ynh_script_progression --message="Installation of Movim completed" --last

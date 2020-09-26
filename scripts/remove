@@ -58,7 +58,7 @@ ynh_remove_app_dependencies
 #=================================================
 # REMOVE APP MAIN DIR
 #=================================================
-ynh_script_progression --message="Removing app main directory..." --weight=6
+ynh_script_progression --message="Removing Movim main directory..." --weight=6
 
 # Remove the app directory securely
 ynh_secure_remove --file="$final_path"
@@ -66,7 +66,7 @@ ynh_secure_remove --file="$final_path"
 #=================================================
 # REMOVE APP CACHE DIR
 #=================================================
-ynh_script_progression --message="Removing app cache directory..." --weight=6
+ynh_script_progression --message="Removing Movim cache directory..." --weight=6
 
 # Remove the app directory securely
 ynh_secure_remove --file="/home/$app"
@@ -93,4 +93,4 @@ ynh_system_user_delete --username=$app
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Removal of $app completed" --last
+ynh_script_progression --message="Removal of Movim completed" --last

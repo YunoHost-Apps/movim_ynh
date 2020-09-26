@@ -20,7 +20,6 @@ app=$YNH_APP_INSTANCE_NAME
 domain=$(ynh_app_setting_get --app=$app --key=domain)
 path_url=$(ynh_app_setting_get --app=$app --key=path)
 port=$(ynh_app_setting_get --app=$app --key=port)
-ssoenabled=$(ynh_app_setting_get --app=$app --key=ssoenabled)
 is_public=$(ynh_app_setting_get --app=$app --key=is_public)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
@@ -63,7 +62,7 @@ fi
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
-ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --weight=1
+ynh_script_progression --message="Backing up Movim before upgrading (may take a while)..." --weight=1
 
 # Backup the current version of the app
 ynh_backup_before_upgrade
@@ -192,4 +191,4 @@ ynh_systemd_action --service_name=nginx --action=reload
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Upgrade of $app completed" --last
+ynh_script_progression --message="Upgrade of Movim completed" --last
