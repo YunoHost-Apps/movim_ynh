@@ -1,15 +1,17 @@
 [Unit]
-Description=Movim daemon (__APP__)
-After=nginx.service network.target local-fs.target mysql.service
+Description=Movim: Responsive web-based XMPP client
+After=nginx.service network.target local-fs.target postgresql.service
 
 [Service]
 Type=simple
 User=__APP__
-Group=__APP__
-WorkingDirectory=__FINALPATH__/
-ExecStart=/usr/bin/php daemon.php start --url=https://__URL__ --port=__PORT__
+WorkingDirectory=__FINALPATH__
+ExecStart=/usr/bin/php7.3 daemon.php start --interface=127.0.0.1 --url=https://__DOMAIN____PATH__/ --port=__PORT__
 StandardOutput=syslog
 SyslogIdentifier=__APP__
+PIDFile=/run/movim.pid
+Restart=on-failure
+RestartSec=10
 
 [Install]
 WantedBy=multi-user.target

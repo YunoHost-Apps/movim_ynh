@@ -12,47 +12,64 @@ source /usr/share/yunohost/helpers
 #=================================================
 # LOAD SETTINGS
 #=================================================
+ynh_script_progression --message="Loading installation settings..." --weight=1
 
 app=$YNH_APP_INSTANCE_NAME
 
 # Retrieve app settings
-domain=$(ynh_app_setting_get "$app" domain)
-path_url=$(ynh_app_setting_get "$app" path)
-port=$(ynh_app_setting_get "$app" port)
-ssoenabled=$(ynh_app_setting_get "$app" ssoenabled)
-public_site=$(ynh_app_setting_get "$app" public_site)
+domain=$(ynh_app_setting_get --app=$app --key=domain)
+path_url=$(ynh_app_setting_get --app=$app --key=path)
+port=$(ynh_app_setting_get --app=$app --key=port)
+is_public=$(ynh_app_setting_get --app=$app --key=is_public)
+final_path=$(ynh_app_setting_get --app=$app --key=final_path)
+db_name=$(ynh_app_setting_get --app=$app --key=db_name)
+db_pwd=$(ynh_app_setting_get --app=$app --key=db_pwd)
+phpversion=$(ynh_app_setting_get --app="$app" --key=phpversion)
 timezone=$(cat /etc/timezone)
-final_path=$(ynh_app_setting_get "$app" final_path)
-db_name=$(ynh_app_setting_get "$app" db_name)
+
+#=================================================
+# CHECK VERSION
+#=================================================
+
+upgrade_type=$(ynh_check_app_version_changed)
 
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
+ynh_script_progression --message="Ensuring downward compatibility..." --weight=4
 
-# If final_path doesn't exist, create it
-if [ -z "$final_path" ]; then
-	final_path="/var/www/$app"
-	ynh_app_setting_set "$app" final_path "$final_path"
+# Fix is_public as a boolean value
+if [ "$is_public" = "Yes" ]; then
+	ynh_app_setting_set --app=$app --key=is_public --value=1
+	is_public=1
+elif [ "$is_public" = "No" ]; then
+	ynh_app_setting_set --app=$app --key=is_public --value=0
+	is_public=0
 fi
-
 
 # If db_name doesn't exist, create it
 if [ -z "$db_name" ]; then
-	db_name=$(ynh_sanitize_dbid "$app")
-	ynh_app_setting_set "$app" db_name "$db_name"
+	db_name=$(ynh_sanitize_dbid --db_name=$app)
+	ynh_app_setting_set --app=$app --key=db_name --value=$db_name
+fi
+
+# If final_path doesn't exist, create it
+if [ -z "$final_path" ]; then
+	final_path=/var/www/$app
+	ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 fi
 
 #=================================================
-# ACTIVE TRAP
+# BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
+ynh_script_progression --message="Backing up Movim before upgrading (may take a while)..." --weight=1
 
-# TODO: activate backup
 # Backup the current version of the app
-# ynh_backup_before_upgrade
-# ynh_clean_setup () {
+ynh_backup_before_upgrade
+ynh_clean_setup () {
 	# restore it if the upgrade fails
-	# ynh_restore_upgradebackup
-# }
+	ynh_restore_upgradebackup
+}
 # Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
 
@@ -63,56 +80,67 @@ ynh_abort_if_errors
 # Normalize the URL path syntax
 path_url=$(ynh_normalize_url_path $path_url)
 
-
 #=================================================
 # STANDARD UPGRADE STEPS
 #=================================================
-
+# STOP SYSTEMD SERVICE
 #=================================================
-# UPGRADE DEPENDENCIES
-#=================================================
+ynh_script_progression --message="Stopping a systemd service..." --weight=23
 
-ynh_install_app_dependencies php-gd php-curl php-imagick php-cli php-zmq
+ynh_systemd_action --service_name=$app --action="stop" --log_path="/var/log/$app/$app.log"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 
-ynh_setup_source "$final_path"
+if [ "$upgrade_type" == "UPGRADE_APP" ]
+then
+	ynh_script_progression --message="Upgrading source files..." --weight=1
 
-## TODO: consider installation in a subpath
-ynh_replace_string "'/ws/'" "'${path_url%/}/ws/'" \
-    "${final_path}/app/assets/js/movim_websocket.js"
+	# Download, check integrity, uncompress and patch the source from app.src
+	ynh_setup_source --dest_dir="$final_path"
+fi
 
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
+ynh_script_progression --message="Upgrading NGINX web server configuration..." --weight=5
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
 
 #=================================================
+# UPGRADE DEPENDENCIES
+#=================================================
+ynh_script_progression --message="Upgrading dependencies..." --weight=4
+
+ynh_install_app_dependencies $pkg_dependencies
+
+#=================================================
 # CREATE DEDICATED USER
 #=================================================
+ynh_script_progression --message="Making sure dedicated system user exists..." --weight=7
 
 # Create a dedicated user (if not existing)
-ynh_system_user_create "$app"
+ynh_system_user_create --username=$app
 
 #=================================================
 # PHP-FPM CONFIGURATION
 #=================================================
+ynh_script_progression --message="Upgrading PHP-FPM configuration..." --weight=1
 
-# Create a dedicated php-fpm config
-ynh_add_fpm_config
+# Create a dedicated PHP-FPM config
+ynh_replace_string --match_string="__TIMEZONE__" --replace_string="$timezone" --target_file=../conf/php-fpm.conf
+
+ynh_add_fpm_config --phpversion=$YNH_PHP_VERSION --package="$extra_php_dependencies"
+phpversion=$(ynh_app_setting_get --app="$app" --key=phpversion)
 
 #=================================================
 # SET PERMISSIONS
 #=================================================
 
-chown -R "$app":www-data "$final_path"
-find "${final_path}/" -type f -print0 | xargs -0 chmod 0644
-find "${final_path}/" -type d -print0 | xargs -0 chmod 0755
-chmod 400 "${final_path}/config/db.inc.php"
+chown -R $app:www-data $final_path
+chown -R $app $final_path/src/Movim/Bootstrap.php
 
 #=================================================
 # Install PHP dependencies using composer
@@ -128,58 +156,39 @@ chmod 400 "${final_path}/config/db.inc.php"
 #=================================================
 # Set-up database
 #=================================================
-
+ynh_script_progression --message="Configuring database.." --weight=1
 (
 	cd "$final_path"
-	php mud.php db --set
+	ynh_exec_as $app php"${phpversion}" composer.phar movim:migrate
 )
-
-#=================================================
-# ENSURE DOWNWARD COMPATIBILITY
-#=================================================
-
-# Reset SSO parameters
-ynh_app_setting_delete "$app" protected_uris
-ynh_app_setting_delete "$app" skipped_uris
-yunohost app clearaccess "$app"
-
-# Replace old public_site variable (if exists) by ssoenabled
-# TODO: add clean support for old/new setting public_site/ssoenabled
-if [ ! -z "$public_site" ]; then
-    [[ $public_site = "Yes" ]] \
-      && ssoenabled="No" \
-      || ssoenabled="Yes"
-    ynh_app_setting_delete "$app" public_site
-    ynh_app_setting_set "$app" ssoenabled "$ssoenabled"
-fi
-
-#=================================================
-# SETUP SSOWAT
-#=================================================
-
-# SSOwat configuration
-if [[ "$ssoenabled" = "No" ]]; then
-    ynh_app_setting_set "$app" skipped_uris "/"
-    (cd "$final_path" && php mud.php config --xmppwhitelist="$domain")
-    yunohost app ssowatconf
-    undo_sso_patch
-else
-    ynh_app_setting_set "$app" unprotected_uris "/"
-fi
-
 
 #=================================================
 # SETUP SYSTEMD
 #=================================================
 
 # Create a dedicated systemd config
-ynh_replace_string "__URL__"  "${domain}${path_url}" ../conf/systemd.service
-ynh_replace_string "__PORT__" "${port}"              ../conf/systemd.service
+ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file=../conf/systemd.service
+ynh_replace_string --match_string="__PATH__" --replace_string="$path_url" --target_file=../conf/systemd.service
+ynh_replace_string --match_string="__PORT__" --replace_string="$port"     --target_file=../conf/systemd.service
+
 ynh_add_systemd_config
 
 #=================================================
-# RELOAD SERVICES
+# START SYSTEMD SERVICE
+#=================================================
+ynh_script_progression --message="Starting a systemd service..." --weight=1
+
+ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
+
+#=================================================
+# RELOAD NGINX
+#=================================================
+ynh_script_progression --message="Reloading NGINX web server..." --weight=1
+
+ynh_systemd_action --service_name=nginx --action=reload
+
+#=================================================
+# END OF SCRIPT
 #=================================================
 
-# Reload services
-service nginx reload
+ynh_script_progression --message="Upgrade of Movim completed" --last
