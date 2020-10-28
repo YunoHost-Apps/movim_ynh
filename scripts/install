@@ -142,8 +142,8 @@ ynh_store_file_checksum --file="$final_path/config/db.inc.php"
 (
 	cd "$final_path"
 	export COMPOSER_HOME=$final_path
-	curl -sS https://getcomposer.org/installer | php -- --install-dir="$final_path" \
-		&& php"${phpversion}" composer.phar install --no-interaction --quiet
+	curl -sS https://getcomposer.org/installer | php -- --version="1.10.16" --install-dir="$final_path" \
+		&& php"${phpversion}" composer.phar install --no-interaction
 )
 
 #=================================================
