@@ -148,9 +148,9 @@ chown -R $app $final_path/src/Movim/Bootstrap.php
 
 (
 	cd "$final_path"
-	curl -sS https://getcomposer.org/installer | php -- --install-dir="$final_path" \
-		&& php composer.phar config --global discard-changes true --quiet \
-		&& php composer.phar install --no-interaction --quiet
+	curl -sS https://getcomposer.org/installer | php${phpversion} -- --version="1.10.16" --install-dir="$final_path" \
+		&& php${phpversion} composer.phar config --global discard-changes true --quiet \
+		&& php${phpversion} composer.phar install --no-interaction --quiet
 )
 
 #=================================================
@@ -159,7 +159,7 @@ chown -R $app $final_path/src/Movim/Bootstrap.php
 ynh_script_progression --message="Configuring database.." --weight=1
 (
 	cd "$final_path"
-	ynh_exec_as $app php"${phpversion}" composer.phar movim:migrate
+	ynh_exec_as $app php${phpversion} composer.phar movim:migrate
 )
 
 #=================================================
