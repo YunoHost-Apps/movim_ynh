@@ -132,7 +132,7 @@ ynh_script_progression --message="Upgrading PHP-FPM configuration..." --weight=1
 # Create a dedicated PHP-FPM config
 ynh_replace_string --match_string="__TIMEZONE__" --replace_string="$timezone" --target_file=../conf/php-fpm.conf
 
-ynh_add_fpm_config --phpversion=$YNH_PHP_VERSION --package="$extra_php_dependencies"
+ynh_add_fpm_config --package="$extra_php_dependencies"
 phpversion=$(ynh_app_setting_get --app="$app" --key=phpversion)
 
 #=================================================
@@ -141,6 +141,13 @@ phpversion=$(ynh_app_setting_get --app="$app" --key=phpversion)
 
 chown -R $app:www-data $final_path
 chown -R $app $final_path/src/Movim/Bootstrap.php
+
+#=================================================
+# INTEGRATE SERVICE IN YUNOHOST
+#=================================================
+ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
+
+yunohost service add $app --description "Responsive web-based XMPP client" --log="/var/log/$app/$app.log"
 
 #=================================================
 # Install PHP dependencies using composer
