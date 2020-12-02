@@ -74,13 +74,6 @@ ynh_clean_setup () {
 ynh_abort_if_errors
 
 #=================================================
-# CHECK THE PATH
-#=================================================
-
-# Normalize the URL path syntax
-path_url=$(ynh_normalize_url_path $path_url)
-
-#=================================================
 # STANDARD UPGRADE STEPS
 #=================================================
 # STOP SYSTEMD SERVICE
@@ -155,9 +148,9 @@ yunohost service add $app --description "Responsive web-based XMPP client" --log
 
 (
 	cd "$final_path"
-	curl -sS https://getcomposer.org/installer | php${phpversion} -- --version="1.10.16" --install-dir="$final_path" \
-		&& php${phpversion} composer.phar config --global discard-changes true --quiet \
-		&& php${phpversion} composer.phar install --no-interaction --quiet
+	curl -sS https://getcomposer.org/installer | php$phpversion -- --version="1.10.16" --install-dir="$final_path" \
+		&& php$phpversion composer.phar config --global discard-changes true --quiet \
+		&& php$phpversion composer.phar install --no-interaction --quiet
 )
 
 #=================================================
@@ -166,7 +159,7 @@ yunohost service add $app --description "Responsive web-based XMPP client" --log
 ynh_script_progression --message="Configuring database.." --weight=1
 (
 	cd "$final_path"
-	ynh_exec_as $app php${phpversion} composer.phar movim:migrate
+	ynh_exec_as $app php$phpversion composer.phar movim:migrate
 )
 
 #=================================================
