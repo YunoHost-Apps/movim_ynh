@@ -169,8 +169,8 @@ mkdir -p $cache_dir
 chown -R $app $cache_dir
 
 cd "$final_path"
-ynh_exec_as $app php"${phpversion}" composer.phar $app:migrate
-php"${phpversion}" daemon.php config --username=$admin --password=$password
+ynh_exec_as $app php$phpversion composer.phar $app:migrate
+ynh_exec_as $app php$phpversion daemon.php config --username=$admin --password=$password
 
 #=================================================
 # GENERIC FINALIZATION
