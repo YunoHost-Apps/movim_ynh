@@ -113,7 +113,7 @@ systemctl enable $app.service
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
 
-yunohost service add $app --description "Responsive web-based XMPP client" --log "/var/log/$app/$app.log"
+yunohost service add $app --description "Responsive web-based XMPP client" --log="/var/log/$app/$app.log"
 
 #=================================================
 # START SYSTEMD SERVICE
