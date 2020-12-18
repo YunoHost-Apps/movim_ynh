@@ -140,7 +140,7 @@ chown -R $app $final_path/src/Movim/Bootstrap.php
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
 
-yunohost service add $app --description "Responsive web-based XMPP client" --log="/var/log/$app/$app.log"
+yunohost service add $app --description="Responsive web-based XMPP client" --log="/var/log/$app/$app.log"
 
 #=================================================
 # Install PHP dependencies using composer
