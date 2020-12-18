@@ -19,7 +19,7 @@
     "multi_instance": false,
     "services": [
         "nginx",
-        "php7.0-fpm",
+        "php7.3-fpm",
         "postgresql",
         "metronome"
     ],

@@ -126,7 +126,6 @@ ynh_script_progression --message="Upgrading PHP-FPM configuration..." --weight=1
 ynh_replace_string --match_string="__TIMEZONE__" --replace_string="$timezone" --target_file=../conf/php-fpm.conf
 
 ynh_add_fpm_config --package="$extra_php_dependencies"
-phpversion=$(ynh_app_setting_get --app="$app" --key=phpversion)
 
 #=================================================
 # SET PERMISSIONS
@@ -143,24 +142,23 @@ ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
 yunohost service add $app --description="Responsive web-based XMPP client" --log="/var/log/$app/$app.log"
 
 #=================================================
-# Install PHP dependencies using composer
+# INSTALL PHP DEPENDENCIES USING COMPOSER
 #=================================================
 
-(
-	cd "$final_path"
+pushd "$final_path"
 	curl -sS https://getcomposer.org/installer | php$phpversion -- --version="1.10.16" --install-dir="$final_path" \
 		&& php$phpversion composer.phar config --global discard-changes true --quiet \
 		&& php$phpversion composer.phar install --no-interaction --quiet
-)
+popd
 
 #=================================================
 # Set-up database
 #=================================================
 ynh_script_progression --message="Configuring database.." --weight=1
-(
-	cd "$final_path"
+
+pushd "$final_path"
 	ynh_exec_as $app php$phpversion composer.phar movim:migrate
-)
+popd
 
 #=================================================
 # SETUP SYSTEMD
@@ -169,7 +167,8 @@ ynh_script_progression --message="Configuring database.." --weight=1
 # Create a dedicated systemd config
 ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file=../conf/systemd.service
 ynh_replace_string --match_string="__PATH__" --replace_string="$path_url" --target_file=../conf/systemd.service
-ynh_replace_string --match_string="__PORT__" --replace_string="$port"     --target_file=../conf/systemd.service
+ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file=../conf/systemd.service
+ynh_replace_string --match_string="__PHP_VERSION__" --replace_string="$phpversion" --target_file=../conf/systemd.service
 
 ynh_add_systemd_config
 
