@@ -156,8 +156,8 @@ popd
 #=================================================
 ynh_script_progression --message="Configuring database.." --weight=1
 
-pushd "$final_path"
-	ynh_exec_as $app php$phpversion composer.phar movim:migrate
+pushd $final_path
+	ynh_exec_as $app php$phpversion composer.phar movim:migrate --quiet
 popd
 
 #=================================================
