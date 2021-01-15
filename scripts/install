@@ -55,7 +55,7 @@ ynh_app_setting_set --app=$app --key=is_public --value=$is_public
 #=================================================
 # FIND AND OPEN A PORT
 #=================================================
-ynh_script_progression --message="Configuring firewall..." --weight=2
+ynh_script_progression --message="Finding an available port..." --weight=2
 
 # Find a free port
 port=$(ynh_find_port --port=9537)
@@ -67,7 +67,7 @@ ynh_app_setting_set --app=$app --key=port --value=$port
 ynh_script_progression --message="Installing dependencies..." --weight=1
 
 # Install packages
-ynh_install_app_dependencies $pkg_dependencies
+ynh_exec_warn_less ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # CREATE A POSTGRESQL DATABASE
@@ -139,12 +139,11 @@ ynh_store_file_checksum --file="$final_path/config/db.inc.php"
 # Install PHP dependencies using composer
 #=================================================
 
-(
-	cd "$final_path"
+pushd $final_path
 	export COMPOSER_HOME=$final_path
-	curl -sS https://getcomposer.org/installer | php${phpversion} -- --version="1.10.16" --install-dir="$final_path" \
-		&& php${phpversion} composer.phar install --no-interaction
-)
+	ynh_exec_warn_less curl -sS https://getcomposer.org/installer | php${phpversion} -- --version="1.10.16" --install-dir="$final_path" \
+		&& php${phpversion} composer.phar install --no-interaction --quiet
+popd
 
 #=================================================
 # SETUP SYSTEMD
@@ -153,7 +152,8 @@ ynh_script_progression --message="Configuring a systemd service..." --weight=1
 
 ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file=../conf/systemd.service
 ynh_replace_string --match_string="__PATH__" --replace_string="$path_url" --target_file=../conf/systemd.service
-ynh_replace_string --match_string="__PORT__" --replace_string="$port"     --target_file=../conf/systemd.service
+ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file=../conf/systemd.service
+ynh_replace_string --match_string="__PHP_VERSION__" --replace_string="$phpversion" --target_file=../conf/systemd.service
 
 ynh_add_systemd_config
 
@@ -168,9 +168,10 @@ cache_dir="/home/$app"
 mkdir -p $cache_dir
 chown -R $app $cache_dir
 
-cd "$final_path"
-ynh_exec_as $app php$phpversion composer.phar $app:migrate
-ynh_exec_as $app php$phpversion daemon.php config --username=$admin --password=$password
+pushd $final_path
+	ynh_exec_as $app php$phpversion composer.phar $app:migrate --quiet
+	ynh_exec_as $app php$phpversion daemon.php config --username=$admin --password=$password --quiet
+popd
 
 #=================================================
 # GENERIC FINALIZATION
@@ -186,7 +187,7 @@ chown -R $app $final_path/src/Movim/
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
 
-yunohost service add $app --description "Responsive web-based XMPP client" --log="/var/log/$app/$app.log"
+yunohost service add $app --description="Responsive web-based XMPP client" --log="/var/log/$app/$app.log"
 
 #=================================================
 # START SYSTEMD SERVICE
@@ -194,7 +195,7 @@ yunohost service add $app --description "Responsive web-based XMPP client" --log
 ynh_script_progression --message="Starting a systemd service..." --weight=2
 
 # Start a systemd service
-ynh_systemd_action --service_name=$app --action="start" --log_path="systemd" #--line_match="HTTP Server listening"
+ynh_systemd_action --service_name=$app --action=start --log_path="systemd" #--line_match="HTTP Server listening"
 
 #=================================================
 # SETUP SSOWAT

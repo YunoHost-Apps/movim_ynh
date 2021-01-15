@@ -1,7 +1,7 @@
 # Movim pour YunoHost
 
 [![Integration level](https://dash.yunohost.org/integration/movim.svg)](https://dash.yunohost.org/appci/app/movim) ![](https://ci-apps.yunohost.org/ci/badges/movim.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/movim.maintain.svg)  
-[![Installer Movim avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=movim)
+[![Installer Movim avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=movim)
 
 *[Read this readme in english.](./README.md)* 
 
