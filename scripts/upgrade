@@ -107,7 +107,7 @@ ynh_add_nginx_config
 #=================================================
 ynh_script_progression --message="Upgrading dependencies..." --weight=4
 
-ynh_install_app_dependencies $pkg_dependencies
+ynh_exec_warn_less ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # CREATE DEDICATED USER
@@ -146,7 +146,7 @@ yunohost service add $app --description="Responsive web-based XMPP client" --log
 #=================================================
 
 pushd "$final_path"
-	curl -sS https://getcomposer.org/installer | php$phpversion -- --version="1.10.16" --install-dir="$final_path" \
+	ynh_exec_warn_less curl -sS https://getcomposer.org/installer | php$phpversion -- --version="1.10.16" --install-dir="$final_path" \
 		&& php$phpversion composer.phar config --global discard-changes true --quiet \
 		&& php$phpversion composer.phar install --no-interaction --quiet
 popd
