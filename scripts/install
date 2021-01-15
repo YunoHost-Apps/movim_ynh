@@ -139,12 +139,11 @@ ynh_store_file_checksum --file="$final_path/config/db.inc.php"
 # Install PHP dependencies using composer
 #=================================================
 
-(
-	cd "$final_path"
+pushd "$final_path"
 	export COMPOSER_HOME=$final_path
 	curl -sS https://getcomposer.org/installer | php${phpversion} -- --version="1.10.16" --install-dir="$final_path" \
 		&& php${phpversion} composer.phar install --no-interaction
-)
+popd
 
 #=================================================
 # SETUP SYSTEMD

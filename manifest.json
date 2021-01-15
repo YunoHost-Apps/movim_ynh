@@ -6,7 +6,7 @@
         "en": "Web-based cross-platform XMPP client",
         "fr": "Client XMPP multiplateforme basé sur le Web"
     },
-    "version": "0.18~ynh4",
+    "version": "0.18~ynh5",
     "url": "https://movim.eu",
     "license": "AGPL-3.0-or-later",
     "maintainer": {
