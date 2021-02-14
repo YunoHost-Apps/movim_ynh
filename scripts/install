@@ -181,6 +181,7 @@ popd
 
 chown -R $app:www-data $final_path
 chown -R $app $final_path/src/Movim/
+chmod u+rwx $final_path
 
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
