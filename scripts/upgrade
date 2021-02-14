@@ -87,7 +87,7 @@ ynh_abort_if_errors
 #=================================================
 ynh_script_progression --message="Stopping a systemd service..." --weight=23
 
-ynh_systemd_action --service_name=$app --action="stop" --log_path="/var/log/$app/$app.log"
+ynh_systemd_action --service_name=$app --action=stop --log_path="/var/log/$app/$app.log"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -140,6 +140,7 @@ ynh_add_fpm_config --package="$extra_php_dependencies"
 
 chown -R $app:www-data $final_path
 chown -R $app $final_path/src/Movim/Bootstrap.php
+chmod u+rwx $final_path
 
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
@@ -164,7 +165,7 @@ popd
 ynh_script_progression --message="Configuring database.." --weight=1
 
 pushd $final_path
-	ynh_exec_as $app php$phpversion composer.phar movim:migrate --quiet
+	php$phpversion composer.phar movim:migrate --quiet
 popd
 
 #=================================================
@@ -184,7 +185,7 @@ ynh_add_systemd_config
 #=================================================
 ynh_script_progression --message="Starting a systemd service..." --weight=1
 
-ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
+ynh_systemd_action --service_name=$app --action=start --log_path="/var/log/$app/$app.log"
 
 #=================================================
 # RELOAD NGINX
