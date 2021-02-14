@@ -169,8 +169,8 @@ mkdir -p $cache_dir
 chown -R $app $cache_dir
 
 pushd $final_path
-	ynh_exec_as $app php$phpversion composer.phar $app:migrate --quiet
-	ynh_exec_as $app php$phpversion daemon.php config --username=$admin --password=$password --quiet
+	php$phpversion composer.phar $app:migrate --quiet
+	php$phpversion daemon.php config --username=$admin --password=$password --quiet
 popd
 
 #=================================================
