@@ -24,6 +24,8 @@ is_public=$(ynh_app_setting_get --app=$app --key=is_public)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
+admin=$(ynh_app_setting_get --app=$app --key=admin)
+password=$(ynh_app_setting_get --app=$app --key=password)
 phpversion=$(ynh_app_setting_get --app="$app" --key=phpversion)
 timezone=$(cat /etc/timezone)
 
@@ -158,7 +160,8 @@ pushd "$final_path"
 	ynh_exec_warn_less curl -sS https://getcomposer.org/installer | php$phpversion -- --version="1.10.16" --install-dir="$final_path" \
 		&& php$phpversion composer.phar config --global discard-changes true --quiet \
 		&& php$phpversion composer.phar update --no-interaction --quiet \
-		&& php$phpversion composer.phar movim:migrate --quiet
+		&& php$phpversion composer.phar movim:migrate --quiet \
+		&& php$phpversion daemon.php config --username=$admin --password=$password --quiet
 popd
 
 #&& php$phpversion composer.phar install --no-interaction --quiet \
