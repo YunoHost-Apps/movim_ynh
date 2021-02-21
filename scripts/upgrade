@@ -153,11 +153,7 @@ yunohost service add $app --description="Responsive web-based XMPP client" --log
 # INSTALL PHP DEPENDENCIES USING COMPOSER
 #=================================================
 
-pushd "$final_path"
-	ynh_exec_warn_less curl -sS https://getcomposer.org/installer | php$phpversion -- --version="2.0.9" --install-dir="$final_path" \
-		&& php$phpversion composer.phar config --global discard-changes true --quiet \
-		&& php$phpversion composer.phar install --no-interaction --quiet
-popd
+ynh_install_composer --phpversion="$phpversion" --workdir="$final_path"
 
 #=================================================
 # Set-up database
