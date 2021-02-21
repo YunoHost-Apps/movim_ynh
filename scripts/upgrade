@@ -154,14 +154,19 @@ yunohost service add $app --description="Responsive web-based XMPP client" --log
 #=================================================
 ynh_script_progression --message="Installing Composer..." --weight=1
 
-ynh_install_composer --phpversion="$phpversion" --workdir="$final_path"
+curl -sS https://getcomposer.org/installer \
+	| COMPOSER_HOME="$final_path/.composer" \
+	php${phpversion} -- --quiet --install-dir="$final_path" --version=2.0.9
+
+COMPOSER_HOME="$final_path/.composer" \
+		php${phpversion} "$workdir/composer.phar" install --no-dev $install_args \
+		-d "$final_path" --quiet --no-interaction
 
 #=================================================
 # Set-up database
 #=================================================
 ynh_script_progression --message="Configuring database.." --weight=1
 
-ynh_composer_exec --phpversion="${phpversion}" --workdir="$final_path" --commands="install --no-dev $install_args"
 ynh_composer_exec --phpversion="$phpversion" --workdir="$final_path" --commands="movim:migrate"
 
 #=================================================
