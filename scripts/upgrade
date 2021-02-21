@@ -23,7 +23,7 @@ port=$(ynh_app_setting_get --app=$app --key=port)
 is_public=$(ynh_app_setting_get --app=$app --key=is_public)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
-db_pwd=$(ynh_app_setting_get --app=$app --key=db_pwd)
+db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
 phpversion=$(ynh_app_setting_get --app="$app" --key=phpversion)
 timezone=$(cat /etc/timezone)
 
@@ -171,12 +171,6 @@ popd
 #=================================================
 # SETUP SYSTEMD
 #=================================================
-
-# Create a dedicated systemd config
-ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file=../conf/systemd.service
-ynh_replace_string --match_string="__PATH__" --replace_string="$path_url" --target_file=../conf/systemd.service
-ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file=../conf/systemd.service
-ynh_replace_string --match_string="__PHP_VERSION__" --replace_string="$phpversion" --target_file=../conf/systemd.service
 
 ynh_add_systemd_config
 
