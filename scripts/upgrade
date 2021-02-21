@@ -158,9 +158,10 @@ pushd "$final_path"
 	ynh_exec_warn_less curl -sS https://getcomposer.org/installer | php$phpversion -- --version="1.10.16" --install-dir="$final_path" \
 		&& php$phpversion composer.phar config --global discard-changes true --quiet \
 		&& php$phpversion composer.phar update --no-interaction --quiet \
-		&& php$phpversion composer.phar install --no-interaction --quiet \
 		&& php$phpversion composer.phar movim:migrate --quiet
 popd
+
+#&& php$phpversion composer.phar install --no-interaction --quiet \
 
 #=================================================
 # SETUP SYSTEMD
