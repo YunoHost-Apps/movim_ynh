@@ -159,7 +159,7 @@ curl -sS https://getcomposer.org/installer \
 	php${phpversion} -- --quiet --install-dir="$final_path" --version=2.0.9
 
 COMPOSER_HOME="$final_path/.composer" \
-		php${phpversion} "$workdir/composer.phar" install --no-dev $install_args \
+		php${phpversion} "$final_path/composer.phar" install --no-dev $install_args \
 		-d "$final_path" --quiet --no-interaction
 
 #=================================================
