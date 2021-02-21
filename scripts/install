@@ -48,7 +48,6 @@ ynh_script_progression --message="Storing installation settings..." --weight=2
 ynh_app_setting_set --app=$app --key=domain --value=$domain
 ynh_app_setting_set --app=$app --key=path --value=$path_url
 ynh_app_setting_set --app=$app --key=admin --value=$admin
-ynh_app_setting_set --app=$app --key=is_public --value=$is_public
 
 #=================================================
 # STANDARD MODIFICATIONS
@@ -76,13 +75,9 @@ ynh_script_progression --message="Creating a PostgreSQL database..." --weight=2
 
 db_name=$(ynh_sanitize_dbid --db_name=$app)
 db_user=$db_name
-db_pwd=$(ynh_string_random --length=30)
-
 ynh_app_setting_set --app=$app --key=db_name --value=$db_name
-ynh_app_setting_set --app=$app --key=db_pwd  --value=$db_pwd
-
 ynh_psql_test_if_first_run
-ynh_psql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_pwd
+ynh_psql_setup_db --db_user=$db_name --db_name=$db_name
 
 ynh_psql_execute_as_root --sql="CREATE EXTENSION IF NOT EXISTS unaccent;" --database=$db_name
 ynh_psql_execute_as_root --sql="CREATE EXTENSION IF NOT EXISTS pg_trgm;" --database=$db_name
@@ -128,16 +123,14 @@ phpversion=$(ynh_app_setting_get --app="$app" --key=phpversion)
 #=================================================
 ynh_script_progression --message="Modifying a config file..." --weight=1
 
-cp ../conf/db.example.inc.php  $final_path/config/db.inc.php
-
-ynh_replace_string --match_string="__DB_PWD__"  --replace_string="$db_pwd"  --target_file="$final_path/config/db.inc.php"
-ynh_replace_string --match_string="__DB_NAME__" --replace_string="$db_name" --target_file="$final_path/config/db.inc.php"
+ynh_add_config --template="../conf/db.example.inc.php" --destination="$final_path/config/db.inc.php"
 
 ynh_store_file_checksum --file="$final_path/config/db.inc.php"
 
 #=================================================
 # Install PHP dependencies using composer
 #=================================================
+ynh_script_progression --message="Configuring Composer..." --weight=1
 
 pushd $final_path
 	export COMPOSER_HOME=$final_path
@@ -148,12 +141,12 @@ popd
 #=================================================
 # SETUP SYSTEMD
 #=================================================
-ynh_script_progression --message="Configuring a systemd service..." --weight=1
+ynh_script_progression --message="Configuring a systemd service..." --weight=12
 
 ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file=../conf/systemd.service
 ynh_replace_string --match_string="__PATH__" --replace_string="$path_url" --target_file=../conf/systemd.service
 ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file=../conf/systemd.service
-ynh_replace_string --match_string="__PHP_VERSION__" --replace_string="$phpversion" --target_file=../conf/systemd.service
+ynh_replace_string --match_string="__PHPVERSION__" --replace_string="$phpversion" --target_file=../conf/systemd.service
 
 ynh_add_systemd_config
 
@@ -169,8 +162,8 @@ mkdir -p $cache_dir
 chown -R $app $cache_dir
 
 pushd $final_path
-	ynh_exec_as $app php$phpversion composer.phar $app:migrate --quiet
-	ynh_exec_as $app php$phpversion daemon.php config --username=$admin --password=$password --quiet
+	php$phpversion composer.phar $app:migrate --quiet
+	php$phpversion daemon.php config --username=$admin --password=$password --quiet
 popd
 
 #=================================================
@@ -181,6 +174,7 @@ popd
 
 chown -R $app:www-data $final_path
 chown -R $app $final_path/src/Movim/
+chmod u+rwx $final_path
 
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
@@ -200,12 +194,12 @@ ynh_systemd_action --service_name=$app --action=start --log_path="systemd" #--li
 #=================================================
 # SETUP SSOWAT
 #=================================================
-ynh_script_progression --message="Configuring SSOwat..." --weight=1
+ynh_script_progression --message="Configuring permissions..." --weight=1
 
 # Make app public if necessary or protect it
 if [ $is_public -eq 1 ]
 then
-	ynh_permission_update --permission "main" --add "visitors"
+	ynh_permission_update --permission="main" --add="visitors"
 fi
 
 #=================================================
