@@ -22,4 +22,3 @@ extra_php_dependencies="php${YNH_PHP_VERSION}-curl php${YNH_PHP_VERSION}-mbstrin
 #=================================================
 # FUTURE OFFICIAL HELPERS
 #=================================================
-

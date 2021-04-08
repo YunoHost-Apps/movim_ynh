@@ -40,8 +40,8 @@ Si vous n'avez pas YunoHost, consultez [le guide](https://yunohost.org/#/install
 
 #### Architectures supportées
 
-* x86-64 - [![Build Status](https://ci-apps.yunohost.org/ci/logs/movim%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/movim/)
-* ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/movim%20%28Apps%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/movim/)
+* x86-64 - [![Build Status](https://ci-apps.yunohost.org/ci/logs/movim.svg)](https://ci-apps.yunohost.org/ci/apps/movim/)
+* ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/movim.svg)](https://ci-apps-arm.yunohost.org/ci/apps/movim/)
 
 ## Limitations
 
