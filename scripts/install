@@ -132,11 +132,7 @@ ynh_store_file_checksum --file="$final_path/config/db.inc.php"
 #=================================================
 ynh_script_progression --message="Configuring Composer..." --weight=1
 
-pushd $final_path
-	export COMPOSER_HOME=$final_path
-	ynh_exec_warn_less curl -sS https://getcomposer.org/installer | php${phpversion} -- --version="1.10.16" --install-dir="$final_path" \
-		&& php${phpversion} composer.phar install --no-interaction --quiet
-popd
+ynh_install_composer
 
 #=================================================
 # SETUP SYSTEMD
@@ -146,13 +142,12 @@ ynh_script_progression --message="Configuring a systemd service..." --weight=12
 ynh_add_systemd_config
 
 #=================================================
-# Set-up database and configuration
+# SET-UP DATABASE AND CONFIGURATION
 #=================================================
-ynh_script_progression --message="Configuring database..." --weight=1
-
-cache_dir="/home/yunohost.app/$app"
+ynh_script_progression --message="Configuring Movim..." --weight=1
 
 # Create cachedir folder
+cache_dir="/home/yunohost.app/$app"
 mkdir -p $cache_dir
 chown -R $app $cache_dir
 
