@@ -143,11 +143,6 @@ popd
 #=================================================
 ynh_script_progression --message="Configuring a systemd service..." --weight=12
 
-ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file=../conf/systemd.service
-ynh_replace_string --match_string="__PATH__" --replace_string="$path_url" --target_file=../conf/systemd.service
-ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file=../conf/systemd.service
-ynh_replace_string --match_string="__PHPVERSION__" --replace_string="$phpversion" --target_file=../conf/systemd.service
-
 ynh_add_systemd_config
 
 #=================================================
@@ -155,7 +150,7 @@ ynh_add_systemd_config
 #=================================================
 ynh_script_progression --message="Configuring database..." --weight=1
 
-cache_dir="/home/$app"
+cache_dir="/home/yunohost.app/$app"
 
 # Create cachedir folder
 mkdir -p $cache_dir
@@ -172,9 +167,9 @@ popd
 # SET PERMISSIONS
 #=================================================
 
-chown -R $app:www-data $final_path
-chown -R $app $final_path/src/Movim/
-chmod u+rwx $final_path
+chmod 750 "$final_path"
+chmod -R o-rwx "$final_path"
+chown -R $app:www-data "$final_path"
 
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
