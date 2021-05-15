@@ -128,9 +128,9 @@ ynh_add_fpm_config --package="$extra_php_dependencies"
 # SET PERMISSIONS
 #=================================================
 
-chown -R $app:www-data $final_path
-chown -R $app $final_path/src/Movim/Bootstrap.php
-chmod u+rwx $final_path
+chmod 750 "$final_path"
+chmod -R o-rwx "$final_path"
+chown -R $app:www-data "$final_path"
 
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
@@ -145,7 +145,7 @@ yunohost service add $app --description="Responsive web-based XMPP client" --log
 ynh_script_progression --message="Installing Composer..." --weight=1
 
 pushd "$final_path"
-	ynh_exec_warn_less curl -sS https://getcomposer.org/installer | php$phpversion -- --version="1.10.16" --install-dir="$final_path" \
+	ynh_exec_warn_less ynh_install_composer \
 		&& php$phpversion composer.phar config --global discard-changes true --quiet \
 		&& php$phpversion composer.phar update --no-interaction --quiet \
 		&& php$phpversion composer.phar movim:migrate --quiet
@@ -155,11 +155,6 @@ popd
 # SETUP SYSTEMD
 #=================================================
 ynh_script_progression --message="Upgrading systemd configuration..." --weight=5
-
-ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file=../conf/systemd.service
-ynh_replace_string --match_string="__PATH__" --replace_string="$path_url" --target_file=../conf/systemd.service
-ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file=../conf/systemd.service
-ynh_replace_string --match_string="__PHPVERSION__" --replace_string="$phpversion" --target_file=../conf/systemd.service
 
 ynh_add_systemd_config
 
