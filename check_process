@@ -1,6 +1,3 @@
-# See here for more informations
-# https://github.com/YunoHost/package_check#syntax-check_process-file
-
 ;; Test complet
 	; Manifest
 		domain="domain.tld"
@@ -9,7 +6,6 @@
 		is_public=1
 		password="phrasedepasse"
 		language="fr"
-		port=9537 (PORT)
 	; Checks
 		pkg_linter=1
 		setup_sub_dir=1
@@ -28,4 +24,4 @@ Notification=none
 ;;; Upgrade options
 	; commit=80bdea70f80aafef673718911ad492ddc54aab5c
 		name=Testing (#23)
-		manifest_arg=domain=DOMAIN&path=PATH&admin=USER&language=fr&is_public=1&password=phrasedepasse&port=9537&
+		manifest_arg=domain=DOMAIN&path=PATH&admin=USER&language=fr&is_public=1&password=phrasedepasse&
