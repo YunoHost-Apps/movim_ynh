@@ -26,6 +26,7 @@ admin=$YNH_APP_ARG_ADMIN
 is_public=$YNH_APP_ARG_IS_PUBLIC
 password=$YNH_APP_ARG_PASSWORD
 timezone=$(cat /etc/timezone)
+maindomain=$(yunohost domain main-domain --output-as plain)
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -158,8 +159,7 @@ chown -R $app $cache_dir
 
 pushd $final_path
 	php$phpversion composer.phar $app:migrate --quiet
-	#php$phpversion daemon.php config --username=$admin --password=$password --quiet
-	#php$phpversion daemon.php setAdmin {$admin}
+	php$phpversion daemon.php setAdmin $admin@maindomain
 popd
 
 #=================================================
