@@ -13,7 +13,7 @@ Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour
 
 Client XMPP multiplateforme basé sur le Web
 
-**Version incluse :** 0.19~ynh2
+**Version incluse :** 0.19.1~ynh1
 
 **Démo :** https://nl.movim.eu/?login
 
