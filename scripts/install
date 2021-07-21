@@ -159,7 +159,7 @@ chown -R $app $cache_dir
 pushd $final_path
 	php$phpversion composer.phar $app:migrate --quiet
 	#php$phpversion daemon.php config --username=$admin --password=$password --quiet
-	php$phpversion daemon.php setAdmin {jid}
+	php$phpversion daemon.php setAdmin $admin
 popd
 
 #=================================================
