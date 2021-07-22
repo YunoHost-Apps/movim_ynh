@@ -194,10 +194,6 @@ ynh_script_progression --message="Reloading NGINX web server..." --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
 
-pushd $final_path
-	php$phpversion daemon.php setAdmin $admin@${maindomain}
-popd
-
 #=================================================
 # END OF SCRIPT
 #=================================================
