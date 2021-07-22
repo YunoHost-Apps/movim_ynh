@@ -158,7 +158,6 @@ chown -R $app $cache_dir
 
 pushd $final_path
 	php$phpversion composer.phar $app:migrate --quiet
-	php$phpversion daemon.php setAdmin $admin@${maindomain}
 popd
 
 #=================================================
@@ -175,6 +174,8 @@ ynh_script_progression --message="Starting a systemd service..." --weight=2
 
 # Start a systemd service
 ynh_systemd_action --service_name=$app --action=start --log_path="systemd" #--line_match="HTTP Server listening"
+
+php$phpversion daemon.php setAdmin $admin@${maindomain}
 
 #=================================================
 # SETUP SSOWAT
