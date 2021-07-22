@@ -158,7 +158,7 @@ chown -R $app $cache_dir
 
 pushd $final_path
 	php$phpversion composer.phar $app:migrate --quiet
-	php$phpversion daemon.php setAdmin $admin@maindomain
+	php$phpversion daemon.php setAdmin $admin@${maindomain}
 popd
 
 #=================================================
