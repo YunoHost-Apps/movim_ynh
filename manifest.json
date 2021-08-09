@@ -8,6 +8,13 @@
     },
     "version": "0.19~ynh2",
     "url": "https://movim.eu",
+     "upstream": {
+        "license": "AGPL-3.0-or-later",
+        "website": "https://movim.eu",
+        "demo": "https://nl.movim.eu/?login",
+        "admindoc": "https://github.com/movim/movim/wiki",
+        "code": "https://github.com/movim/movim"
+    },
     "license": "AGPL-3.0-or-later",
     "maintainer": {
         "name": "",
