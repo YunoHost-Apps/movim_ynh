@@ -29,7 +29,7 @@ Web-based cross-platform XMPP client
 
 ## Configuration
 
- * How to configure this app: From an admin panel at this address https://example.com/movim/?admin. Username and password are defined during installation.
+ * After installing the app, it can be configured at https://example.com/movim/?admin using the username and password defined during the installation.
 
 ## Documentation and resources
 
