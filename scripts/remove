@@ -81,7 +81,7 @@ ynh_secure_remove --file="$final_path"
 ynh_script_progression --message="Removing Movim cache directory..." --weight=6
 
 # Remove the app directory securely
-ynh_secure_remove --file="/home/$app"
+ynh_secure_remove --file="/home/yunohost.app/$app"
 
 #=================================================
 # REMOVE PHP-FPM CONFIGURATION
