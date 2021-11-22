@@ -1,6 +1,5 @@
-SOURCE_URL=https://github.com/movim/movim/archive/refs/tags/v0.19.1rc5.tar.gz
-SOURCE_SUM=48240577116edf6df6da1daceee78c2a50037f86a1a9349071cc18390dd82b8c
+SOURCE_URL=https://github.com/movim/movim/archive/refs/tags/v0.20rc1.tar.gz
+SOURCE_SUM=504e456888eb18ce2474ab8cd3fcd261a95e5ba83fcc189bbc95709fa88e644d
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=tar.gz
 SOURCE_IN_SUBDIR=true
-SOURCE_FILENAME=
