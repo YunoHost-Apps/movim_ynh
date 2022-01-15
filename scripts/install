@@ -167,10 +167,10 @@ chown -R $app:www-data "$cache_dir"
 ynh_script_progression --message="Configuring Movim..." --weight=1
 
 pushd $final_path
-	sudo -u $app php$phpversion composer.phar install
+	sudo -u $app php$phpversion composer.phar install --quiet
 	sudo -u $app php$phpversion composer.phar $app:migrate --quiet
 	#php$phpversion daemon.php setAdmin $admin@${maindomain}
-	sudo -u $app php$phpversion daemon.php setAdmin $email
+	#sudo -u $app php$phpversion daemon.php setAdmin $email
 popd
 
 #=================================================
