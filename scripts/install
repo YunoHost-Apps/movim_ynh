@@ -27,6 +27,7 @@ is_public=$YNH_APP_ARG_IS_PUBLIC
 timezone=$(cat /etc/timezone)
 maindomain=$(yunohost domain main-domain --output-as plain)
 email=$(ynh_user_get_info --username=$admin --key=mail)
+phpversion=$YNH_PHP_VERSION
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -121,7 +122,6 @@ ynh_script_progression --message="Configuring PHP-FPM..." --weight=1
 ynh_replace_string --match_string="__TIMEZONE__" --replace_string="$timezone" --target_file=../conf/php-fpm.conf
 
 ynh_add_fpm_config
-phpversion=$(ynh_app_setting_get --app="$app" --key=phpversion)
 
 #=================================================
 # SET CONFIGURATION FILE
