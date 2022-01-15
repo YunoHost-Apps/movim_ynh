@@ -61,14 +61,6 @@ ynh_script_progression --message="Removing NGINX web server configuration..." --
 ynh_remove_nginx_config
 
 #=================================================
-# REMOVE DEPENDENCIES
-#=================================================
-ynh_script_progression --message="Removing dependencies..." --weight=1
-
-# Remove metapackage and its dependencies
-ynh_remove_app_dependencies
-
-#=================================================
 # REMOVE APP MAIN DIR
 #=================================================
 ynh_script_progression --message="Removing Movim main directory..." --weight=6
@@ -102,6 +94,14 @@ ynh_script_progression --message="Removing PHP-FPM configuration..." --weight=2
 
 # Remove the dedicated PHP_FPM config
 ynh_remove_fpm_config
+
+#=================================================
+# REMOVE DEPENDENCIES
+#=================================================
+ynh_script_progression --message="Removing dependencies..." --weight=1
+
+# Remove metapackage and its dependencies
+ynh_remove_app_dependencies
 
 #=================================================
 # GENERIC FINALIZATION
