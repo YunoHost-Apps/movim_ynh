@@ -168,7 +168,7 @@ ynh_script_progression --message="Configuring Movim..." --weight=1
 
 pushd $final_path
 	php$phpversion composer.phar install --quiet
-	php$phpversion composer.phar $app:migrate --quiet
+	#php$phpversion composer.phar $app:migrate --quiet
 	#php$phpversion daemon.php setAdmin $admin@${maindomain}
 	#sudo -u $app php$phpversion daemon.php setAdmin $email
 popd
