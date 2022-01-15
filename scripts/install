@@ -154,7 +154,7 @@ ynh_script_progression --message="Configuring Movim..." --weight=1
 # Create cachedir folder
 cache_dir="/home/yunohost.app/$app"
 mkdir -p $cache_dir
-chown -R $app $cache_dir
+chown -R $app:www-data "$final_path"
 
 pushd $final_path
 	php$phpversion composer.phar $app:migrate --quiet
