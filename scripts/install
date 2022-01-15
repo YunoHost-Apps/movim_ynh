@@ -26,6 +26,7 @@ admin=$YNH_APP_ARG_ADMIN
 is_public=$YNH_APP_ARG_IS_PUBLIC
 timezone=$(cat /etc/timezone)
 maindomain=$(yunohost domain main-domain --output-as plain)
+email=$(ynh_user_get_info --username=$admin --key=mail)
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -166,9 +167,10 @@ chown -R $app:www-data "$cache_dir"
 ynh_script_progression --message="Configuring Movim..." --weight=1
 
 pushd $final_path
-	php$phpversion composer.phar install
-	php$phpversion composer.phar $app:migrate #--quiet
+	sudo -u $app php$phpversion composer.phar install
+	sudo -u $app php$phpversion composer.phar $app:migrate --quiet
 	#php$phpversion daemon.php setAdmin $admin@${maindomain}
+	sudo -u $app php$phpversion daemon.php setAdmin $email
 popd
 
 #=================================================
