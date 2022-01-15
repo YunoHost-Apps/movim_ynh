@@ -147,14 +147,23 @@ ynh_script_progression --message="Configuring a systemd service..." --weight=12
 ynh_add_systemd_config
 
 #=================================================
+# CREATE DATA DIRECTORY
+#=================================================
+ynh_script_progression --message="Creating a data directory..." --weight=1
+
+cache_dir=/home/yunohost.app/$app
+ynh_app_setting_set --app=$app --key=cache_dir --value=$cache_dir
+
+mkdir -p $cache_dir
+
+chmod 750 "$cache_dir"
+chmod -R o-rwx "$cache_dir"
+chown -R $app:www-data "$cache_dir"
+
+#=================================================
 # SET-UP DATABASE AND CONFIGURATION
 #=================================================
 ynh_script_progression --message="Configuring Movim..." --weight=1
-
-# Create cachedir folder
-cache_dir="/home/yunohost.app/$app"
-mkdir -p $cache_dir
-chown -R $app:www-data "$final_path"
 
 pushd $final_path
 	php$phpversion composer.phar $app:migrate --quiet
