@@ -34,6 +34,7 @@ db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 db_user=$db_name
 db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
 phpversion=$(ynh_app_setting_get --app=$app --key=phpversion)
+cache_dir=$(ynh_app_setting_get --app=$app --key=cache_dir)
 
 #=================================================
 # CHECK IF THE APP CAN BE RESTORED
@@ -68,6 +69,19 @@ ynh_restore_file --origin_path="$final_path"
 chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
 chown -R $app:www-data "$final_path"
+
+#=================================================
+# RESTORE THE DATA DIRECTORY
+#=================================================
+ynh_script_progression --message="Restoring the data directory..." --weight=1
+
+ynh_restore_file --origin_path="$cache_dir" --not_mandatory
+
+mkdir -p $cache_dir
+
+chmod 750 "$cache_dir"
+chmod -R o-rwx "$cache_dir"
+chown -R $app:www-data "$cache_dir"
 
 #=================================================
 # RESTORE THE PHP-FPM CONFIGURATION
