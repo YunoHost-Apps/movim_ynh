@@ -12,15 +12,15 @@ source /usr/share/yunohost/helpers
 #=================================================
 # LOAD SETTINGS
 #=================================================
+ynh_script_progression --message="Loading installation settings..."
 
 app=$YNH_APP_INSTANCE_NAME
 
-# Retrieve app settings
 domain=$(ynh_app_setting_get --app=$app --key=domain)
-final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 port=$(ynh_app_setting_get --app=$app --key=port)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 db_user=$db_name
+final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 cache_dir=$(ynh_app_setting_get --app=$app --key=cache_dir)
 
 #=================================================
@@ -39,7 +39,7 @@ fi
 #=================================================
 # STOP AND REMOVE SERVICE
 #=================================================
-ynh_script_progression --message="Stopping and removing the systemd service" --weight=1
+ynh_script_progression --message="Stopping and removing the systemd service..." --weight=1
 
 # Remove the dedicated systemd config
 ynh_remove_systemd_config
@@ -47,34 +47,18 @@ ynh_remove_systemd_config
 #=================================================
 # REMOVE THE POSTGRESQL DATABASE
 #=================================================
-ynh_script_progression --message="Removing the PostgreSQL database" --weight=1
+ynh_script_progression --message="Removing the PostgreSQL database..." --weight=1
 
 # Remove a database if it exists, along with the associated user
 ynh_psql_remove_db --db_user=$db_user --db_name=$db_name
 
 #=================================================
-# REMOVE NGINX CONFIGURATION
-#=================================================
-ynh_script_progression --message="Removing NGINX web server configuration..." --weight=5
-
-# Remove the dedicated NGINX config
-ynh_remove_nginx_config
-
-#=================================================
 # REMOVE APP MAIN DIR
 #=================================================
-ynh_script_progression --message="Removing Movim main directory..." --weight=6
+ynh_script_progression --message="Removing app main directory..." --weight=6
 
 # Remove the app directory securely
 ynh_secure_remove --file="$final_path"
-
-#=================================================
-# REMOVE APP CACHE DIR
-#=================================================
-ynh_script_progression --message="Removing Movim cache directory..." --weight=6
-
-# Remove the app directory securely
-ynh_secure_remove --file="/home/yunohost.app/$app"
 
 #=================================================
 # REMOVE DATA DIR
@@ -88,11 +72,19 @@ then
 fi
 
 #=================================================
+# REMOVE NGINX CONFIGURATION
+#=================================================
+ynh_script_progression --message="Removing NGINX web server configuration..." --weight=5
+
+# Remove the dedicated NGINX config
+ynh_remove_nginx_config
+
+#=================================================
 # REMOVE PHP-FPM CONFIGURATION
 #=================================================
 ynh_script_progression --message="Removing PHP-FPM configuration..." --weight=2
 
-# Remove the dedicated PHP_FPM config
+# Remove the dedicated PHP-FPM config
 ynh_remove_fpm_config
 
 #=================================================

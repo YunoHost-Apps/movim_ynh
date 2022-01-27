@@ -6,6 +6,7 @@
 # IMPORT GENERIC HELPERS
 #=================================================
 
+# Keep this path for calling _common.sh inside the execution's context of backup and restore scripts
 source ../settings/scripts/_common.sh
 source /usr/share/yunohost/helpers
 
@@ -61,6 +62,8 @@ ynh_backup --src_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 
 ynh_backup --src_path="/etc/php/$phpversion/fpm/pool.d/$app.conf"
 
+#=================================================
+# SPECIFIC BACKUP
 #=================================================
 # BACKUP SYSTEMD
 #=================================================

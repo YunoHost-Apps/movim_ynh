@@ -27,7 +27,6 @@ is_public=$YNH_APP_ARG_IS_PUBLIC
 timezone=$(cat /etc/timezone)
 maindomain=$(yunohost domain main-domain --output-as plain)
 email=$(ynh_user_get_info --username=$admin --key=mail)
-phpversion=$YNH_PHP_VERSION
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -37,7 +36,7 @@ app=$YNH_APP_INSTANCE_NAME
 ynh_script_progression --message="Validating installation parameters..." --weight=1
 
 final_path=/var/www/$app
-test ! -e "$final_path" || ynh_die "This path already contains a folder"
+test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
 
 # Register (book) web path
 ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
@@ -58,7 +57,7 @@ ynh_app_setting_set --app=$app --key=admin --value=$admin
 #=================================================
 ynh_script_progression --message="Finding an available port..." --weight=2
 
-# Find a free port
+# Find an available port
 port=$(ynh_find_port --port=9537)
 ynh_app_setting_set --app=$app --key=port --value=$port
 
@@ -119,27 +118,11 @@ ynh_add_nginx_config
 ynh_script_progression --message="Configuring PHP-FPM..." --weight=1
 
 # Create a dedicated PHP-FPM config
-ynh_replace_string --match_string="__TIMEZONE__" --replace_string="$timezone" --target_file=../conf/php-fpm.conf
-
 ynh_add_fpm_config
+phpversion=$(ynh_app_setting_get --app=$app --key=phpversion)
 
 #=================================================
-# SET CONFIGURATION FILE
-#=================================================
-ynh_script_progression --message="Modifying a config file..." --weight=1
-
-ynh_add_config --template="../conf/db.example.inc.php" --destination="$final_path/config/db.inc.php"
-
-chmod 400 "$final_path/config/db.inc.php"
-chown $app "$final_path/config/db.inc.php"
-
-#=================================================
-# SETUP SYSTEMD
-#=================================================
-ynh_script_progression --message="Configuring a systemd service..." --weight=12
-
-ynh_add_systemd_config
-
+# SPECIFIC SETUP
 #=================================================
 # Install PHP dependencies using composer
 #=================================================
@@ -162,6 +145,24 @@ chmod -R o-rwx "$cache_dir"
 chown -R $app:www-data "$cache_dir"
 
 #=================================================
+# ADD A CONFIGURATION
+#=================================================
+ynh_script_progression --message="Adding a configuration file..." --weight=1
+
+ynh_add_config --template="../conf/db.example.inc.php" --destination="$final_path/config/db.inc.php"
+
+chmod 400 "$final_path/config/db.inc.php"
+chown $app "$final_path/config/db.inc.php"
+
+#=================================================
+# SETUP SYSTEMD
+#=================================================
+ynh_script_progression --message="Configuring a systemd service..." --weight=12
+
+# Create a dedicated systemd config
+ynh_add_systemd_config
+
+#=================================================
 # SET-UP DATABASE AND CONFIGURATION
 #=================================================
 ynh_script_progression --message="Configuring Movim..." --weight=1
@@ -173,6 +174,8 @@ pushd $final_path
 	#sudo -u $app php$phpversion daemon.php setAdmin $email
 popd
 
+#=================================================
+# GENERIC FINALIZATION
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
@@ -193,7 +196,7 @@ ynh_systemd_action --service_name=$app --action=start --log_path="systemd" #--li
 #=================================================
 ynh_script_progression --message="Configuring permissions..." --weight=1
 
-# Make app public if necessary or protect it
+# Make app public if necessary
 if [ $is_public -eq 1 ]
 then
 	ynh_permission_update --permission="main" --add="visitors"

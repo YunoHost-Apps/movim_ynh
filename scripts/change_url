@@ -28,11 +28,11 @@ ynh_script_progression --message="Loading installation settings..." --weight=1
 
 # Needed for helper "ynh_add_nginx_config"
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-phpversion=$(ynh_app_setting_get --app="$app" --key=phpversion)
+phpversion=$(ynh_app_setting_get --app=$app --key=phpversion)
 port=$(ynh_app_setting_get --app=$app --key=port)
 
 #=================================================
-# BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
+# BACKUP BEFORE CHANGE URL THEN ACTIVE TRAP
 #=================================================
 ynh_script_progression --message="Backing up the app before changing its URL (may take a while)..." --weight=1
 
@@ -103,22 +103,14 @@ then
 fi
 
 #=================================================
-# STOP SYSTEMD SERVICE
-#=================================================
-ynh_script_progression --message="Stopping a systemd service..." --weight=11
-
-ynh_systemd_action --service_name=$app --action="stop" --log_path="/var/log/$app/$app.log"
-
+# SPECIFIC MODIFICATIONS
 #=================================================
 # SETUP SYSTEMD
 #=================================================
 ynh_script_progression --message="Configuring a systemd service..." --weight=4
 
-ynh_replace_string --match_string="__DOMAIN__" --replace_string="$new_domain" --target_file=../conf/systemd.service
-ynh_replace_string --match_string="__PATH__" --replace_string="$new_path" --target_file=../conf/systemd.service
-ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file=../conf/systemd.service
-ynh_replace_string --match_string="__PHPVERSION__" --replace_string="$phpversion" --target_file=../conf/systemd.service
-
+domain=$new_domain
+path=$new_path
 ynh_add_systemd_config
 
 #=================================================
@@ -128,6 +120,7 @@ ynh_add_systemd_config
 #=================================================
 ynh_script_progression --message="Starting a systemd service..." --weight=2
 
+# Start a systemd service
 ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
 
 #=================================================
