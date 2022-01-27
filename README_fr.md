@@ -11,7 +11,8 @@ Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour
 
 ## Vue d'ensemble
 
-Client XMPP multiplateforme basé sur le Web
+Web-based cross-platform XMPP client
+
 
 **Version incluse :** 0.20.0~ynh1
 
