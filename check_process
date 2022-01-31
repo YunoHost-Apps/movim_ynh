@@ -3,9 +3,9 @@
 		domain="domain.tld"
 		path="/path"
 		admin="john"
-		is_public=1
-		password="phrasedepasse"
 		language="fr"
+		is_public=1
+		password="1Strong-Password"
 	; Checks
 		pkg_linter=1
 		setup_sub_dir=1
@@ -14,6 +14,7 @@
 		setup_private=1
 		setup_public=1
 		upgrade=1
+		# 0.19~ynh1
 		upgrade=1	from_commit=80bdea70f80aafef673718911ad492ddc54aab5c
 		backup_restore=1
 		multi_instance=0
@@ -23,5 +24,5 @@ Email=
 Notification=none
 ;;; Upgrade options
 	; commit=80bdea70f80aafef673718911ad492ddc54aab5c
-		name=Testing (#23)
+		name=0.19~ynh1
 		manifest_arg=domain=DOMAIN&path=PATH&admin=USER&language=fr&is_public=1&password=phrasedepasse&
