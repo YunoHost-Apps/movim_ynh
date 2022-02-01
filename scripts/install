@@ -103,6 +103,7 @@ ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source --dest_dir="$final_path"
 
+# Temporary workaround to fix movim.ERROR: Error: Call to undefined function GuzzleHttp\Psr7\uri_for()
 ynh_replace_string --match_string="0.3.5" --replace_string="0.4.1" --target_file="$final_path/composer.json"
 
 chmod 750 "$final_path"
