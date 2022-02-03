@@ -5,7 +5,7 @@ $conf = [
     # The type can be 'pgsql' or 'mysql'
     'type'        => 'pgsql',
     # The database username
-    'username'    => '__DB_NAME__',
+    'username'    => '__DB_USER__',
     # The password
     'password'    => '__DB_PWD__',
     # Where can we find the database ?
