@@ -29,7 +29,6 @@ timezone=$(cat /etc/timezone)
 #=================================================
 # CHECK VERSION
 #=================================================
-ynh_script_progression --message="Checking version..."
 
 upgrade_type=$(ynh_check_app_version_changed)
 
