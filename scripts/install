@@ -27,8 +27,8 @@ domain=$YNH_APP_ARG_DOMAIN
 path_url=$YNH_APP_ARG_PATH
 admin=$YNH_APP_ARG_ADMIN
 is_public=$YNH_APP_ARG_IS_PUBLIC
-password=$YNH_APP_ARG_PASSWORD
 timezone=$(cat /etc/timezone)
+email=$(ynh_user_get_info --username=$admin --key=mail)
 phpversion=$YNH_PHP_VERSION
 
 app=$YNH_APP_INSTANCE_NAME
@@ -104,9 +104,6 @@ ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source --dest_dir="$final_path"
 
-# Temporary workaround to fix movim.ERROR: Error: Call to undefined function GuzzleHttp\Psr7\uri_for()
-ynh_replace_string --match_string="0.3.5" --replace_string="0.4.1" --target_file="$final_path/composer.json"
-
 chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
 chown -R $app:www-data "$final_path"
@@ -155,7 +152,7 @@ ynh_script_progression --message="Building Movim..."
 
 ynh_exec_warn_less ynh_install_composer --phpversion="$phpversion" --workdir="$final_path"
 ynh_exec_warn_less ynh_composer_exec --phpversion="$phpversion" --workdir="$final_path" --commands="movim:migrate"
-#ynh_exec_as $app php$phpversion $final_path/daemon.php config --username=$admin --password=$password --quiet
+ynh_exec_as $app php$phpversion $final_path/daemon.php setAdmin $email
 
 #=================================================
 # GENERIC FINALIZATION
