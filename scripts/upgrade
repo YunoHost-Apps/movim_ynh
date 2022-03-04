@@ -97,7 +97,7 @@ then
 	ynh_script_progression --message="Upgrading source files..."
 
 	# Download, check integrity, uncompress and patch the source from app.src
-	ynh_setup_source --dest_dir="$final_path"
+	ynh_setup_source --dest_dir="$final_path" --keep="$final_path/config/db.inc.php"
 fi
 
 chmod 750 "$final_path"
@@ -132,12 +132,12 @@ ynh_add_fpm_config
 #=================================================
 # UPDATE A CONFIG FILE
 #=================================================
-ynh_script_progression --message="Updating a configuration file..."
+# ynh_script_progression --message="Updating a configuration file..."
 
-ynh_add_config --template="../conf/db.example.inc.php" --destination="$final_path/config/db.inc.php"
+# ynh_add_config --template="../conf/db.example.inc.php" --destination="$final_path/config/db.inc.php"
 
-chmod 400 "$final_path/config/db.inc.php"
-chown $app:$app "$final_path/config/db.inc.php"
+# chmod 400 "$final_path/config/db.inc.php"
+# chown $app:$app "$final_path/config/db.inc.php"
 
 #=================================================
 # BUILD MOVIM
