@@ -163,8 +163,8 @@ date=(date "+%F %T")
 # # We need to register the admin in the database first before setting the admin JID
 # ynh_psql_connect_as --user=$db_user --password=$db_pwd --database=$db_name <<< "INSERT INTO users (id, configuration, language, nightmode, nsfw, public, created_at, updated_at, nickname, chatmain, notificationchat, notificationcall, admin) VALUES ("$email", NULL, fr, f, f, t, "$date", "$date", NULL, f, t, t, t);"
 
-ynh_psql_connect_as --user=$db_user --password=$db_pwd --database=$db_name <<< INSERT INTO "users" ("id", "configuration", "language", "nightmode", "nsfw", "public", "created_at", "updated_at", "nickname", "chatmain", "notificationchat", "notificationcall", "admin") VALUES
-('$email',	NULL,	'fr',	'f',	'f',	NULL,	'$date',	'$date',	NULL,	'f',	't',	't',	'f');
+ynh_psql_connect_as --user=$db_user --password=$db_pwd --database=$db_name <<< "INSERT INTO "users" ("id", "configuration", "language", "nightmode", "nsfw", "public", "created_at", "updated_at", "nickname", "chatmain", "notificationchat", "notificationcall", "admin") VALUES
+('$email',	NULL,	'fr',	'f',	'f',	NULL,	'$date',	'$date',	NULL,	'f',	't',	't',	'f');"
 
 ynh_exec_as $app php$phpversion $final_path/daemon.php setAdmin $email
 
