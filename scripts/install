@@ -161,8 +161,7 @@ ynh_exec_warn_less ynh_composer_exec --phpversion="$phpversion" --workdir="$fina
 
 set_date=$(date "+%F %T")
 # In order to set an admin we must first set a user in the database
-ynh_psql_connect_as --user=$db_user --password=$db_pwd --database=$db_name <<< "INSERT INTO "users" ("id", "configuration", "language", "nightmode", "nsfw", "public", "created_at", "updated_at", "nickname", "chatmain", "notificationchat", "notificationcall", "admin") VALUES
-('$email',	NULL,	'fr',	'f',	'f',	NULL,	'$set_date',	'$set_date',	NULL,	'f',	't',	't',	'f');"
+ynh_psql_connect_as --user=$db_user --password=$db_pwd --database=$db_name <<< "INSERT INTO "users" ("id", "configuration", "language", "nightmode", "nsfw", "public", "created_at", "updated_at", "nickname", "chatmain", "notificationchat", "notificationcall", "admin") VALUES ('$email',	NULL,	'fr',	'f',	'f',	NULL,	'$set_date',	'$set_date',	NULL,	'f',	't',	't',	'f');"
 
 # Now we set this user as an admin for Movim
 ynh_exec_as $app php$phpversion $final_path/daemon.php setAdmin $email
