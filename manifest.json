@@ -3,7 +3,7 @@
     "id": "movim",
     "packaging_format": 1,
     "description": {
-        "en": "Web-based cross-platform XMPP client",
+        "en": "Decentralized social platform based on XMPP",
         "fr": "Client XMPP multiplateforme basé sur le Web"
     },
     "version": "0.20~ynh1",
