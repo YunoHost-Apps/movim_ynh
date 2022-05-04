@@ -155,19 +155,16 @@ ynh_add_systemd_config
 #=================================================
 ynh_script_progression --message="Building Movim..."
 
+pushd $final_path
 # ynh_install_composer --phpversion="$phpversion" --workdir="$final_path"
-curl -sS https://getcomposer.org/installer \
-		| COMPOSER_HOME="$final_path/.composer" \
-		php${phpversion} -- --quiet --install-dir="$final_path" \
-		|| ynh_die "Unable to install Composer."
+	curl -sS https://getcomposer.org/installer | php${phpversion}
 
 # ynh_composer_exec --workdir="$final_path" --commands="movim:migrate" --phpversion="$phpversion" 
-COMPOSER_HOME="$final_path/.composer" \
-		php${phpversion} "$final_path/composer.phar" "install" \
-		-d "$final_path" --quiet --no-interaction
+	php${phpversion} composer.phar install
 
-ynh_exec_as $app php$phpversion $final_path/daemon.php config --username=$admin --password=$password --quiet --phpversion="$phpversion" 
+	ynh_exec_as $app php$phpversion daemon.php config --username=$admin --password=$password --quiet --phpversion="$phpversion" 
 
+popd
 #=================================================
 # GENERIC FINALIZATION
 #=================================================
