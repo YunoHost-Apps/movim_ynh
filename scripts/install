@@ -163,7 +163,7 @@ curl -sS https://getcomposer.org/installer \
 
 # ynh_composer_exec --workdir="$final_path" --commands="movim:migrate" --phpversion="$phpversion" 
 COMPOSER_HOME="$final_path/.composer" \
-		php${phpversion} "$final_path/composer.phar" "movim:migrate" \
+		php${phpversion} "$final_path/composer.phar" "install" \
 		-d "$final_path" --quiet --no-interaction
 
 ynh_exec_as $app php$phpversion $final_path/daemon.php config --username=$admin --password=$password --quiet --phpversion="$phpversion" 
