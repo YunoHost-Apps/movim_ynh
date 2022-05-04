@@ -1,7 +1,7 @@
 SOURCE_URL=https://github.com/movim/movim/archive/refs/tags/v0.20.zip
 SOURCE_SUM=53bd3c7060455e353fc44b5996f4e5ae9b2181dc0ef44243a3edf87e0fbfdec2
 SOURCE_SUM_PRG=sha256sum
-SOURCE_FORMAT=tar.gz
+SOURCE_FORMAT=zip
 SOURCE_IN_SUBDIR=true
 SOURCE_FILENAME=
 SOURCE_EXTRACT=true
