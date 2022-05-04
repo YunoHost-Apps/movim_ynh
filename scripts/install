@@ -8,7 +8,7 @@
 
 source _common.sh
 source ynh_composer__2
-# source /usr/share/yunohost/helpers
+source /usr/share/yunohost/helpers
 
 #=================================================
 # MANAGE SCRIPT FAILURE
@@ -155,8 +155,17 @@ ynh_add_systemd_config
 #=================================================
 ynh_script_progression --message="Building Movim..."
 
-ynh_install_composer --workdir="$final_path" --phpversion="$phpversion" 
-ynh_composer_exec --workdir="$final_path" --commands="movim:migrate" --phpversion="$phpversion" 
+# ynh_install_composer --phpversion="$phpversion" --workdir="$final_path"
+curl -sS https://getcomposer.org/installer \
+		| COMPOSER_HOME="$final_path/.composer" \
+		php${phpversion} -- --quiet --install-dir="$final_path" \
+		|| ynh_die "Unable to install Composer."
+
+# ynh_composer_exec --workdir="$final_path" --commands="movim:migrate" --phpversion="$phpversion" 
+COMPOSER_HOME="$final_path/.composer" \
+		php${phpversion} "$final_path/composer.phar" "movim:migrate" \
+		-d "$final_path" --quiet --no-interaction
+
 ynh_exec_as $app php$phpversion $final_path/daemon.php config --username=$admin --password=$password --quiet --phpversion="$phpversion" 
 
 #=================================================
