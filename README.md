@@ -15,10 +15,13 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 
 ## Overview
 
-Web-based cross-platform XMPP client
+Movim is a social and chat platform that act as a frontend for the XMPP network.
 
+Once deployed Movim offers a complete social and chat experience for the decentralized XMPP network users. It can easily connect to several XMPP servers at the same time.
 
-**Shipped version:** 0.19~ynh4
+With a simple configuration it can also be restricted to one XMPP server and will then act as a powerful frontend for it. Movim is fully compatible with the most used XMPP servers such as ejabberd or Prosody.
+
+**Shipped version:** 0.20~ynh1
 
 **Demo:** https://nl.movim.eu/?login
 
@@ -30,8 +33,13 @@ Web-based cross-platform XMPP client
 
 ## Configuration
 
- * After installing the app, it can be configured at https://example.com/movim/?admin using the username and password defined during the installation.
+* The admin panel is available directly from the Movim UI once an admin user is logged in. To set a user admin login at least once (to register it in the database). You can then set him admin using the following command.
 
+```
+sudo php8.0 /var/www/movim/daemon.php setAdmin {jid}
+```
+
+The administrators will be listed on the login page of the instance.
 ## Documentation and resources
 
 * Official app website: <https://movim.eu>

@@ -18,7 +18,7 @@ Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour
 Client XMPP multiplateforme basé sur le Web
 
 
-**Version incluse :** 0.19~ynh4
+**Version incluse :** 0.20~ynh1
 
 **Démo :** https://nl.movim.eu/?login
 
@@ -30,8 +30,13 @@ Client XMPP multiplateforme basé sur le Web
 
 ## Configuration
 
- * Après l'installation, l'application peut être configurée sur https://example.com/movim/?admin en utilisant le nom d'utilisateur et le mot de passe définis lors de l'installation.
+* Le panneau d'administration est disponible directement à partir de l'interface utilisateur MOVIM une fois qu'un utilisateur administrateur est connecté. Pour définir un administrateur, connectez-vous au moins une fois (pour l'enregistrer dans la base de données). Vous pouvez ensuite le régler comme administrateur à l'aide de la commande suivante :
 
+```
+sudo php8.0 /var/www/movim/daemon.php setAdmin {jid}
+```
+
+Les administrateurs seront inscrits sur la page de connexion de l'instance. 
 ## Documentations et ressources
 
 * Site officiel de l'app : <https://movim.eu>
