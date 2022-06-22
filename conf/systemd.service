@@ -8,7 +8,7 @@ User=__APP__
 Group=__APP__
 Environment=PUBLIC_URL=https://__DOMAIN____PATH__/
 Environment=WS_PORT=__PORT__
-WorkingDirectory=__FINALPATH__
+WorkingDirectory=__FINALPATH__/
 ExecStart=/usr/bin/php__PHPVERSION__ daemon.php start --url=${PUBLIC_URL} --port=${WS_PORT}
 StandardOutput=syslog
 SyslogIdentifier=__APP__

@@ -1,1 +1,1 @@
-Client XMPP multiplateforme basé sur le Web
+Client XMPP multiplateforme basÃ© sur le Web
