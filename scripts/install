@@ -30,6 +30,7 @@ admin=$YNH_APP_ARG_ADMIN
 timezone=$(cat /etc/timezone)
 email=$(ynh_user_get_info --username=$admin --key=mail)
 phpversion=$YNH_PHP_VERSION
+password=$YNH_APP_ARG_PASSWORD
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -69,7 +70,6 @@ ynh_app_setting_set --app=$app --key=port --value=$port
 #=================================================
 ynh_script_progression --message="Installing dependencies..."
 
-# Install packages
 ynh_exec_warn_less ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================

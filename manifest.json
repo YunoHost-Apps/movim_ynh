@@ -6,6 +6,7 @@
         "en": "Decentralized social platform based on XMPP",
         "fr": "Client XMPP multiplateforme basé sur le Web"
     },
+
     "version": "0.20~ynh1",
     "url": "https://movim.eu",
     "upstream": {
@@ -43,13 +44,17 @@
                 "default": "/movim"
             },
             {
+                "name": "is_public",
+                "type": "boolean",
+                "default": true
+            },
+            {
                 "name": "admin",
                 "type": "user"
             },
             {
-                "name": "is_public",
-                "type": "boolean",
-                "default": true
+                "name": "password",
+                "type": "password"
             }
         ]
     }
