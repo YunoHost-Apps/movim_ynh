@@ -41,6 +41,7 @@ ynh_script_progression --message="Backing up the app before upgrading (may take 
 # Backup the current version of the app
 ynh_backup_before_upgrade
 ynh_clean_setup () {
+	ynh_clean_check_starting
 	# Restore it if the upgrade fails
 	ynh_restore_upgradebackup
 }
@@ -87,7 +88,7 @@ fi
 ynh_script_progression --message="Making sure dedicated system user exists..."
 
 # Create a dedicated user (if not existing)
-ynh_system_user_create --username=$app --home_dir=$final_path
+ynh_system_user_create --username=$app --home_dir="$final_path"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -98,7 +99,7 @@ then
 	ynh_script_progression --message="Upgrading source files..."
 
 	# Download, check integrity, uncompress and patch the source from app.src
-	ynh_setup_source --dest_dir="$final_path"
+	ynh_setup_source --dest_dir="$final_path" --keep="config/db.inc.php"
 
 	# Temporary workaround to fix movim.ERROR: Error: Call to undefined function GuzzleHttp\Psr7\uri_for()
 	ynh_replace_string --match_string="0.3.5" --replace_string="0.4.1" --target_file="$final_path/composer.json"
@@ -107,14 +108,6 @@ fi
 chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
 chown -R $app:www-data "$final_path"
-
-#=================================================
-# NGINX CONFIGURATION
-#=================================================
-ynh_script_progression --message="Upgrading NGINX web server configuration..."
-
-# Create a dedicated NGINX config
-ynh_add_nginx_config
 
 #=================================================
 # UPGRADE DEPENDENCIES
@@ -129,10 +122,18 @@ ynh_exec_warn_less ynh_install_app_dependencies $pkg_dependencies
 ynh_script_progression --message="Upgrading PHP-FPM configuration..."
 
 # Create a dedicated PHP-FPM config
-ynh_add_fpm_config --package="$extra_php_dependencies"
+ynh_add_fpm_config
 
 #=================================================
-# SPECIFIC SETUP
+# NGINX CONFIGURATION
+#=================================================
+ynh_script_progression --message="Upgrading NGINX web server configuration..."
+
+# Create a dedicated NGINX config
+ynh_add_nginx_config
+
+#=================================================
+# SPECIFIC UPGRADE
 #=================================================
 # UPDATE A CONFIG FILE
 #=================================================
