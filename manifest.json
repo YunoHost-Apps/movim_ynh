@@ -13,7 +13,8 @@
         "website": "https://movim.eu",
         "demo": "https://nl.movim.eu/?login",
         "admindoc": "https://github.com/movim/movim/wiki",
-        "code": "https://github.com/movim/movim"
+        "code": "https://github.com/movim/movim",
+        "cpe": "cpe:2.3:a:movim:movim"
     },
     "license": "AGPL-3.0-or-later",
     "maintainer": {
