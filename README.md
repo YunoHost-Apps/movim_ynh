@@ -20,7 +20,6 @@ Web-based cross-platform XMPP client
 
 **Shipped version:** 0.19~ynh4
 
-
 **Demo:** https://nl.movim.eu/?login
 
 ## Screenshots
