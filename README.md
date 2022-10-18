@@ -18,8 +18,7 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 Web-based cross-platform XMPP client
 
 
-**Shipped version:** 0.19~ynh4
-
+**Shipped version:** 0.20~ynh1
 
 **Demo:** https://nl.movim.eu/?login
 
