@@ -154,7 +154,7 @@ ynh_script_progression --message="Building Movim..."
 
 ynh_exec_warn_less ynh_install_composer --phpversion="$phpversion" --workdir="$final_path"
 ynh_exec_warn_less ynh_composer_exec --phpversion="$phpversion" --workdir="$final_path" --commands="movim:migrate"
-ynh_exec_as $app php$phpversion $final_path/daemon.php config --username=$admin --password=$password --quiet
+#ynh_exec_as $app php$phpversion $final_path/daemon.php config --username=$admin --password=$password --quiet
 
 #=================================================
 # GENERIC FINALIZATION
