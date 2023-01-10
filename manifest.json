@@ -6,14 +6,15 @@
         "en": "Web-based cross-platform XMPP client",
         "fr": "Client XMPP multiplateforme basé sur le Web"
     },
-    "version": "0.19~ynh4",
+    "version": "0.19~ynh5",
     "url": "https://movim.eu",
     "upstream": {
         "license": "AGPL-3.0-or-later",
         "website": "https://movim.eu",
         "demo": "https://nl.movim.eu/?login",
         "admindoc": "https://github.com/movim/movim/wiki",
-        "code": "https://github.com/movim/movim"
+        "code": "https://github.com/movim/movim",
+        "cpe": "cpe:2.3:a:movim:movim"
     },
     "license": "AGPL-3.0-or-later",
     "maintainer": {
@@ -21,12 +22,12 @@
         "email": ""
     },
     "requirements": {
-        "yunohost": ">= 4.3.0"
+        "yunohost": ">= 11.0.9"
     },
     "multi_instance": false,
     "services": [
         "nginx",
-        "php7.3-fpm",
+        "php7.4-fpm",
         "postgresql",
         "metronome"
     ],
