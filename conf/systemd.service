@@ -1,5 +1,5 @@
 [Unit]
-Description=Movim: Responsive web-based XMPP client
+Description=Movim: responsive web-based XMPP client
 After=nginx.service network.target local-fs.target postgresql.service
 
 [Service]
