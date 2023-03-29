@@ -52,16 +52,21 @@ ram.runtime = "50M" # FIXME: replace with an **estimate** minimum ram requiremen
 
 [resources]
         [resources.sources.main]
-        url = "https://github.com/movim/movim/archive/v0.20.tar.gz"
-        sha256 = "8d9e6b75efd1db3bf9920857ad49e290b34182ccd974c5d09d560dea54c962b1"
+        url = "https://github.com/movim/movim/archive/v0.21.tar.gz"
+        sha256 = "9889f260c973951a080d36defffe22a84732ad0628aaa7a945ec32907c225c69"
+        autoupdate.strategy = "latest_github_tag"
 
-
+    [resources.ports]
+    
     [resources.system_user]
 
     [resources.install_dir]
 
     [resources.permissions]
     main.url = "/"
+
+    [resources.apt]
+    packages = "postgresql php8.0-curl php8.0-mbstring php8.0-imagick php8.0-gd php8.0-pgsql php8.0-xml"
 
     [resources.database]
     type = "postgresql"
