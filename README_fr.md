@@ -5,15 +5,16 @@ It shall NOT be edited by hand.
 
 # Movim pour YunoHost
 
-[![Niveau d'intégration](https://dash.yunohost.org/integration/movim.svg)](https://dash.yunohost.org/appci/app/movim) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/movim.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/movim.maintain.svg)  
+[![Niveau d’intégration](https://dash.yunohost.org/integration/movim.svg)](https://dash.yunohost.org/appci/app/movim) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/movim.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/movim.maintain.svg)
+
 [![Installer Movim avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=movim)
 
 *[Read this readme in english.](./README.md)*
 
-> *Ce package vous permet d'installer Movim rapidement et simplement sur un serveur YunoHost.
-Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour savoir comment l'installer et en profiter.*
+> *Ce package vous permet d’installer Movim rapidement et simplement sur un serveur YunoHost.
+Si vous n’avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour savoir comment l’installer et en profiter.*
 
-## Vue d'ensemble
+## Vue d’ensemble
 
 Client XMPP multiplateforme basé sur le Web
 
@@ -22,9 +23,9 @@ Client XMPP multiplateforme basé sur le Web
 
 **Démo :** https://nl.movim.eu/?login
 
-## Captures d'écran
+## Captures d’écran
 
-![Capture d'écran de Movim](./doc/screenshots/movim.png)
+![Capture d’écran de Movim](./doc/screenshots/movim.png)
 
 ## Avertissements / informations importantes
 
@@ -34,9 +35,9 @@ Client XMPP multiplateforme basé sur le Web
 
 ## Documentations et ressources
 
-* Site officiel de l'app : <https://movim.eu>
-* Documentation officielle de l'admin : <https://github.com/movim/movim/wiki>
-* Dépôt de code officiel de l'app : <https://github.com/movim/movim>
+* Site officiel de l’app : <https://movim.eu>
+* Documentation officielle de l’admin : <https://github.com/movim/movim/wiki>
+* Dépôt de code officiel de l’app : <https://github.com/movim/movim>
 * Documentation YunoHost pour cette app : <https://yunohost.org/app_movim>
 * Signaler un bug : <https://github.com/YunoHost-Apps/movim_ynh/issues>
 
@@ -52,4 +53,4 @@ ou
 sudo yunohost app upgrade movim -u https://github.com/YunoHost-Apps/movim_ynh/tree/testing --debug
 ```
 
-**Plus d'infos sur le packaging d'applications :** <https://yunohost.org/packaging_apps>
+**Plus d’infos sur le packaging d’applications :** <https://yunohost.org/packaging_apps>
