@@ -17,7 +17,7 @@ admindoc = "https://github.com/movim/movim/wiki"
 code = "https://github.com/movim/movim"
 
 [integration]
-yunohost = ">= 11.1.17"
+yunohost = ">= 11.1.20"
 architectures = "all"
 multi_instance = false
 ldap = false
