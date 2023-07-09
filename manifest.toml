@@ -5,7 +5,7 @@ name = "Movim"
 description.en = "Web-based cross-platform XMPP client"
 description.fr = "Client XMPP multiplateforme basé sur le Web"
 
-version = "0.22~ynh1"
+version = "0.22.1~ynh1"
 
 maintainers = []
 
@@ -46,8 +46,8 @@ ram.runtime = "50M"
 
 [resources]
         [resources.sources.main]
-        url = "https://github.com/movim/movim/archive/v0.22.tar.gz"
-        sha256 = "c650210645adb07c9024fc3fa637786fde0086b9cfbf0e371fb65994ccf22b11"
+        url = "https://github.com/movim/movim/archive/v0.22.1.tar.gz"
+        sha256 = "69e533ce8ce04edee8e82386e789cd7ca316bf830477ec4bd0d9117b144a264f"
         autoupdate.strategy = "latest_github_tag"
 
     [resources.ports]
