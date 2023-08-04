@@ -89,6 +89,7 @@ ynh_script_progression --message="Building Movim..."
 # Install composer
 ynh_install_composer
 ynh_exec_warn_less ynh_install_composer --phpversion="$phpversion" --workdir="$install_dir"
+
 pushd $install_dir
 	ynh_exec_as $app php$phpversion composer.phar install
 popd
