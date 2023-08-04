@@ -5,7 +5,7 @@ name = "Movim"
 description.en = "Web-based cross-platform XMPP client"
 description.fr = "Client XMPP multiplateforme basé sur le Web"
 
-version = "0.22.1~ynh1"
+version = "0.22.3~ynh1"
 
 maintainers = []
 
@@ -17,7 +17,7 @@ admindoc = "https://github.com/movim/movim/wiki"
 code = "https://github.com/movim/movim"
 
 [integration]
-yunohost = ">= 11.1.21"
+yunohost = ">= 11.2"
 architectures = "all"
 multi_instance = false
 ldap = false
@@ -46,8 +46,8 @@ ram.runtime = "50M"
 
 [resources]
         [resources.sources.main]
-        url = "https://github.com/movim/movim/archive/v0.22.1.tar.gz"
-        sha256 = "69e533ce8ce04edee8e82386e789cd7ca316bf830477ec4bd0d9117b144a264f"
+        url = "https://github.com/movim/movim/archive/v0.22.3.tar.gz"
+        sha256 = "cf0473cf7ad00cfce425b2cb45ca9cf88cb5ab5233ad91f5fe08da6a4e6a5a68"
         autoupdate.strategy = "latest_github_tag"
 
     [resources.ports]
@@ -60,7 +60,7 @@ ram.runtime = "50M"
     main.url = "/"
 
     [resources.apt]
-    packages = "postgresql php8.0-curl php8.0-mbstring php8.0-imagick php8.0-gd php8.0-pgsql php8.0-xml"
+    packages = "postgresql php8.2-curl php8.2-mbstring php8.2-imagick php8.2-gd php8.2-pgsql php8.2-xml"
 
     [resources.database]
     type = "postgresql"
