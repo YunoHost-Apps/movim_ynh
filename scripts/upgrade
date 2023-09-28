@@ -85,7 +85,7 @@ ynh_add_nginx_config
 # Create a dedicated systemd config
 ynh_add_systemd_config
 
-yunohost service add $app --description="Responsive web-based XMPP client"
+yunohost service add $app --description="Responsive web-based XMPP client" --log="/var/log/$app/$app.log"
 
 #=================================================
 # SPECIFIC UPGRADE
