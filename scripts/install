@@ -81,6 +81,8 @@ ynh_script_progression --message="Building Movim..."
 # Install composer
 ynh_install_composer
 
+ynh_exec_warn_less ynh_composer_exec --commands="install"
+
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================

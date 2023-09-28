@@ -11,7 +11,7 @@ ExecStart=/usr/bin/php__PHPVERSION__ daemon.php start
 StandardOutput=syslog
 SyslogIdentifier=__APP__
 PIDFile=/run/movim.pid
-Restart=on-failure
+#Restart=on-failure
 RestartSec=10
 
 # Sandboxing options to harden security
