@@ -19,7 +19,7 @@ Si vous n’avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) po
 Client XMPP multiplateforme basé sur le Web
 
 
-**Version incluse :** 0.22.3~ynh1
+**Version incluse :** 0.22.5~ynh1
 
 **Démo :** https://nl.movim.eu/?login
 
@@ -32,7 +32,6 @@ Client XMPP multiplateforme basé sur le Web
 * Site officiel de l’app : <https://movim.eu>
 * Documentation officielle de l’admin : <https://github.com/movim/movim/wiki>
 * Dépôt de code officiel de l’app : <https://github.com/movim/movim>
-* Documentation YunoHost pour cette app : <https://yunohost.org/app_movim>
 * Signaler un bug : <https://github.com/YunoHost-Apps/movim_ynh/issues>
 
 ## Informations pour les développeurs

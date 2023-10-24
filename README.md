@@ -19,7 +19,7 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 Web-based cross-platform XMPP client
 
 
-**Shipped version:** 0.22.3~ynh1
+**Shipped version:** 0.22.5~ynh1
 
 **Demo:** https://nl.movim.eu/?login
 
@@ -32,7 +32,6 @@ Web-based cross-platform XMPP client
 * Official app website: <https://movim.eu>
 * Official admin documentation: <https://github.com/movim/movim/wiki>
 * Upstream app code repository: <https://github.com/movim/movim>
-* YunoHost documentation for this app: <https://yunohost.org/app_movim>
 * Report a bug: <https://github.com/YunoHost-Apps/movim_ynh/issues>
 
 ## Developer info
