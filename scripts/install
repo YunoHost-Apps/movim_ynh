@@ -68,7 +68,8 @@ ynh_script_progression --message="Building Movim..."
 ynh_install_composer
 
 #ynh_exec_warn_less ynh_exec_as "$app" ynh_composer_exec --commands="install"
-ynh_exec_warn_less ynh_exec_as "$app" ynh_composer_exec --commands="movim:migrate"
+#ynh_exec_warn_less ynh_exec_as "$app" ynh_composer_exec --commands="movim:migrate"
+ynh_composer_exec --commands="movim:migrate"
 
 #=================================================
 # START SYSTEMD SERVICE
