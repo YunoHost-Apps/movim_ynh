@@ -32,6 +32,7 @@ Client XMPP multiplateforme basé sur le Web
 * Site officiel de l’app : <https://movim.eu>
 * Documentation officielle de l’admin : <https://github.com/movim/movim/wiki>
 * Dépôt de code officiel de l’app : <https://github.com/movim/movim>
+* YunoHost Store: <https://apps.yunohost.org/app/movim>
 * Signaler un bug : <https://github.com/YunoHost-Apps/movim_ynh/issues>
 
 ## Informations pour les développeurs

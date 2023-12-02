@@ -32,6 +32,7 @@ Web-based cross-platform XMPP client
 * Official app website: <https://movim.eu>
 * Official admin documentation: <https://github.com/movim/movim/wiki>
 * Upstream app code repository: <https://github.com/movim/movim>
+* YunoHost Store: <https://apps.yunohost.org/app/movim>
 * Report a bug: <https://github.com/YunoHost-Apps/movim_ynh/issues>
 
 ## Developer info
