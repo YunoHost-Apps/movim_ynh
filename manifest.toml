@@ -1,0 +1,81 @@
+#:schema https://raw.githubusercontent.com/YunoHost/apps/master/schemas/manifest.v2.schema.json
+
+packaging_format = 2
+
+id = "movim"
+name = "Movim"
+description.en = "Web-based cross-platform XMPP client"
+description.fr = "Client XMPP multiplateforme basé sur le Web"
+
+version = "0.19~ynh5"
+
+maintainers = []
+
+[upstream]
+license = "AGPL-3.0-or-later"
+website = "https://movim.eu"
+demo = "https://nl.movim.eu/?login"
+admindoc = "https://github.com/movim/movim/wiki"
+code = "https://github.com/movim/movim"
+cpe = "cpe:2.3:a:movim:movim"
+
+[integration]
+yunohost = ">= 11.0.9"
+architectures = "all"
+multi_instance = false
+ldap = "?" # FIXME: replace with true, false, or "not_relevant". Not to confuse with the "sso" key : the "ldap" key corresponds to wether or not a user *can* login on the app using its YunoHost credentials.
+sso = "?" # FIXME: replace with true, false, or "not_relevant". Not to confuse with the "ldap" key : the "sso" key corresponds to wether or not a user is *automatically logged-in* on the app when logged-in on the YunoHost portal.
+disk = "50M" # FIXME: replace with an **estimate** minimum disk requirement. e.g. 20M, 400M, 1G, ...
+ram.build = "50M" # FIXME: replace with an **estimate** minimum ram requirement. e.g. 50M, 400M, 1G, ...
+ram.runtime = "50M" # FIXME: replace with an **estimate** minimum ram requirement. e.g. 50M, 400M, 1G, ...
+
+[install]
+    [install.domain]
+    type = "domain"
+
+    [install.path]
+    type = "path"
+    default = "/movim"
+
+    [install.init_main_permission]
+    type = "group"
+    default = "visitors"
+
+    [install.admin]
+    type = "user"
+
+    [install.password]
+    type = "password"
+
+[resources]
+    [resources.sources.main]
+    url = "https://github.com/movim/movim/archive/v0.19.tar.gz"
+    sha256 = "df98b5b0df6fd6bfa5fda88f387ac017bc7bcead42c462745296604f3e0ee501"
+
+    autoupdate.strategy = "latest_github_tag"
+
+    [resources.system_user]
+
+    [resources.install_dir]
+
+    [resources.permissions]
+    main.url = "/"
+
+    [resources.ports]
+    main.default = 9537
+
+    [resources.apt]
+    packages = [
+        "php7.4-curl",
+        "php7.4-mbstring",
+        "php7.4-imagick",
+        "php7.4-gd",
+        "php7.4-pgsql",
+        "php7.4-xml",
+        "postgresql",
+        "postgresql-contrib",
+        "apt-transport-https",
+    ]
+
+    [resources.database]
+    type = "postgresql"
