@@ -54,7 +54,7 @@ ynh_script_progression --message="Reloading NGINX web server and $app's service.
 ynh_systemd_action --service_name="$app" --action="start" --log_path="systemd" --line_match="Movim daemon launched"
 ynh_systemd_action --service_name="php$phpversion-fpm" --action=reload
 
-ynh_systemd_action --service_name=nginx --action=Reloading
+ynh_systemd_action --service_name=nginx --action="reload"
 
 #=================================================
 # END OF SCRIPT
