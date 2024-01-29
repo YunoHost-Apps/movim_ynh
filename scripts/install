@@ -50,9 +50,9 @@ ynh_install_composer
 ynh_composer_exec --commands="movim:migrate"
 
 #=================================================
-# PHP-FPM CONFIGURATION
+# SYSTEM CONFIGURATION
 #=================================================
-ynh_script_progression --message="Configuring PHP-FPM..."
+ynh_script_progression --message="Adding system configurations related to $app..." --weight=1
 
 # Create a dedicated PHP-FPM config
 ynh_add_fpm_config --usage=low --footprint=low
@@ -62,7 +62,7 @@ ynh_add_nginx_config
 
 # Create a dedicated systemd config
 ynh_add_systemd_config
-yunohost service add $app --description="Responsive web-based XMPP client" --log="/var/log/$app/$app.log"
+yunohost service add "$app" --description="Responsive web-based XMPP client" --log="/var/log/$app/$app.log"
 
 #=================================================
 # START SYSTEMD SERVICE
