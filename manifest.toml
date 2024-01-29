@@ -1,0 +1,80 @@
+#:schema https://raw.githubusercontent.com/YunoHost/apps/master/schemas/manifest.v2.schema.json
+
+packaging_format = 2
+
+id = "movim"
+name = "Movim"
+description.en = "Decentralized social platform based on XMPP"
+description.fr = "Plateforme sociale décentralisée basée sur XMPP"
+
+version = "0.19~ynh5"
+
+maintainers = []
+
+[upstream]
+license = "AGPL-3.0-or-later"
+website = "https://movim.eu"
+demo = "https://nl.movim.eu/?login"
+admindoc = "https://github.com/movim/movim/wiki"
+code = "https://github.com/movim/movim"
+cpe = "cpe:2.3:a:movim:movim"
+
+[integration]
+yunohost = ">= 11.2"
+architectures = "all"
+multi_instance = false
+ldap = false
+sso = false
+disk = "50M"
+ram.build = "100M"
+ram.runtime = "50M"
+
+[install]
+    [install.domain]
+    type = "domain"
+
+    [install.path]
+    type = "path"
+    default = "/movim"
+
+    [install.init_main_permission]
+    type = "group"
+    default = "visitors"
+
+    [install.admin]
+    type = "user"
+
+    [install.password]
+    type = "password"
+
+[resources]
+    [resources.sources.main]
+    url = "https://github.com/movim/movim/archive/v0.19.tar.gz"
+    sha256 = "df98b5b0df6fd6bfa5fda88f387ac017bc7bcead42c462745296604f3e0ee501"
+
+    autoupdate.strategy = "latest_github_tag"
+
+    [resources.ports]
+
+    [resources.system_user]
+
+    [resources.install_dir]
+
+    [resources.permissions]
+    main.url = "/"
+
+    [resources.apt]
+    packages = [
+        "php7.4-curl",
+        "php7.4-mbstring",
+        "php7.4-imagick",
+        "php7.4-gd",
+        "php7.4-pgsql",
+        "php7.4-xml",
+        "postgresql",
+        "postgresql-contrib",
+        "apt-transport-https",
+    ]
+
+    [resources.database]
+    type = "postgresql"
