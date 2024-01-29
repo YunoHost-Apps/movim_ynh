@@ -13,7 +13,6 @@ source /usr/share/yunohost/helpers
 # INITIALIZE AND STORE SETTINGS
 #=================================================
 
-timezone=$(cat /etc/timezone)
 fpm_footprint="low"
 fpm_free_footprint=0
 fpm_usage="low"
