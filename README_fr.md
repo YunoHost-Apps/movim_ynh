@@ -27,12 +27,6 @@ Client XMPP multiplateforme basé sur le Web
 
 ![Capture d’écran de Movim](./doc/screenshots/movim.png)
 
-## Avertissements / informations importantes
-
-## Configuration
-
- * Après l'installation, l'application peut être configurée sur https://example.com/movim/?admin en utilisant le nom d'utilisateur et le mot de passe définis lors de l'installation.
-
 ## Documentations et ressources
 
 * Site officiel de l’app : <https://movim.eu>
