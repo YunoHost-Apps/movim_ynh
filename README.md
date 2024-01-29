@@ -27,12 +27,6 @@ Web-based cross-platform XMPP client
 
 ![Screenshot of Movim](./doc/screenshots/movim.png)
 
-## Disclaimers / important information
-
-## Configuration
-
- * After installing the app, it can be configured at https://example.com/movim/?admin using the username and password defined during the installation.
-
 ## Documentation and resources
 
 * Official app website: <https://movim.eu>
