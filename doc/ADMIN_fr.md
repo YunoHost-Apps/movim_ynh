@@ -1,1 +1,1 @@
-Après l'installation, l'application peut être configurée sur https://__DOMAIN__/movim/?admin en utilisant le nom d'utilisateur et le mot de passe définis lors de l'installation.
+L'application peut être configurée sur <https://__DOMAIN____PATH__/?admin> en utilisant le nom d'utilisateur et le mot de passe définis lors de l'installation.

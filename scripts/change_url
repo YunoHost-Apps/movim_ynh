@@ -16,7 +16,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 ynh_script_progression --message="Stopping a systemd service..."
 
-ynh_systemd_action --service_name=$app --action="stop" --log_path="systemd" --line_match="Stopped"
+ynh_systemd_action --service_name=$app --action="stop" --log_path="systemd"
 
 #=================================================
 # MODIFY URL IN NGINX CONF
@@ -28,23 +28,16 @@ ynh_change_url_nginx_config
 #=================================================
 # SPECIFIC MODIFICATIONS
 #=================================================
-# SETUP SYSTEMD
-#=================================================
 ynh_script_progression --message="Configuring a systemd service..."
 
-domain=$new_domain
-path=$new_path
 ynh_add_systemd_config
 
 #=================================================
-# GENERIC FINALISATION
-#=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting a systemd service..."
+ynh_script_progression --message="Starting a systemd service..." --weight=1
 
-# Start a systemd service
-ynh_systemd_action --service_name=$app --action="start" --log_path="systemd" --line_match="Movim daemon launched"
+ynh_systemd_action --service_name="$app" --action="start" --log_path="systemd" --line_match="Movim daemon launched"
 
 #=================================================
 # END OF SCRIPT
