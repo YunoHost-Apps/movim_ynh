@@ -10,34 +10,17 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# INITIALIZE AND STORE SETTINGS
+# RETRIEVE ARGUMENTS FROM THE MANIFEST
 #=================================================
 
-fpm_footprint="low"
-fpm_free_footprint=0
-fpm_usage="low"
-ynh_app_setting_set --app="$app" --key=fpm_footprint --value="$fpm_footprint"
-ynh_app_setting_set --app="$app" --key=fpm_free_footprint --value="$fpm_free_footprint"
-ynh_app_setting_set --app="$app" --key=fpm_usage --value="$fpm_usage"
-
-#=================================================
-# CONFIGURING A POSTGRESQL DATABASE
-#=================================================
-ynh_script_progression --message="Configuring a PostgreSQL database..."
-
-ynh_psql_execute_as_root --database="$db_name" --sql="CREATE EXTENSION IF NOT EXISTS unaccent;"
-ynh_psql_execute_as_root --database="$db_name" --sql="CREATE EXTENSION IF NOT EXISTS pg_trgm;"
+timezone=$(cat /etc/timezone)
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 ynh_script_progression --message="Setting up source files..."
 
-# Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source --dest_dir="$install_dir"
-
-# Temporary workaround to fix movim.ERROR: Error: Call to undefined function GuzzleHttp\Psr7\uri_for()
-ynh_replace_string --match_string="0.3.5" --replace_string="0.4.1" --target_file="$install_dir/composer.json"
 
 chmod -R o-rwx "$install_dir"
 chown -R "$app:www-data" "$install_dir"
@@ -49,10 +32,10 @@ chown -R "$app:www-data" "$install_dir"
 #=================================================
 ynh_script_progression --message="Adding a configuration file..."
 
-ynh_add_config --template="db.example.inc.php" --destination="$install_dir/config/db.inc.php"
+ynh_add_config --template=".env" --destination="$install_dir/.env"
 
-chmod 400 "$install_dir/config/db.inc.php"
-chown "$app:$app" "$install_dir/config/db.inc.php"
+chmod 650 "$install_dir/.env"
+chown "$app:$app" "$install_dir/.env"
 
 #=================================================
 # BUILD MOVIM
@@ -60,32 +43,29 @@ chown "$app:$app" "$install_dir/config/db.inc.php"
 ynh_script_progression --message="Building Movim..."
 
 # Install composer
-ynh_exec_warn_less ynh_install_composer --phpversion="$phpversion" --workdir="$install_dir"
+ynh_install_composer
 
-ynh_exec_warn_less ynh_composer_exec --phpversion="$phpversion" --workdir="$install_dir" --commands="movim:migrate"
-ynh_exec_as "$app" "php$phpversion" "$install_dir/daemon.php" config --username="$admin" --password="$password" --quiet
+ynh_exec_warn_less ynh_composer_exec --commands="install"
+ynh_exec_warn_less ynh_composer_exec --commands="movim:migrate"
+
 
 #=================================================
 # SYSTEM CONFIGURATION
 #=================================================
 ynh_script_progression --message="Adding system configurations related to $app..." --weight=1
 
-# Create a dedicated PHP-FPM config
-ynh_add_fpm_config --usage=$fpm_usage --footprint=$fpm_footprint
+ynh_add_fpm_config
 
-# Create a dedicated NGINX config
 ynh_add_nginx_config
 
-# Create a dedicated systemd config
 ynh_add_systemd_config
-yunohost service add "$app" --description="Responsive web-based XMPP client"
+yunohost service add "$app" --description="Responsive web-based XMPP client" --log="/var/log/$app/$app.log"
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
 ynh_script_progression --message="Starting a systemd service..."
 
-# Start a systemd service
 ynh_systemd_action --service_name="$app" --action="start" --log_path="systemd" --line_match="Movim daemon launched"
 
 #=================================================

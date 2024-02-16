@@ -23,8 +23,11 @@ cpe = "cpe:2.3:a:movim:movim"
 yunohost = ">= 11.2"
 architectures = "all"
 multi_instance = false
+
 ldap = false
-sso = false
+
+sso = true
+
 disk = "50M"
 ram.build = "100M"
 ram.runtime = "50M"
@@ -51,7 +54,6 @@ ram.runtime = "50M"
     [resources.sources.main]
     url = "https://github.com/movim/movim/archive/refs/tags/v0.23.tar.gz"
     sha256 = "f0acd671c8e7e6979c75265ea696101ebd68f47d74cb7e5908eb8071a89026c3"
-
     autoupdate.strategy = "latest_github_tag"
 
     [resources.ports]
@@ -69,6 +71,7 @@ ram.runtime = "50M"
         "php8.2-mbstring",
         "php8.2-imagick",
         "php8.2-gd",
+        "php8.2-dom",
         "php8.2-pgsql",
         "php8.2-xml",
         "postgresql",
