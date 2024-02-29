@@ -26,6 +26,18 @@ chmod -R o-rwx "$install_dir"
 chown -R "$app:www-data" "$install_dir"
 
 #=================================================
+# SYSTEM CONFIGURATION
+#=================================================
+ynh_script_progression --message="Adding system configurations related to $app..." --weight=1
+
+ynh_add_fpm_config
+
+ynh_add_nginx_config
+
+ynh_add_systemd_config
+yunohost service add "$app" --description="Responsive web-based XMPP client" --log="/var/log/$app/$app.log"
+
+#=================================================
 # SPECIFIC SETUP
 #=================================================
 # ADD A CONFIGURATION
@@ -47,19 +59,6 @@ ynh_install_composer
 
 ynh_exec_warn_less ynh_composer_exec --commands="install"
 ynh_exec_warn_less ynh_composer_exec --commands="movim:migrate"
-
-
-#=================================================
-# SYSTEM CONFIGURATION
-#=================================================
-ynh_script_progression --message="Adding system configurations related to $app..." --weight=1
-
-ynh_add_fpm_config
-
-ynh_add_nginx_config
-
-ynh_add_systemd_config
-yunohost service add "$app" --description="Responsive web-based XMPP client" --log="/var/log/$app/$app.log"
 
 #=================================================
 # START SYSTEMD SERVICE
