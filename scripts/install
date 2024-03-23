@@ -1,8 +1,6 @@
 #!/bin/bash
 
 #=================================================
-# GENERIC START
-#=================================================
 # IMPORT GENERIC HELPERS
 #=================================================
 
@@ -23,7 +21,7 @@ ynh_app_setting_set --app="$app" --key=fpm_usage --value="$fpm_usage"
 #=================================================
 # CONFIGURING A POSTGRESQL DATABASE
 #=================================================
-ynh_script_progression --message="Configuring a PostgreSQL database..."
+ynh_script_progression --message="Configuring $app's PostgreSQL database..."
 
 ynh_psql_execute_as_root --database="$db_name" --sql="CREATE EXTENSION IF NOT EXISTS unaccent;"
 ynh_psql_execute_as_root --database="$db_name" --sql="CREATE EXTENSION IF NOT EXISTS pg_trgm;"
@@ -43,11 +41,9 @@ chmod -R o-rwx "$install_dir"
 chown -R "$app:www-data" "$install_dir"
 
 #=================================================
-# SPECIFIC SETUP
-#=================================================
 # ADD A CONFIGURATION
 #=================================================
-ynh_script_progression --message="Adding a configuration file..."
+ynh_script_progression --message="Adding $app's configuration file..."
 
 ynh_add_config --template="db.example.inc.php" --destination="$install_dir/config/db.inc.php"
 
@@ -83,7 +79,7 @@ yunohost service add "$app" --description="Responsive web-based XMPP client"
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting a systemd service..."
+ynh_script_progression --message="Starting $app's systemd service..."
 
 # Start a systemd service
 ynh_systemd_action --service_name="$app" --action="start" --log_path="systemd" --line_match="Movim daemon launched"
