@@ -8,11 +8,6 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# INITIALIZE AND STORE SETTINGS
-#=================================================
-
-
-#=================================================
 # CONFIGURING A POSTGRESQL DATABASE
 #=================================================
 ynh_script_progression --message="Configuring $app's PostgreSQL database..."
