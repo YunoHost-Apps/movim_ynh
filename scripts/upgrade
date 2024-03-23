@@ -54,7 +54,7 @@ chown -R "$app:www-data" "$install_dir"
 #=================================================
 # UPDATE A CONFIG FILE
 #=================================================
-ynh_script_progression --message="Updating $ap's configuration file..."
+ynh_script_progression --message="Updating $app's configuration file..."
 
 ynh_add_config --template="db.example.inc.php" --destination="$install_dir/config/db.inc.php"
 
