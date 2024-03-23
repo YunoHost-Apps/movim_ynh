@@ -11,12 +11,6 @@ source /usr/share/yunohost/helpers
 # INITIALIZE AND STORE SETTINGS
 #=================================================
 
-fpm_footprint="low"
-fpm_free_footprint=0
-fpm_usage="low"
-ynh_app_setting_set --app="$app" --key=fpm_footprint --value="$fpm_footprint"
-ynh_app_setting_set --app="$app" --key=fpm_free_footprint --value="$fpm_free_footprint"
-ynh_app_setting_set --app="$app" --key=fpm_usage --value="$fpm_usage"
 
 #=================================================
 # CONFIGURING A POSTGRESQL DATABASE
@@ -67,7 +61,7 @@ ynh_exec_as "$app" "php$phpversion" "$install_dir/daemon.php" config --username=
 ynh_script_progression --message="Adding system configurations related to $app..." --weight=1
 
 # Create a dedicated PHP-FPM config
-ynh_add_fpm_config --usage=$fpm_usage --footprint=$fpm_footprint
+ynh_add_fpm_config
 
 # Create a dedicated NGINX config
 ynh_add_nginx_config
