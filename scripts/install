@@ -39,6 +39,8 @@ ynh_install_composer
 COMPOSER_ALLOW_SUPERUSER=1 "$app" ynh_composer_exec --commands="install"
 COMPOSER_ALLOW_SUPERUSER=1 "$app" ynh_composer_exec --commands="movim:migrate"
 
+chown -R "$app:www-data" "$install_dir"
+
 #=================================================
 # SYSTEM CONFIGURATION
 #=================================================
