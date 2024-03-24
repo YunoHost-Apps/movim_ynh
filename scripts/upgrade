@@ -42,9 +42,9 @@ ynh_script_progression --message="Building Movim..."
 
 ynh_exec_warn_less ynh_install_composer
 
-ynh_exec_warn_less ynh_composer_exec --commands="config --global discard-changes true --quiet"
-ynh_exec_warn_less ynh_composer_exec --commands="update --no-interaction --quiet"
-ynh_exec_warn_less ynh_composer_exec --commands="movim:migrate --quiet"
+ynh_exec_warn_less COMPOSER_ALLOW_SUPERUSER=1 ynh_composer_exec --commands="config --global discard-changes true --quiet"
+ynh_exec_warn_less COMPOSER_ALLOW_SUPERUSER=1 ynh_composer_exec --commands="update --no-interaction --quiet"
+ynh_exec_warn_less COMPOSER_ALLOW_SUPERUSER=1 ynh_composer_exec --commands="movim:migrate --quiet"
 
 #=================================================
 # REAPPLY SYSTEM CONFIGURATIONS
