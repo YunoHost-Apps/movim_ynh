@@ -37,7 +37,7 @@ ynh_script_progression --message="Building Movim..."
 ynh_install_composer
 
 COMPOSER_ALLOW_SUPERUSER=1 ynh_composer_exec --commands="install --no-dev"
-COMPOSER_ALLOW_SUPERUSER=1 ynh_composer_exec --commands="movim:migrate"
+COMPOSER_ALLOW_SUPERUSER=1 _fix_php_version ynh_composer_exec --commands="movim:migrate"
 
 chown -R "$app:www-data" "$install_dir"
 
