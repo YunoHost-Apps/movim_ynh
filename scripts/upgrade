@@ -54,7 +54,7 @@ chown -R "$app:www-data" "$install_dir"
 #=================================================
 # UPDATE A CONFIG FILE
 #=================================================
-ynh_script_progression --message="Updating $ap's configuration file..."
+ynh_script_progression --message="Updating $app's configuration file..."
 
 ynh_add_config --template="db.example.inc.php" --destination="$install_dir/config/db.inc.php"
 
@@ -66,10 +66,11 @@ chown "$app:$app" "$install_dir/config/db.inc.php"
 #=================================================
 ynh_script_progression --message="Building Movim..."
 
-ynh_exec_warn_less ynh_install_composer --phpversion="$phpversion" --workdir="$install_dir"
-ynh_exec_warn_less ynh_composer_exec --phpversion="$phpversion" --workdir="$install_dir" --commands="config --global discard-changes true --quiet"
-ynh_exec_warn_less ynh_composer_exec --phpversion="$phpversion" --workdir="$install_dir" --commands="update --no-interaction --quiet"
-ynh_exec_warn_less ynh_composer_exec --phpversion="$phpversion" --workdir="$install_dir" --commands="movim:migrate --quiet"
+ynh_exec_warn_less ynh_install_composer
+
+ynh_exec_warn_less ynh_composer_exec --commands="config --global discard-changes true --quiet"
+ynh_exec_warn_less ynh_composer_exec --commands="update --no-interaction --quiet"
+ynh_exec_warn_less ynh_composer_exec --commands="movim:migrate --quiet"
 
 #=================================================
 # REAPPLY SYSTEM CONFIGURATIONS
@@ -77,7 +78,7 @@ ynh_exec_warn_less ynh_composer_exec --phpversion="$phpversion" --workdir="$inst
 ynh_script_progression --message="Upgrading system configurations related to $app..." --weight=1
 
 # Create a dedicated PHP-FPM config
-ynh_add_fpm_config --phpversion="$phpversion" --usage="$fpm_usage" --footprint="$fpm_footprint"
+ynh_add_fpm_config  --usage="$fpm_usage" --footprint="$fpm_footprint"
 
 # Create a dedicated NGINX config
 ynh_add_nginx_config

@@ -23,8 +23,10 @@ cpe = "cpe:2.3:a:movim:movim"
 yunohost = ">= 11.2"
 architectures = "all"
 multi_instance = false
+
 ldap = false
-sso = false
+sso = true
+
 disk = "50M"
 ram.build = "100M"
 ram.runtime = "50M"
