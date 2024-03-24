@@ -7,7 +7,7 @@ name = "Movim"
 description.en = "Decentralized social platform based on XMPP"
 description.fr = "Plateforme sociale décentralisée basée sur XMPP"
 
-version = "0.19~ynh5"
+version = "0.23~ynh1"
 
 maintainers = []
 
@@ -51,8 +51,8 @@ ram.runtime = "50M"
 
 [resources]
     [resources.sources.main]
-    url = "https://github.com/movim/movim/archive/v0.19.tar.gz"
-    sha256 = "df98b5b0df6fd6bfa5fda88f387ac017bc7bcead42c462745296604f3e0ee501"
+    url = "https://github.com/movim/movim/archive/refs/tags/v0.23.tar.gz"
+    sha256 = "f0acd671c8e7e6979c75265ea696101ebd68f47d74cb7e5908eb8071a89026c3"
 
     autoupdate.strategy = "latest_github_tag"
 
@@ -67,12 +67,13 @@ ram.runtime = "50M"
 
     [resources.apt]
     packages = [
-        "php7.4-curl",
-        "php7.4-mbstring",
-        "php7.4-imagick",
-        "php7.4-gd",
-        "php7.4-pgsql",
-        "php7.4-xml",
+        "php8.2-curl",
+        "php8.2-mbstring",
+        "php8.2-imagick",
+        "php8.2-gd",
+        "php8.2-dom",
+        "php8.2-pgsql",
+        "php8.2-xml",
         "postgresql",
         "postgresql-contrib",
         "apt-transport-https",
