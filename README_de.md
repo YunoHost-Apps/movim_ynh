@@ -18,7 +18,7 @@ Wenn Sie YunoHost nicht haben, lesen Sie bitte [die Anleitung](https://yunohost.
 
 Web-based cross-platform XMPP client
 
-**Ausgelieferte Version:** 0.23~ynh1
+**Shipped version:** 0.23~ynh1
 
 **Demo:** <https://nl.movim.eu/?login>
 
@@ -39,7 +39,7 @@ Web-based cross-platform XMPP client
 Bitte senden Sie Ihren Pull-Request an den [testing branch](https://github.com/YunoHost-Apps/movim_ynh/tree/testing),
 
 
-Um den Testing-Branch auszuprobieren, gehen Sie bitte wie folgt vor:
+To try the testing branch, please proceed like that:
 
 ```bash
 sudo yunohost app install https://github.com/YunoHost-Apps/movim_ynh/tree/testing --debug

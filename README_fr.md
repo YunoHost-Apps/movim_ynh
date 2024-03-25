@@ -18,9 +18,9 @@ Si vous n’avez pas YunoHost, consultez [ce guide](https://yunohost.org/#/insta
 
 Client XMPP multiplateforme basé sur le Web
 
-**Version incluse :** 0.23~ynh1
+**Shipped version:** 0.23~ynh1
 
-**Démo :** <https://nl.movim.eu/?login>
+**Demo:** <https://nl.movim.eu/?login>
 
 ## Captures d'écran
 
@@ -39,7 +39,7 @@ Client XMPP multiplateforme basé sur le Web
 Merci de faire vos pull request sur la [branche testing](https://github.com/YunoHost-Apps/movim_ynh/tree/testing),
 
 
-Pour essayer la branche testing, procédez comme suit :
+To try the testing branch, please proceed like that:
 
 ```bash
 sudo yunohost app install https://github.com/YunoHost-Apps/movim_ynh/tree/testing --debug
