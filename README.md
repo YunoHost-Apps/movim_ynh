@@ -39,7 +39,7 @@ Web-based cross-platform XMPP client
 Please send your pull request to the [testing branch](https://github.com/YunoHost-Apps/movim_ynh/tree/testing),
 
 
-To try the testing branch, please proceed like that.
+To try the testing branch, please proceed like that:
 
 ```bash
 sudo yunohost app install https://github.com/YunoHost-Apps/movim_ynh/tree/testing --debug
