@@ -1,50 +1,50 @@
 <!--
-Nota bene : ce README est automatiquement généré par https://github.com/YunoHost/apps/tree/master/tools/readme_generator
-Il ne doit pas être modifié à la main.
+NOTA: Este README foi creado automáticamente por <https://github.com/YunoHost/apps/tree/master/tools/readme_generator>
+NON debe editarse manualmente.
 -->
 
-# Movim pour YunoHost
+# Movim para YunoHost
 
-[![Niveau d'intégration](https://dash.yunohost.org/integration/movim.svg)](https://dash.yunohost.org/appci/app/movim) ![Status du fonctionnement](https://ci-apps.yunohost.org/ci/badges/movim.status.svg) ![Statut demaintenance](https://ci-apps.yunohost.org/ci/badges/movim.maintain.svg)
+[![Nivel de integración](https://dash.yunohost.org/integration/movim.svg)](https://dash.yunohost.org/appci/app/movim) ![Estado de funcionamento](https://ci-apps.yunohost.org/ci/badges/movim.status.svg) ![Estado de mantemento](https://ci-apps.yunohost.org/ci/badges/movim.maintain.svg)
 
-[![Installer Movim avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=movim)
+[![Instalar Movim con YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=movim)
 
-*[Lire le README dans d'autres langues.](./ALL_README.md)*
+*[Le este README en outros idiomas.](./ALL_README.md)*
 
-> *Ce package vous permet d’installer Movim rapidement et simplement sur un serveur YunoHost.
-Si vous n’avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour savoir comment l’installer et en profiter.*
+> *Este paquete permíteche instalar Movim de xeito rápido e doado nun servidor YunoHost.*  
+> *Se non usas YunoHost, le a [documentación](https://yunohost.org/install) para saber como instalalo.*
 
-## Vue d'ensemble
+## Vista xeral
 
 Web-based cross-platform XMPP client
 
-**Version incluse :** 0.19~ynh5
 
-**Démo:** <https://nl.movim.eu/?login>
+**Versión proporcionada:** 0.19~ynh5
 
-## Captures d'écran
+**Demo:** <https://nl.movim.eu/?login>
 
-![Capture d'écran de Movim](./doc/screenshots/movim.png)
+## Capturas de pantalla
 
-## Documentations et ressources
+![Captura de pantalla de Movim](./doc/screenshots/movim.png)
 
-- Site officiel de l’app : <https://movim.eu>
-- Documentation officielle de l'admin : <https://github.com/movim/movim/wiki>
-- Dépôt de code officiel de l’app : <https://github.com/movim/movim>
-- YunoHost Store : <https://apps.yunohost.org/app/movim>
-- Signaler un bug : <https://github.com/YunoHost-Apps/movim_ynh/issues>
+## Documentación e recursos
 
-## Informations pour les développeurs
+- Web oficial da app: <https://movim.eu>
+- Documentación oficial para admin: <https://github.com/movim/movim/wiki>
+- Repositorio de orixe do código: <https://github.com/movim/movim>
+- Tenda YunoHost: <https://apps.yunohost.org/app/movim>
+- Informar dun problema: <https://github.com/YunoHost-Apps/movim_ynh/issues>
 
-Merci de faire vos pull request sur la [branche branch](https://github.com/YunoHost-Apps/movim_ynh/tree/testing),
+## Info de desenvolvemento
 
+Envía a túa colaboración á [rama `testing`](https://github.com/YunoHost-Apps/movim_ynh/tree/testing).
 
-Pour essayer la branche testing, procédez comme suit.
+Para probar a rama `testing`, procede deste xeito:
 
 ```bash
 sudo yunohost app install https://github.com/YunoHost-Apps/movim_ynh/tree/testing --debug
-or
+ou
 sudo yunohost app upgrade movim -u https://github.com/YunoHost-Apps/movim_ynh/tree/testing --debug
 ```
 
-**Plus d'infos sur le packaging d'applications :** <https://yunohost.org/packaging_apps>
+**Máis info sobre o empaquetado da app:** <https://yunohost.org/packaging_apps>
