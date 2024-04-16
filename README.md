@@ -9,7 +9,7 @@ It shall NOT be edited by hand.
 
 [![Install Movim with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=movim)
 
-*[Read this README is other languages.](./ALL_README.md)*
+*[Read this README in other languages.](./ALL_README.md)*
 
 > *This package allows you to install Movim quickly and simply on a YunoHost server.*  
 > *If you don't have YunoHost, please consult [the guide](https://yunohost.org/install) to learn how to install it.*
@@ -19,7 +19,7 @@ It shall NOT be edited by hand.
 Web-based cross-platform XMPP client
 
 
-**Shipped version:** 0.19~ynh5
+**Shipped version:** 0.19~ynh6
 
 **Demo:** <https://nl.movim.eu/?login>
 

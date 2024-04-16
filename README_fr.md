@@ -19,7 +19,7 @@ Il NE doit PAS être modifié à la main.
 Client XMPP multiplateforme basé sur le Web
 
 
-**Version incluse :** 0.19~ynh5
+**Version incluse :** 0.19~ynh6
 
 **Démo :** <https://nl.movim.eu/?login>
 
