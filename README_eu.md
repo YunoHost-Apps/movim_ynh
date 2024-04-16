@@ -19,7 +19,7 @@ EZ editatu eskuz.
 Web-based cross-platform XMPP client
 
 
-**Paketatutako bertsioa:** 0.19~ynh6
+**Paketatutako bertsioa:** 0.23~ynh1
 
 **Demoa:** <https://nl.movim.eu/?login>
 

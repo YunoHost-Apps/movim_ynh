@@ -19,7 +19,7 @@
 Web-based cross-platform XMPP client
 
 
-**分发版本：** 0.19~ynh6
+**分发版本：** 0.23~ynh1
 
 **演示：** <https://nl.movim.eu/?login>
 
