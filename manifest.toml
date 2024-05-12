@@ -25,6 +25,7 @@ architectures = "all"
 multi_instance = false
 
 ldap = false
+
 sso = true
 
 disk = "50M"
@@ -53,7 +54,6 @@ ram.runtime = "50M"
     [resources.sources.main]
     url = "https://github.com/movim/movim/archive/refs/tags/v0.24.1.tar.gz"
     sha256 = "4a596a2aae517be58f185dfd56a182235a9373d524b7e3272d044d4c9805b940"
-
     autoupdate.strategy = "latest_github_tag"
 
     [resources.ports]
