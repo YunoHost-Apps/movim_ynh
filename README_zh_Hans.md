@@ -3,7 +3,7 @@
 请勿手动编辑。
 -->
 
-# YunoHost 的 Movim
+# YunoHost 上的 Movim
 
 [![集成程度](https://dash.yunohost.org/integration/movim.svg)](https://dash.yunohost.org/appci/app/movim) ![工作状态](https://ci-apps.yunohost.org/ci/badges/movim.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/movim.maintain.svg)
 
