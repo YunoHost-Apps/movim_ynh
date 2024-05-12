@@ -68,9 +68,9 @@ ynh_exec_warn_less ynh_install_composer
 # hack to make composer use php8.2 rather than system-default 7.4
 ln -s $(which php$phpversion) $install_dir/php
 
-ynh_exec_warn_less ynh_exec_as $app PATH=$install_dir:$PATH ynh_composer_exec --commands="config --global discard-changes true --quiet"
-ynh_exec_warn_less ynh_exec_as $app PATH=$install_dir:$PATH ynh_composer_exec --commands="update --no-interaction --quiet"
-ynh_exec_warn_less ynh_exec_as $app PATH=$install_dir:$PATH ynh_composer_exec --commands="movim:migrate --quiet"
+ynh_exec_warn_less ynh_exec_as $app PATH=$install_dir:$PATH; ynh_composer_exec --commands="config --global discard-changes true --quiet"
+ynh_exec_warn_less ynh_exec_as $app PATH=$install_dir:$PATH; ynh_composer_exec --commands="update --no-interaction --quiet"
+ynh_exec_warn_less ynh_exec_as $app PATH=$install_dir:$PATH; ynh_composer_exec --commands="movim:migrate --quiet"
 
 rm $install_dir/php
 
