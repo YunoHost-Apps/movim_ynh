@@ -59,7 +59,7 @@ ynh_install_composer
 ln -s $(which php$phpversion) $install_dir/php
 PATH=$install_dir:$PATH
 
-ynh_exec_warn_less ynh_composer_exec --commands="movim:migrate"
+ynh_exec_warn_less ynh_composer_execute --commands="movim:migrate"
 rm $install_dir/php
 ynh_exec_as "$app" "php$phpversion" "$install_dir/daemon.php" config --username="$admin" --password="$password" --quiet
 
