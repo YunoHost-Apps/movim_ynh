@@ -30,7 +30,7 @@ ynh_composer_execute() {
     fi
 
     COMPOSER_HOME="sudo -u $app $workdir/.composer" COMPOSER_MEMORY_LIMIT=-1 \
-        php${phpversion} "$workdir/composer.phar" $commands \
+        sudo -u $app php${phpversion} "$workdir/composer.phar" $commands \
         -d "$workdir" --no-interaction --no-ansi 2>&1
 }
 
