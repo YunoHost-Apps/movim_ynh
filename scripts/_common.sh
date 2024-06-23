@@ -4,7 +4,7 @@
 # COMMON VARIABLES
 #=================================================
 
-YNH_COMPOSER_VERSION="2.2.5"
+YNH_COMPOSER_VERSION="2.6.5"
 
 #=================================================
 # PERSONAL HELPERS
