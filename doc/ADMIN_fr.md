@@ -1,4 +1,4 @@
-Un utilisateur Jabber peut être mis admini via cette commande (iel doit s'être loggué une fois avant):
+Un utilisateur Jabber peut être mis admin via cette commande (iel doit s'être loggué une fois avant) :
 ```
 sudo -u __APP__ php__PHPVERSION__ __INSTALL_DIR__/daemon.php setAdmin <your jabber id>
 ```
