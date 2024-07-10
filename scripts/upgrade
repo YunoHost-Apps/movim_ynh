@@ -41,6 +41,10 @@ if [ -f "$install_dir/config/db.inc.php" ]; then
     ynh_secure_remove --file="$install_dir/config/db.inc.php"
 fi
 
+if [[ -n "${path:-}" ]] && [[ "${path:-}" != "/" ]]; then
+    ynh_die --message="Movim can't be installed in a subdir anymore. Please change_url to the root of a domain before upgrading."
+fi
+
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
