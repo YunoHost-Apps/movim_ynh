@@ -23,6 +23,7 @@ ynh_app_setting_set --app="$app" --key=fpm_usage --value="$fpm_usage"
 #=================================================
 ynh_script_progression --message="Configuring $app's PostgreSQL database..."
 
+# FIXME: is it actually required?
 ynh_psql_execute_as_root --database="$db_name" --sql="CREATE EXTENSION IF NOT EXISTS unaccent;"
 ynh_psql_execute_as_root --database="$db_name" --sql="CREATE EXTENSION IF NOT EXISTS pg_trgm;"
 
@@ -34,8 +35,11 @@ ynh_script_progression --message="Setting up source files..."
 # Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source --dest_dir="$install_dir"
 
-# Temporary workaround to fix movim.ERROR: Error: Call to undefined function GuzzleHttp\Psr7\uri_for()
-ynh_replace_string --match_string="0.3.5" --replace_string="0.4.1" --target_file="$install_dir/composer.json"
+# Patch call to php in composer
+ynh_replace_string -f "$install_dir/composer.json" --match_string='"vendor/bin/phinx' --replace_string='"@php vendor/bin/phinx'
+
+# Patch call to php in daemon code
+ynh_replace_string -f "$install_dir/src/Movim/Daemon/Session.php" --match_string="exec php" --replace_string="exec php$phpversion"
 
 chmod -R o-rwx "$install_dir"
 chown -R "$app:www-data" "$install_dir"
@@ -45,10 +49,10 @@ chown -R "$app:www-data" "$install_dir"
 #=================================================
 ynh_script_progression --message="Adding $app's configuration file..."
 
-ynh_add_config --template="db.example.inc.php" --destination="$install_dir/config/db.inc.php"
+ynh_add_config --template="dot_env" --destination="$install_dir/.env"
 
-chmod 400 "$install_dir/config/db.inc.php"
-chown "$app:$app" "$install_dir/config/db.inc.php"
+chmod 400 "$install_dir/.env"
+chown "$app:$app" "$install_dir/.env"
 
 #=================================================
 # BUILD MOVIM
@@ -58,8 +62,9 @@ ynh_script_progression --message="Building Movim..."
 # Install composer
 ynh_install_composer
 
-ynh_exec_warn_less ynh_composer_exec --commands="movim:migrate"
-ynh_exec_as "$app" "php$phpversion" "$install_dir/daemon.php" config --username="$admin" --password="$password" --quiet
+COMPOSER_ALLOW_SUPERUSER=1 ynh_exec_warn_less ynh_composer_exec --commands="movim:migrate"
+chmod -R o-rwx "$install_dir"
+chown -R "$app:www-data" "$install_dir"
 
 #=================================================
 # SYSTEM CONFIGURATION

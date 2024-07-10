@@ -1,0 +1,14 @@
+# Database configuration
+DB_DRIVER=pgsql
+DB_HOST=localhost
+DB_PORT=5432
+DB_DATABASE=__DB_NAME__
+DB_USERNAME=__DB_USER__
+DB_PASSWORD=__DB_PWD__
+
+# Daemon configuration
+DAEMON_URL=https://__DOMAIN____PATH__/
+DAEMON_PORT=__PORT__
+DAEMON_INTERFACE=127.0.0.1
+DAEMON_DEBUG=false
+DAEMON_VERBOSE=false
