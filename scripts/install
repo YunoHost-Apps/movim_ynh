@@ -56,7 +56,7 @@ ynh_script_progression --message="Building Movim..."
 # Install composer
 ynh_install_composer
 
-ynh_exec_warn_less ynh_composer_exec --commands="movim:migrate"
+COMPOSER_ALLOW_SUPERUSER=1 ynh_exec_warn_less ynh_composer_exec --commands="movim:migrate"
 ynh_exec_as "$app" "php$phpversion" "$install_dir/daemon.php" config --username="$admin" --password="$password" --quiet
 
 #=================================================
