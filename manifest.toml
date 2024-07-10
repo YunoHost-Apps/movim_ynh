@@ -43,11 +43,10 @@ ram.runtime = "50M"
     type = "group"
     default = "visitors"
 
-    [install.admin]
-    type = "user"
-
-    [install.password]
-    type = "password"
+    [install.admin_jid]
+    type = "string"
+    help.en = "The Jabber ID of the user you want as admin."
+    help.fr = "L'identifiant Jabber de l'utilisateur que vous voulez rendre admin."
 
 [resources]
     [resources.sources.main]
