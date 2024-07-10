@@ -67,12 +67,12 @@ ram.runtime = "50M"
 
     [resources.apt]
     packages = [
-        "php7.4-curl",
-        "php7.4-mbstring",
-        "php7.4-imagick",
-        "php7.4-gd",
-        "php7.4-pgsql",
-        "php7.4-xml",
+        "php8.2-curl",
+        "php8.2-mbstring",
+        "php8.2-imagick",
+        "php8.2-gd",
+        "php8.2-pgsql",
+        "php8.2-xml",
         "postgresql",
         "postgresql-contrib",
         "apt-transport-https",
