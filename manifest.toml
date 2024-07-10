@@ -7,7 +7,7 @@ name = "Movim"
 description.en = "Decentralized social platform based on XMPP"
 description.fr = "Plateforme sociale décentralisée basée sur XMPP"
 
-version = "0.25.1~ynh1"
+version = "0.25.1~ynh2"
 
 maintainers = []
 
