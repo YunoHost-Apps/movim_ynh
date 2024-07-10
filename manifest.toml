@@ -43,11 +43,6 @@ ram.runtime = "50M"
     type = "group"
     default = "visitors"
 
-    [install.admin_jid]
-    type = "string"
-    help.en = "The Jabber ID of the user you want as admin."
-    help.fr = "L'identifiant Jabber de l'utilisateur que vous voulez rendre admin."
-
 [resources]
     [resources.sources.main]
     url = "https://github.com/movim/movim/archive/refs/tags/v0.25.1.tar.gz"
