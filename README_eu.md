@@ -5,7 +5,7 @@ EZ editatu eskuz.
 
 # Movim YunoHost-erako
 
-[![Integrazio maila](https://dash.yunohost.org/integration/movim.svg)](https://dash.yunohost.org/appci/app/movim) ![Funtzionamendu egoera](https://ci-apps.yunohost.org/ci/badges/movim.status.svg) ![Mantentze egoera](https://ci-apps.yunohost.org/ci/badges/movim.maintain.svg)
+[![Integrazio maila](https://dash.yunohost.org/integration/movim.svg)](https://ci-apps.yunohost.org/ci/apps/movim/) ![Funtzionamendu egoera](https://ci-apps.yunohost.org/ci/badges/movim.status.svg) ![Mantentze egoera](https://ci-apps.yunohost.org/ci/badges/movim.maintain.svg)
 
 [![Instalatu Movim YunoHost-ekin](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=movim)
 
