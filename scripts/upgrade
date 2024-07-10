@@ -37,13 +37,27 @@ if [ -z "${fpm_usage:-}" ]; then
     ynh_app_setting_set --app="$app" --key=fpm_usage --value="$fpm_usage"
 fi
 
+if [ -f "$install_dir/config/db.inc.php" ]; then
+    ynh_secure_remove --file="$install_dir/config/db.inc.php"
+fi
+
+if [[ -n "${path:-}" ]] && [[ "${path:-}" != "/" ]]; then
+    ynh_die --message="Movim can't be installed in a subdir anymore. Please change_url to the root of a domain before upgrading."
+fi
+
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 ynh_script_progression --message="Upgrading source files..."
 
 # Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source --dest_dir="$install_dir" --full_replace=1 --keep="config/db.inc.php"
+ynh_setup_source --dest_dir="$install_dir" --full_replace=1 --keep=".env"
+
+# Patch call to php in composer
+ynh_replace_string -f "$install_dir/composer.json" --match_string='"vendor/bin/phinx' --replace_string='"@php vendor/bin/phinx'
+
+# Patch call to php in daemon code
+ynh_replace_string -f "$install_dir/src/Movim/Daemon/Session.php" --match_string="exec php" --replace_string="exec php$phpversion"
 
 chmod -R o-rwx "$install_dir"
 chown -R "$app:www-data" "$install_dir"
@@ -53,10 +67,10 @@ chown -R "$app:www-data" "$install_dir"
 #=================================================
 ynh_script_progression --message="Updating $app's configuration file..."
 
-ynh_add_config --template="db.example.inc.php" --destination="$install_dir/config/db.inc.php"
+ynh_add_config --template="dot_env" --destination="$install_dir/.env"
 
-chmod 400 "$install_dir/config/db.inc.php"
-chown "$app:$app" "$install_dir/config/db.inc.php"
+chmod 400 "$install_dir/.env"
+chown "$app:$app" "$install_dir/.env"
 
 #=================================================
 # BUILD MOVIM
@@ -65,9 +79,9 @@ ynh_script_progression --message="Building $app..."
 
 ynh_exec_warn_less ynh_install_composer
 
-ynh_exec_warn_less ynh_composer_exec --commands="config --global discard-changes true --quiet"
-ynh_exec_warn_less ynh_composer_exec --commands="update --no-interaction --quiet"
-ynh_exec_warn_less ynh_composer_exec --commands="movim:migrate --quiet"
+COMPOSER_ALLOW_SUPERUSER=1 ynh_exec_warn_less ynh_composer_exec --commands="config --global discard-changes true --quiet"
+COMPOSER_ALLOW_SUPERUSER=1 ynh_exec_warn_less ynh_composer_exec --commands="update --no-interaction --quiet"
+COMPOSER_ALLOW_SUPERUSER=1 ynh_exec_warn_less ynh_composer_exec --commands="movim:migrate --quiet"
 
 #=================================================
 # REAPPLY SYSTEM CONFIGURATIONS
