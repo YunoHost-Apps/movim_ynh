@@ -56,6 +56,9 @@ ynh_setup_source --dest_dir="$install_dir" --full_replace=1 --keep=".env"
 # Patch call to php in composer
 ynh_replace_string -f "$install_dir/composer.json" --match_string='"vendor/bin/phinx' --replace_string='"@php vendor/bin/phinx'
 
+# Patch call to php in daemon code
+ynh_replace_string -f "$install_dir/src/Movim/Daemon/Session.php" --match_string="exec php" --replace_string="exec php$phpversion"
+
 chmod -R o-rwx "$install_dir"
 chown -R "$app:www-data" "$install_dir"
 
