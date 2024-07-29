@@ -19,7 +19,7 @@ Ini TIDAK boleh diedit dengan tangan.
 Web-based cross-platform XMPP client
 
 
-**Versi terkirim:** 0.25.1~ynh2
+**Versi terkirim:** 0.26~ynh1
 
 **Demo:** <https://nl.movim.eu/?login>
 
