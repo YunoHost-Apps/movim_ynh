@@ -7,79 +7,70 @@
 source _common.sh
 source /usr/share/yunohost/helpers
 
+ynh_app_setting_set --key=php_upload_max_filesize --value=100M
+
 #=================================================
 # CONFIGURING A POSTGRESQL DATABASE
 #=================================================
-ynh_script_progression --message="Configuring $app's PostgreSQL database..."
+ynh_script_progression "Configuring $app's PostgreSQL database..."
 
 # FIXME: is it actually required?
-ynh_psql_execute_as_root --database="$db_name" --sql="CREATE EXTENSION IF NOT EXISTS unaccent;"
-ynh_psql_execute_as_root --database="$db_name" --sql="CREATE EXTENSION IF NOT EXISTS pg_trgm;"
+ynh_psql_db_shell  <<< "CREATE EXTENSION IF NOT EXISTS unaccent;"
+ynh_psql_db_shell  <<< "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
-ynh_script_progression --message="Setting up source files..."
+ynh_script_progression "Setting up source files..."
 
 # Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source --dest_dir="$install_dir"
 
 # Patch call to php in composer
-ynh_replace_string -f "$install_dir/composer.json" --match_string='"vendor/bin/phinx' --replace_string='"@php vendor/bin/phinx'
+ynh_replace -f "$install_dir/composer.json" --match='"vendor/bin/phinx' --replace='"@php vendor/bin/phinx'
 
 # Patch call to php in daemon code
-ynh_replace_string -f "$install_dir/src/Movim/Daemon/Session.php" --match_string="exec php" --replace_string="exec php$phpversion"
-
-chmod -R o-rwx "$install_dir"
-chown -R "$app:www-data" "$install_dir"
+ynh_replace -f "$install_dir/src/Movim/Daemon/Session.php" --match="exec php" --replace="exec php$php_version"
 
 #=================================================
 # ADD A CONFIGURATION
 #=================================================
-ynh_script_progression --message="Adding $app's configuration file..."
+ynh_script_progression "Adding $app's configuration file..."
 
-ynh_add_config --template="dot_env" --destination="$install_dir/.env"
-
-chmod 400 "$install_dir/.env"
-chown "$app:$app" "$install_dir/.env"
+ynh_config_add --template="dot_env" --destination="$install_dir/.env"
 
 #=================================================
 # BUILD MOVIM
 #=================================================
-ynh_script_progression --message="Building Movim..."
+ynh_script_progression "Building Movim..."
 
 # Install composer
-ynh_install_composer
+ynh_composer_install
+ynh_composer_exec install --no-dev
 
-COMPOSER_ALLOW_SUPERUSER=1 ynh_exec_warn_less ynh_composer_exec --commands="movim:migrate"
-chmod -R o-rwx "$install_dir"
-chown -R "$app:www-data" "$install_dir"
+COMPOSER_ALLOW_SUPERUSER=1 ynh_composer_exec movim:migrate
 
 #=================================================
 # SYSTEM CONFIGURATION
 #=================================================
-ynh_script_progression --message="Adding system configurations related to $app..." --weight=1
+ynh_script_progression "Adding system configurations related to $app..."
 
-# Create a dedicated PHP-FPM config
-ynh_add_fpm_config
+ynh_config_add_phpfpm
 
-# Create a dedicated NGINX config
-ynh_add_nginx_config
+ynh_config_add_nginx
 
-# Create a dedicated systemd config
-ynh_add_systemd_config
+ynh_config_add_systemd
 yunohost service add "$app" --description="Responsive web-based XMPP client"
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting $app's systemd service..."
+ynh_script_progression "Starting $app's systemd service..."
 
-# Start a systemd service
-ynh_systemd_action --service_name="$app" --action="start" --log_path="systemd" --line_match="Movim daemon launched"
+ynh_systemctl --service="$app" --action="start" --log_path="systemd" --wait_until="Movim daemon launched"
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Installation of $app completed"
+ynh_script_progression "Installation of $app completed"
