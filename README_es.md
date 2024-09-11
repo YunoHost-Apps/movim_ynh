@@ -19,7 +19,7 @@ No se debe editar a mano.
 Web-based cross-platform XMPP client
 
 
-**Versión actual:** 0.27.1~ynh1
+**Versión actual:** 0.27.1~ynh2
 
 **Demo:** <https://nl.movim.eu/?login>
 
@@ -37,7 +37,7 @@ Web-based cross-platform XMPP client
 
 ## Información para desarrolladores
 
-Por favor enviar sus correcciones a la [`branch testing`](https://github.com/YunoHost-Apps/movim_ynh/tree/testing
+Por favor enviar sus correcciones a la [rama `testing`](https://github.com/YunoHost-Apps/movim_ynh/tree/testing).
 
 Para probar la rama `testing`, sigue asÍ:
 
