@@ -1,9 +1,5 @@
 #!/bin/bash
 
-#=================================================
-# IMPORT GENERIC HELPERS
-#=================================================
-
 source _common.sh
 source /usr/share/yunohost/helpers
 
@@ -14,7 +10,6 @@ ynh_app_setting_set --key=php_upload_max_filesize --value=100M
 #=================================================
 ynh_script_progression "Configuring $app's PostgreSQL database..."
 
-# FIXME: is it actually required?
 ynh_psql_db_shell  <<< "CREATE EXTENSION IF NOT EXISTS unaccent;"
 ynh_psql_db_shell  <<< "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
 
@@ -44,7 +39,6 @@ ynh_config_add --template="dot_env" --destination="$install_dir/.env"
 #=================================================
 ynh_script_progression "Building Movim..."
 
-# Install composer
 ynh_composer_install
 ynh_composer_exec install --no-dev
 
