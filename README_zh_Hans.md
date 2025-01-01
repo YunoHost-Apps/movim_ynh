@@ -5,7 +5,9 @@
 
 # YunoHost 上的 Movim
 
-[![集成程度](https://dash.yunohost.org/integration/movim.svg)](https://ci-apps.yunohost.org/ci/apps/movim/) ![工作状态](https://ci-apps.yunohost.org/ci/badges/movim.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/movim.maintain.svg)
+[![集成程度](https://apps.yunohost.org/badge/integration/movim)](https://ci-apps.yunohost.org/ci/apps/movim/)
+![工作状态](https://apps.yunohost.org/badge/state/movim)
+![维护状态](https://apps.yunohost.org/badge/maintained/movim)
 
 [![使用 YunoHost 安装 Movim](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=movim)
 
@@ -19,7 +21,7 @@
 Web-based cross-platform XMPP client
 
 
-**分发版本：** 0.28.0~ynh1
+**分发版本：** 0.29.0~ynh1
 
 **演示：** <https://nl.movim.eu/?login>
 

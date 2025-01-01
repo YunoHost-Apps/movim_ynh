@@ -10,15 +10,14 @@ ynh_app_setting_set --key=php_upload_max_filesize --value=100M
 #=================================================
 ynh_script_progression "Configuring $app's PostgreSQL database..."
 
-ynh_psql_db_shell  <<< "CREATE EXTENSION IF NOT EXISTS unaccent;"
-ynh_psql_db_shell  <<< "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
+ynh_psql_db_shell <<< "CREATE EXTENSION IF NOT EXISTS unaccent;"
+ynh_psql_db_shell <<< "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 ynh_script_progression "Setting up source files..."
 
-# Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source --dest_dir="$install_dir"
 
 # Patch call to php in composer
@@ -37,7 +36,7 @@ ynh_config_add --template="dot_env" --destination="$install_dir/.env"
 #=================================================
 # BUILD MOVIM
 #=================================================
-ynh_script_progression "Building Movim..."
+ynh_script_progression "Building $app..."
 
 ynh_composer_install
 ynh_composer_exec install --no-dev
