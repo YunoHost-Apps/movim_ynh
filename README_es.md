@@ -5,7 +5,9 @@ No se debe editar a mano.
 
 # Movim para Yunohost
 
-[![Nivel de integración](https://dash.yunohost.org/integration/movim.svg)](https://ci-apps.yunohost.org/ci/apps/movim/) ![Estado funcional](https://ci-apps.yunohost.org/ci/badges/movim.status.svg) ![Estado En Mantención](https://ci-apps.yunohost.org/ci/badges/movim.maintain.svg)
+[![Nivel de integración](https://apps.yunohost.org/badge/integration/movim)](https://ci-apps.yunohost.org/ci/apps/movim/)
+![Estado funcional](https://apps.yunohost.org/badge/state/movim)
+![Estado En Mantención](https://apps.yunohost.org/badge/maintained/movim)
 
 [![Instalar Movim con Yunhost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=movim)
 
@@ -19,7 +21,7 @@ No se debe editar a mano.
 Web-based cross-platform XMPP client
 
 
-**Versión actual:** 0.28.0~ynh1
+**Versión actual:** 0.29.0~ynh1
 
 **Demo:** <https://nl.movim.eu/?login>
 

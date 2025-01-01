@@ -5,7 +5,9 @@ Ini TIDAK boleh diedit dengan tangan.
 
 # Movim untuk YunoHost
 
-[![Tingkat integrasi](https://dash.yunohost.org/integration/movim.svg)](https://ci-apps.yunohost.org/ci/apps/movim/) ![Status kerja](https://ci-apps.yunohost.org/ci/badges/movim.status.svg) ![Status pemeliharaan](https://ci-apps.yunohost.org/ci/badges/movim.maintain.svg)
+[![Tingkat integrasi](https://apps.yunohost.org/badge/integration/movim)](https://ci-apps.yunohost.org/ci/apps/movim/)
+![Status kerja](https://apps.yunohost.org/badge/state/movim)
+![Status pemeliharaan](https://apps.yunohost.org/badge/maintained/movim)
 
 [![Pasang Movim dengan YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=movim)
 
@@ -19,7 +21,7 @@ Ini TIDAK boleh diedit dengan tangan.
 Web-based cross-platform XMPP client
 
 
-**Versi terkirim:** 0.28.0~ynh1
+**Versi terkirim:** 0.29.0~ynh1
 
 **Demo:** <https://nl.movim.eu/?login>
 
