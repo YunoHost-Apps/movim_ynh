@@ -21,7 +21,7 @@
 Web-based cross-platform XMPP client
 
 
-**Поставляемая версия:** 0.29.0~ynh1
+**Поставляемая версия:** 0.29.1~ynh1
 
 **Демо-версия:** <https://nl.movim.eu/?login>
 
