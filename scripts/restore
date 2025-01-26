@@ -28,6 +28,7 @@ ynh_restore "/etc/nginx/conf.d/$domain.d/$app.conf"
 
 ynh_restore "/etc/systemd/system/$app.service"
 systemctl enable "$app.service" --quiet
+
 yunohost service add "$app" --description="Responsive web-based XMPP client"
 
 #=================================================
@@ -36,6 +37,7 @@ yunohost service add "$app" --description="Responsive web-based XMPP client"
 ynh_script_progression "Reloading NGINX web server and $app's service..."
 
 ynh_systemctl --service="$app" --action="start" --log_path="systemd" --wait_until="Movim daemon launched"
+
 ynh_systemctl --service="php$php_version-fpm" --action=reload
 
 ynh_systemctl --service=nginx --action="reload"
