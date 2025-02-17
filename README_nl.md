@@ -21,7 +21,7 @@ Hij mag NIET handmatig aangepast worden.
 Web-based cross-platform XMPP client
 
 
-**Geleverde versie:** 0.29.1~ynh1
+**Geleverde versie:** 0.29.2~ynh1
 
 **Demo:** <https://nl.movim.eu/?login>
 
