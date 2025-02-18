@@ -20,6 +20,7 @@ No se debe editar a mano.
 
 Web-based cross-platform XMPP client
 
+
 **Versión actual:** 0.29.2~ynh1
 
 **Demo:** <https://nl.movim.eu/?login>
