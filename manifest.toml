@@ -7,7 +7,7 @@ name = "Movim"
 description.en = "Decentralized social platform based on XMPP"
 description.fr = "Plateforme sociale décentralisée basée sur XMPP"
 
-version = "0.30.1~ynh1"
+version = "0.31.0~ynh1"
 
 maintainers = []
 
@@ -42,8 +42,8 @@ ram.runtime = "50M"
 
 [resources]
     [resources.sources.main]
-    url = "https://github.com/movim/movim/archive/refs/tags/v0.30.1.tar.gz"
-    sha256 = "b50ddd411193509d7e58e62cc96299eda5b95912dda3512e77cead7cd0fee9ad"
+    url = "https://github.com/movim/movim/archive/refs/tags/v0.31.tar.gz"
+    sha256 = "fdfc97202390744c7cf13e072735608a70eb4ceaea43ca923735e1e41b4eec53"
     autoupdate.strategy = "latest_github_tag"
 
     [resources.ports]
