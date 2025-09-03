@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 source /usr/share/yunohost/helpers
 
 ynh_app_setting_set_default --key=php_upload_max_filesize --value=100M
@@ -50,7 +49,6 @@ ynh_config_add --template="dot_env" --destination="$install_dir/.env"
 #=================================================
 ynh_script_progression "Building $app..."
 
-#REMOVEME? ynh_composer_install
 ynh_composer_exec install --no-dev
 
 COMPOSER_ALLOW_SUPERUSER=1 ynh_composer_exec config --global discard-changes true --quiet
