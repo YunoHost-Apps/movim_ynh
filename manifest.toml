@@ -73,4 +73,4 @@ ram.runtime = "50M"
     type = "postgresql"
 
     [resources.composer]
-    version = "2.8.10"
+    version = "2.8.11"
