@@ -55,6 +55,10 @@ ynh_config_add_nginx
 ynh_config_add_systemd
 yunohost service add "$app" --description="Responsive web-based XMPP client"
 
+# Fix permissions (#77)
+chown -R movim:www-data /var/www/movim/cache
+chmod -R g+w /var/www/movim/cache
+
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
