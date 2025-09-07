@@ -63,5 +63,11 @@ ynh_systemctl --service="$app" --action="start" --log_path="systemd" --wait_unti
 #=================================================
 # END OF SCRIPT
 #=================================================
+# Fix permissions (#77)
+# need to create manually the directory as it will be generated only at the first page loading
+mkdir $install_dir/cache
+chown -R $app:www-data $install_dir/cache
+chmod -R g+w /var/www/movim/cache
+ynh_systemctl --service="$app" --action="restart" --log_path="systemd" --wait_until="Movim daemon launched"
 
 ynh_script_progression "Installation of $app completed"
