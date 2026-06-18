@@ -7,7 +7,7 @@ name = "Movim"
 description.en = "Decentralized social platform based on XMPP"
 description.fr = "Plateforme sociale décentralisée basée sur XMPP"
 
-version = "0.32.1~ynh2"
+version = "0.34~ynh1"
 
 maintainers = []
 
@@ -20,7 +20,7 @@ code = "https://github.com/movim/movim"
 cpe = "cpe:2.3:a:movim:movim"
 
 [integration]
-yunohost = ">= 12.1.17"
+yunohost = ">= 12.1.38"
 helpers_version = "2.1"
 architectures = "all"
 multi_instance = false
@@ -42,8 +42,8 @@ ram.runtime = "50M"
 
 [resources]
     [resources.sources.main]
-    url = "https://github.com/movim/movim/archive/refs/tags/v0.32.1.tar.gz"
-    sha256 = "12342b20cadd73be3c2a7562b66bea87d6644974aeac11cb359aade7805501ff"
+    url = "https://github.com/movim/movim/archive/refs/tags/v0.34.tar.gz"
+    sha256 = "edb57bcf41c91350a5c9e39c5bd09be91501230b35592192834894900763edc4"
     autoupdate.strategy = "latest_github_tag"
 
     [resources.ports]
