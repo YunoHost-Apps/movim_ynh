@@ -7,7 +7,7 @@ name = "Movim"
 description.en = "Decentralized social platform based on XMPP"
 description.fr = "Plateforme sociale décentralisée basée sur XMPP"
 
-version = "0.34~ynh1"
+version = "0.34.1~ynh1"
 
 maintainers = []
 
@@ -20,7 +20,7 @@ code = "https://github.com/movim/movim"
 cpe = "cpe:2.3:a:movim:movim"
 
 [integration]
-yunohost = ">= 12.1.38"
+yunohost = ">= 12.1.39"
 helpers_version = "2.1"
 architectures = "all"
 multi_instance = false
@@ -42,8 +42,8 @@ ram.runtime = "50M"
 
 [resources]
     [resources.sources.main]
-    url = "https://github.com/movim/movim/archive/refs/tags/v0.34.tar.gz"
-    sha256 = "edb57bcf41c91350a5c9e39c5bd09be91501230b35592192834894900763edc4"
+    url = "https://github.com/movim/movim/archive/refs/tags/v0.34.1.tar.gz"
+    sha256 = "35e9ed023810bcef69344dd9d0ae1bfc3c1aa5d3d00a6f4ad0293bdb274d7dd2"
     autoupdate.strategy = "latest_github_tag"
 
     [resources.ports]
@@ -58,12 +58,12 @@ ram.runtime = "50M"
 
     [resources.apt]
     packages = [
-        "php8.3-curl",
-        "php8.3-mbstring",
-        "php8.3-imagick",
-        "php8.3-gd",
-        "php8.3-pgsql",
-        "php8.3-xml",
+        "php8.5-curl",
+        "php8.5-mbstring",
+        "php8.5-imagick",
+        "php8.5-gd",
+        "php8.5-pgsql",
+        "php8.5-xml",
         "postgresql",
         "postgresql-contrib",
         "apt-transport-https",
@@ -73,4 +73,4 @@ ram.runtime = "50M"
     type = "postgresql"
 
     [resources.composer]
-    version = "2.8.11"
+    version = "2.10.1"
