@@ -64,6 +64,7 @@ ram.runtime = "50M"
         "php8.5-gd",
         "php8.5-pgsql",
         "php8.5-xml",
+        "php8.5-intl",
         "postgresql",
         "postgresql-contrib",
         "apt-transport-https",
